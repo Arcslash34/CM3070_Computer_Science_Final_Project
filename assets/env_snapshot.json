@@ -1,0 +1,990 @@
+{
+  "rain": {
+    "stations": [
+      {
+        "id": "S219",
+        "name": "Yio Chu Kang Road",
+        "location": {
+          "latitude": 1.37999,
+          "longitude": 103.87643
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S216",
+        "name": "Ang Mo Kio Avenue 10",
+        "location": {
+          "latitude": 1.36019,
+          "longitude": 103.85335
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S217",
+        "name": "Bishan Street 13",
+        "location": {
+          "latitude": 1.35041,
+          "longitude": 103.85526
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S214",
+        "name": "Tanjong Rhu",
+        "location": {
+          "latitude": 1.29911,
+          "longitude": 103.88289
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S215",
+        "name": "Geylang East Central",
+        "location": {
+          "latitude": 1.32785,
+          "longitude": 103.88899
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S213",
+        "name": "Coronation Walk",
+        "location": {
+          "latitude": 1.32427,
+          "longitude": 103.8097
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S81",
+        "name": "Punggol Central",
+        "location": {
+          "latitude": 1.4029,
+          "longitude": 103.9092
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S40",
+        "name": "Mandai Lake Road",
+        "location": {
+          "latitude": 1.4044,
+          "longitude": 103.78962
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S84",
+        "name": "Simei Avenue",
+        "location": {
+          "latitude": 1.3437,
+          "longitude": 103.9444
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S44",
+        "name": "Nanyang Avenue",
+        "location": {
+          "latitude": 1.34583,
+          "longitude": 103.68166
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S88",
+        "name": "Toa Payoh North",
+        "location": {
+          "latitude": 1.3427,
+          "longitude": 103.8482
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S43",
+        "name": "Kim Chuan Road",
+        "location": {
+          "latitude": 1.3399,
+          "longitude": 103.8878
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S221",
+        "name": "Hougang Avenue 1",
+        "location": {
+          "latitude": 1.35691,
+          "longitude": 103.89088
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S222",
+        "name": "Henderson Road",
+        "location": {
+          "latitude": 1.28987,
+          "longitude": 103.82364
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S08",
+        "name": "Upper Thomson Road",
+        "location": {
+          "latitude": 1.3701,
+          "longitude": 103.8271
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S07",
+        "name": "Lornie Road",
+        "location": {
+          "latitude": 1.3415,
+          "longitude": 103.8334
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S220",
+        "name": "Compassvale Lane",
+        "location": {
+          "latitude": 1.38666,
+          "longitude": 103.89797
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S208",
+        "name": "Changi East Close",
+        "location": {
+          "latitude": 1.3136,
+          "longitude": 104.00317
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S203",
+        "name": "Pasir Panjang",
+        "location": {
+          "latitude": 1.29164,
+          "longitude": 103.7702
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S201",
+        "name": "Clementi Park",
+        "location": {
+          "latitude": 1.32311,
+          "longitude": 103.76714
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S90",
+        "name": "Bukit Timah Road",
+        "location": {
+          "latitude": 1.3191,
+          "longitude": 103.8191
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S92",
+        "name": "South Buona Vista Road",
+        "location": {
+          "latitude": 1.2841,
+          "longitude": 103.7886
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S209",
+        "name": "Yishun Ring Road",
+        "location": {
+          "latitude": 1.42111,
+          "longitude": 103.84472
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S50",
+        "name": "Clementi Road",
+        "location": {
+          "latitude": 1.3337,
+          "longitude": 103.7768
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S94",
+        "name": "Pasir Ris Street 51",
+        "location": {
+          "latitude": 1.3662,
+          "longitude": 103.9528
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S210",
+        "name": "Woodlands Centre",
+        "location": {
+          "latitude": 1.44003,
+          "longitude": 103.76904
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S211",
+        "name": "Kranji Road",
+        "location": {
+          "latitude": 1.42918,
+          "longitude": 103.75711
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S117",
+        "name": "Banyan Road",
+        "location": {
+          "latitude": 1.256,
+          "longitude": 103.679
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S115",
+        "name": "Tuas South Avenue 3",
+        "location": {
+          "latitude": 1.29377,
+          "longitude": 103.61843
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S113",
+        "name": "Marine Parade Road",
+        "location": {
+          "latitude": 1.30648,
+          "longitude": 103.9104
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S60",
+        "name": "Sentosa",
+        "location": {
+          "latitude": 1.25,
+          "longitude": 103.8279
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S64",
+        "name": "Bukit Panjang Road",
+        "location": {
+          "latitude": 1.3824,
+          "longitude": 103.7603
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S66",
+        "name": "Kranji Way",
+        "location": {
+          "latitude": 1.4387,
+          "longitude": 103.7363
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S24",
+        "name": "Upper Changi Road North",
+        "location": {
+          "latitude": 1.3678,
+          "longitude": 103.9826
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S69",
+        "name": "Upper Peirce Reservoir Park",
+        "location": {
+          "latitude": 1.37,
+          "longitude": 103.805
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S123",
+        "name": "Towner Road",
+        "location": {
+          "latitude": 1.3214,
+          "longitude": 103.8577
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S108",
+        "name": "Marina Gardens Drive",
+        "location": {
+          "latitude": 1.2799,
+          "longitude": 103.8703
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S229",
+        "name": "Jurong West Street 42",
+        "location": {
+          "latitude": 1.35167,
+          "longitude": 103.72195
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S900",
+        "name": "Seletar Aerospace View",
+        "location": {
+          "latitude": 1.41284,
+          "longitude": 103.86922
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S109",
+        "name": "Ang Mo Kio Avenue 5",
+        "location": {
+          "latitude": 1.3764,
+          "longitude": 103.8492
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S106",
+        "name": "Pulau Ubin",
+        "location": {
+          "latitude": 1.4168,
+          "longitude": 103.9673
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S227",
+        "name": "Woodlands Drive 62",
+        "location": {
+          "latitude": 1.43944,
+          "longitude": 103.80389
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S107",
+        "name": "East Coast Parkway",
+        "location": {
+          "latitude": 1.3135,
+          "longitude": 103.9625
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S228",
+        "name": "Jurong West Street 73",
+        "location": {
+          "latitude": 1.34703,
+          "longitude": 103.70073
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S104",
+        "name": "Woodlands Avenue 9",
+        "location": {
+          "latitude": 1.44387,
+          "longitude": 103.78538
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S226",
+        "name": "Malan Road",
+        "location": {
+          "latitude": 1.27472,
+          "longitude": 103.80389
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S102",
+        "name": "Semakau Landfill",
+        "location": {
+          "latitude": 1.189,
+          "longitude": 103.768
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S223",
+        "name": "Margaret Drive",
+        "location": {
+          "latitude": 1.29984,
+          "longitude": 103.80264
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S224",
+        "name": "Airport Boulevard",
+        "location": {
+          "latitude": 1.34392,
+          "longitude": 103.98409
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S71",
+        "name": "Kent Ridge Road",
+        "location": {
+          "latitude": 1.2923,
+          "longitude": 103.7815
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S33",
+        "name": "Jurong Pier Road",
+        "location": {
+          "latitude": 1.3081,
+          "longitude": 103.71
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S77",
+        "name": "Alexandra Road",
+        "location": {
+          "latitude": 1.2937,
+          "longitude": 103.8125
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S79",
+        "name": "Somerset Road",
+        "location": {
+          "latitude": 1.3004,
+          "longitude": 103.8372
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S78",
+        "name": "Poole Road",
+        "location": {
+          "latitude": 1.30703,
+          "longitude": 103.89067
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S111",
+        "name": "Scotts Road",
+        "location": {
+          "latitude": 1.31055,
+          "longitude": 103.8365
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S112",
+        "name": "Lim Chu Kang Road",
+        "location": {
+          "latitude": 1.43854,
+          "longitude": 103.70131
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      },
+      {
+        "id": "S230",
+        "name": "West Coast Road",
+        "location": {
+          "latitude": 1.30167,
+          "longitude": 103.76444
+        },
+        "rainfall": 0,
+        "lastHour": 0
+      }
+    ],
+    "timestamp": "2025-08-16T17:40:00+08:00"
+  },
+  "pm25": [
+    {
+      "name": "west",
+      "location": {
+        "latitude": 1.35735,
+        "longitude": 103.7
+      },
+      "value": 17
+    },
+    {
+      "name": "east",
+      "location": {
+        "latitude": 1.35735,
+        "longitude": 103.94
+      },
+      "value": 14
+    },
+    {
+      "name": "central",
+      "location": {
+        "latitude": 1.35735,
+        "longitude": 103.82
+      },
+      "value": 11
+    },
+    {
+      "name": "south",
+      "location": {
+        "latitude": 1.29587,
+        "longitude": 103.82
+      },
+      "value": 6
+    },
+    {
+      "name": "north",
+      "location": {
+        "latitude": 1.41803,
+        "longitude": 103.82
+      },
+      "value": 10
+    }
+  ],
+  "wind": [
+    {
+      "id": "S108",
+      "name": "Marina Gardens Drive",
+      "location": {
+        "latitude": 1.2799,
+        "longitude": 103.8703
+      },
+      "speed": 2.9,
+      "direction": 148
+    },
+    {
+      "id": "S109",
+      "name": "Ang Mo Kio Avenue 5",
+      "location": {
+        "latitude": 1.3764,
+        "longitude": 103.8492
+      },
+      "speed": 4.1,
+      "direction": 134
+    },
+    {
+      "id": "S106",
+      "name": "Pulau Ubin",
+      "location": {
+        "latitude": 1.4168,
+        "longitude": 103.9673
+      },
+      "speed": 2.8,
+      "direction": 192
+    },
+    {
+      "id": "S117",
+      "name": "Banyan Road",
+      "location": {
+        "latitude": 1.256,
+        "longitude": 103.679
+      },
+      "speed": 4.1,
+      "direction": 152
+    },
+    {
+      "id": "S107",
+      "name": "East Coast Parkway",
+      "location": {
+        "latitude": 1.3135,
+        "longitude": 103.9625
+      },
+      "speed": 9.8,
+      "direction": 116
+    },
+    {
+      "id": "S104",
+      "name": "Woodlands Avenue 9",
+      "location": {
+        "latitude": 1.44387,
+        "longitude": 103.78538
+      },
+      "speed": 3.4,
+      "direction": 188
+    },
+    {
+      "id": "S115",
+      "name": "Tuas South Avenue 3",
+      "location": {
+        "latitude": 1.29377,
+        "longitude": 103.61843
+      },
+      "speed": 2.6,
+      "direction": 148
+    },
+    {
+      "id": "S60",
+      "name": "Sentosa",
+      "location": {
+        "latitude": 1.25,
+        "longitude": 103.8279
+      },
+      "speed": 3.5,
+      "direction": 127
+    },
+    {
+      "id": "S50",
+      "name": "Clementi Road",
+      "location": {
+        "latitude": 1.3337,
+        "longitude": 103.7768
+      },
+      "speed": 3.1,
+      "direction": 120
+    },
+    {
+      "id": "S44",
+      "name": "Nanyang Avenue",
+      "location": {
+        "latitude": 1.34583,
+        "longitude": 103.68166
+      },
+      "speed": 2.8,
+      "direction": 232
+    },
+    {
+      "id": "S43",
+      "name": "Kim Chuan Road",
+      "location": {
+        "latitude": 1.3399,
+        "longitude": 103.8878
+      },
+      "speed": 4,
+      "direction": 195
+    },
+    {
+      "id": "S111",
+      "name": "Scotts Road",
+      "location": {
+        "latitude": 1.31055,
+        "longitude": 103.8365
+      },
+      "speed": 4,
+      "direction": 158
+    },
+    {
+      "id": "S121",
+      "name": "Old Choa Chu Kang Road",
+      "location": {
+        "latitude": 1.37288,
+        "longitude": 103.72244
+      },
+      "speed": 4.2,
+      "direction": 167
+    }
+  ],
+  "temp": [
+    {
+      "id": "S109",
+      "name": "Ang Mo Kio Avenue 5",
+      "location": {
+        "latitude": 1.3764,
+        "longitude": 103.8492
+      },
+      "value": 30.4
+    },
+    {
+      "id": "S106",
+      "name": "Pulau Ubin",
+      "location": {
+        "latitude": 1.4168,
+        "longitude": 103.9673
+      },
+      "value": 29.6
+    },
+    {
+      "id": "S117",
+      "name": "Banyan Road",
+      "location": {
+        "latitude": 1.256,
+        "longitude": 103.679
+      },
+      "value": 29.3
+    },
+    {
+      "id": "S107",
+      "name": "East Coast Parkway",
+      "location": {
+        "latitude": 1.3135,
+        "longitude": 103.9625
+      },
+      "value": 29.5
+    },
+    {
+      "id": "S104",
+      "name": "Woodlands Avenue 9",
+      "location": {
+        "latitude": 1.44387,
+        "longitude": 103.78538
+      },
+      "value": 30.5
+    },
+    {
+      "id": "S115",
+      "name": "Tuas South Avenue 3",
+      "location": {
+        "latitude": 1.29377,
+        "longitude": 103.61843
+      },
+      "value": 29.8
+    },
+    {
+      "id": "S102",
+      "name": "Semakau Landfill",
+      "location": {
+        "latitude": 1.189,
+        "longitude": 103.768
+      },
+      "value": 30.2
+    },
+    {
+      "id": "S60",
+      "name": "Sentosa",
+      "location": {
+        "latitude": 1.25,
+        "longitude": 103.8279
+      },
+      "value": 30.6
+    },
+    {
+      "id": "S50",
+      "name": "Clementi Road",
+      "location": {
+        "latitude": 1.3337,
+        "longitude": 103.7768
+      },
+      "value": 29.4
+    },
+    {
+      "id": "S44",
+      "name": "Nanyang Avenue",
+      "location": {
+        "latitude": 1.34583,
+        "longitude": 103.68166
+      },
+      "value": 30.2
+    },
+    {
+      "id": "S43",
+      "name": "Kim Chuan Road",
+      "location": {
+        "latitude": 1.3399,
+        "longitude": 103.8878
+      },
+      "value": 31
+    },
+    {
+      "id": "S24",
+      "name": "Upper Changi Road North",
+      "location": {
+        "latitude": 1.3678,
+        "longitude": 103.9826
+      },
+      "value": 30.1
+    },
+    {
+      "id": "S111",
+      "name": "Scotts Road",
+      "location": {
+        "latitude": 1.31055,
+        "longitude": 103.8365
+      },
+      "value": 30
+    }
+  ],
+  "humidity": [
+    {
+      "id": "S109",
+      "name": "Ang Mo Kio Avenue 5",
+      "location": {
+        "latitude": 1.3764,
+        "longitude": 103.8492
+      },
+      "value": 63.5
+    },
+    {
+      "id": "S106",
+      "name": "Pulau Ubin",
+      "location": {
+        "latitude": 1.4168,
+        "longitude": 103.9673
+      },
+      "value": 75.9
+    },
+    {
+      "id": "S117",
+      "name": "Banyan Road",
+      "location": {
+        "latitude": 1.256,
+        "longitude": 103.679
+      },
+      "value": 74.6
+    },
+    {
+      "id": "S107",
+      "name": "East Coast Parkway",
+      "location": {
+        "latitude": 1.3135,
+        "longitude": 103.9625
+      },
+      "value": 74.6
+    },
+    {
+      "id": "S104",
+      "name": "Woodlands Avenue 9",
+      "location": {
+        "latitude": 1.44387,
+        "longitude": 103.78538
+      },
+      "value": 71.6
+    },
+    {
+      "id": "S115",
+      "name": "Tuas South Avenue 3",
+      "location": {
+        "latitude": 1.29377,
+        "longitude": 103.61843
+      },
+      "value": 72.4
+    },
+    {
+      "id": "S102",
+      "name": "Semakau Landfill",
+      "location": {
+        "latitude": 1.189,
+        "longitude": 103.768
+      },
+      "value": 73.2
+    },
+    {
+      "id": "S60",
+      "name": "Sentosa",
+      "location": {
+        "latitude": 1.25,
+        "longitude": 103.8279
+      },
+      "value": 67.2
+    },
+    {
+      "id": "S50",
+      "name": "Clementi Road",
+      "location": {
+        "latitude": 1.3337,
+        "longitude": 103.7768
+      },
+      "value": 70.8
+    },
+    {
+      "id": "S44",
+      "name": "Nanyang Avenue",
+      "location": {
+        "latitude": 1.34583,
+        "longitude": 103.68166
+      },
+      "value": 65.4
+    },
+    {
+      "id": "S43",
+      "name": "Kim Chuan Road",
+      "location": {
+        "latitude": 1.3399,
+        "longitude": 103.8878
+      },
+      "value": 60.1
+    },
+    {
+      "id": "S24",
+      "name": "Upper Changi Road North",
+      "location": {
+        "latitude": 1.3678,
+        "longitude": 103.9826
+      },
+      "value": 66.5
+    },
+    {
+      "id": "S111",
+      "name": "Scotts Road",
+      "location": {
+        "latitude": 1.31055,
+        "longitude": 103.8365
+      },
+      "value": 56.8
+    }
+  ],
+  "_savedAt": 1755337814260
+}

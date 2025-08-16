@@ -1,0 +1,49 @@
+{
+  "license": "0BSD",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "snapshot": "node scripts/snapshot.js"
+  },
+  "dependencies": {
+    "expo": "~52.0.47",
+    "expo-status-bar": "~2.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "uuid": "*",
+    "expo-location": "~18.0.10",
+    "expo-constants": "~17.0.8",
+    "expo-file-system": "~18.0.12",
+    "expo-image-picker": "~16.0.6",
+    "expo-localization": "~16.0.1",
+    "react-native-maps": "1.18.0",
+    "@expo/vector-icons": "~14.0.4",
+    "expo-notifications": "~0.29.14",
+    "react-native-paper": "4.9.2",
+    "expo-intent-launcher": "~12.0.2",
+    "expo-linear-gradient": "~14.0.2",
+    "react-error-boundary": "*",
+    "react-native-screens": "~4.4.0",
+    "react-native-webview": "13.12.5",
+    "@supabase/supabase-js": "*",
+    "react-native-reanimated": "~3.16.1",
+    "@react-navigation/drawer": "*",
+    "@react-navigation/native": "*",
+    "react-native-url-polyfill": "*",
+    "react-native-gesture-handler": "~2.20.2",
+    "@react-navigation/bottom-tabs": "*",
+    "@react-navigation/native-stack": "*",
+    "react-native-get-random-values": "~1.11.0",
+    "react-native-safe-area-context": "4.12.0",
+    "@react-native-community/netinfo": "11.4.1",
+    "@react-native-async-storage/async-storage": "1.23.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
