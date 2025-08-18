@@ -1,10 +1,19 @@
+// ResultSummary.js
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { quizSets } from './quizzes'; // ✅ Import quiz sets
+import { quizSets } from './quizzes';
 
 export default function ResultSummary({ route }) {
-  const { score, userAnswers, difficulty } = route.params;
-  const quizzes = quizSets[difficulty]; // ✅ Reconstruct quizzes
+  const { score = 0, userAnswers = [], difficulty } = route.params || {};
+  const quizzes = (quizSets && quizSets[difficulty]) || [];
+
+  if (!quizzes.length) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <Text>Nothing to show. (Unknown difficulty or quiz list missing.)</Text>
+      </View>
+    );
+  }
 
   const getBadge = () => {
     if (score >= 30) return '🥇 Gold';
@@ -33,7 +42,7 @@ export default function ResultSummary({ route }) {
                 {isCorrect ? '✅ Correct' : '❌ Incorrect'}
               </Text>
               <Text style={styles.detailText}>
-                🧠 You answered: {q.options[userAns] || 'No Answer'}
+                🧠 You answered: {q.options[userAns] ?? 'No Answer'}
               </Text>
               <Text style={styles.detailText}>
                 ✅ Correct answer: {q.options[q.correctIndex]}
@@ -99,12 +108,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 4,
   },
-  correct: {
-    color: '#2e7d32',
-  },
-  incorrect: {
-    color: '#c62828',
-  },
+  correct: { color: '#2e7d32' },
+  incorrect: { color: '#c62828' },
   detailText: {
     fontSize: 15,
     marginBottom: 3,

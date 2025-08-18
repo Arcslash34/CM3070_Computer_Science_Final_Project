@@ -1,9 +1,8 @@
 // resultScreen.js
-import React, { useCallback, useEffect, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { supabase } from './supabase';
-import { useNavigation } from '@react-navigation/native';
 
 export default function ResultScreen() {
   const [results, setResults] = useState([]);
@@ -21,7 +20,7 @@ export default function ResultScreen() {
       .order('created_at', { ascending: false });
 
     if (!error) {
-      setResults(data);
+      setResults(data || []);
     } else {
       console.error('Failed to fetch quiz results:', error.message);
     }
@@ -32,6 +31,7 @@ export default function ResultScreen() {
       { text: 'Cancel' },
       {
         text: 'Delete',
+        style: 'destructive',
         onPress: async () => {
           const { data: session } = await supabase.auth.getSession();
           const userId = session?.session?.user?.id;
@@ -47,7 +47,7 @@ export default function ResultScreen() {
     navigation.navigate('ResultSummary', {
       score: quiz.score,
       badge: quiz.badge,
-      userAnswers: quiz.answers,
+      userAnswers: quiz.answers, // jsonb array -> JS array
       difficulty: quiz.difficulty,
     });
   };
@@ -62,7 +62,7 @@ export default function ResultScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>📚 Past Quiz Results</Text>
 
-      {results.map((r, idx) => (
+      {results.map((r) => (
         <TouchableOpacity key={r.id} onPress={() => openSummary(r)} style={styles.item}>
           <Text style={styles.titleText}>{r.quiz_title}</Text>
           <Text style={styles.meta}>

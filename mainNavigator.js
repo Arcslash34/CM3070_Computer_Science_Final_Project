@@ -10,6 +10,7 @@ import resultScreen from './resultScreen';
 import ResultSummary from './resultSummary';
 import AuthScreen from './authscreen';
 import { LogoHeader, SettingsScreen } from './drawerapp';
+import Checklist from './checklist';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -54,6 +55,12 @@ export default function MainNavigator() {
         name="ResultSummary"
         component={ResultSummary}
         options={{ headerShown: true, headerTitle: 'Quiz Summary', headerTitleAlign: 'center' }}
+      />
+      {/* Checklist page (opened from Home FAB menu) */}
+      <Stack.Screen
+        name="Checklist"
+        component={Checklist}
+        options={{ headerShown: false }}  // Checklist has its own header UI
       />
     </Stack.Navigator>
   );

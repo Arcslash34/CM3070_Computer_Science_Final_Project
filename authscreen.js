@@ -130,7 +130,7 @@ function MainApp() {
       if (error || !data) return setError('No account with that username.');
       loginEmail = data.email;
     }
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password,
     });

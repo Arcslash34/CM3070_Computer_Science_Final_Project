@@ -458,8 +458,8 @@ export default function HomeScreen() {
           if (seedCoords) pickNearestFrom(fileSnap, seedCoords);
         }
       } catch {
-        console.warn('[snapshot] failed to load env_snapshot.json:', err);
-        setEnvDatasets(null);
+          console.warn('[snapshot] failed to load env_snapshot.json:', err);
+          setEnvDatasets(null);
       }
 
       const grantedNotif = await ensureNotificationsReady();
