@@ -9,7 +9,8 @@ import QuizzesScreen from './quizzes';
 import resultScreen from './resultScreen';
 import ResultSummary from './resultSummary';
 import AuthScreen from './authscreen';
-import { LogoHeader, SettingsScreen } from './drawerapp';
+import { LogoHeader } from './drawerapp';
+import Settings from './settings';
 import Checklist from './checklist';
 
 const Tab = createBottomTabNavigator();
@@ -41,8 +42,7 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Quizzes" component={QuizzesScreen} />
       <Tab.Screen name="Result" component={resultScreen} />
-      <Tab.Screen name="Profile" component={AuthScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
 }

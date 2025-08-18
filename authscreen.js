@@ -434,77 +434,6 @@ function MainApp() {
         </SafeAreaView>
       );
     }
-
-    if (screen === 'profile') {
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <LinearGradient
-            colors={['#EEF2FF', '#C7D2FE']}
-            style={styles.container}>
-            <View style={styles.profileCard}>
-              <View style={styles.profileHeader}>
-                <View>
-                  <TouchableOpacity onPress={() => setAvatarModalVisible(true)}>
-                    {avatarUrl ? (
-                      <Image
-                        source={{ uri: avatarUrl }}
-                        style={styles.avatarImageLarge}
-                      />
-                    ) : (
-                      <Image source={DefaultProfileImage} style={styles.avatarImageLarge} />
-                    )}
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.profileName}>
-                  {profile.username || session.user.email}
-                </Text>
-                {profile.name && (
-                  <Text style={styles.profileTitle}>{profile.name}</Text>
-                )}
-              </View>
-              <View style={styles.profileBody}>
-                <Text style={styles.profileItem}>
-                  <Ionicons name="mail" /> {session.user.email}
-                </Text>
-                <Text style={styles.profileItem}>🏅 Last Badge: {badge}</Text>
-                <Text style={styles.profileItem}>📊 Last Score: {score}</Text>
-                <TouchableOpacity
-                  style={styles.submitButton}
-                  onPress={() => setScreen('edit-profile')}>
-                  <Text style={{ color: '#fff' }}>Edit Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.logoutButton}
-                  onPress={handleLogout}>
-                  <Text style={{ color: '#fff' }}>Logout</Text>
-                </TouchableOpacity>
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-              </View>
-            </View>
-          </LinearGradient>
-          <Modal
-            visible={isAvatarModalVisible}
-            transparent={true}
-            animationType="fade"
-            onRequestClose={() => setAvatarModalVisible(false)}>
-            <Pressable
-              style={styles.modalBackdrop}
-              onPress={() => setAvatarModalVisible(false)}>
-              <View style={styles.modalContainer}>
-                {avatarUrl ? (
-                  <Image
-                    source={{ uri: avatarUrl }}
-                    style={styles.enlargedAvatar}
-                  />
-                ) : (
-                  <Image source={DefaultProfileImage} style={styles.enlargedAvatar} />
-                )}
-              </View>
-            </Pressable>
-          </Modal>
-        </SafeAreaView>
-      );
-    }
   }
 
   return (
@@ -743,44 +672,6 @@ const styles = StyleSheet.create({
     color: '#6c63ff',
     marginBottom: 10,
   },
-  profileCard: {
-    width: '100%',
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-  },
-  profileHeader: {
-    alignItems: 'center',
-    padding: 30,
-    backgroundColor: '#6c63ff',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  // avatarPlaceholder: {
-  //   width: 80,
-  //   height: 80,
-  //   borderRadius: 40,
-  //   backgroundColor: '#fff',
-  //   marginBottom: 10,
-  // },
-  profileName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  profileTitle: {
-    fontSize: 14,
-    color: '#eee',
-    marginTop: 4,
-  },
-  profileBody: {
-    padding: 20,
-  },
-  profileItem: {
-    fontSize: 14,
-    color: '#4B5563',
-    marginVertical: 4,
-  },
   submitText: {
     color: '#fff',
   },
@@ -789,19 +680,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     marginBottom: 10,
-  },
-  logoutButton: {
-    backgroundColor: '#EF4444',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 50,
-    marginVertical: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
   },
   backText: {
     marginLeft: 6,
@@ -814,38 +692,5 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginBottom: 10,
     backgroundColor: '#fff',
-  },
-  avatarImageLarge: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: '#eee',
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: 300,
-    height: 300,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    overflow: 'hidden',
-    padding: 10,
-  },
-  enlargedAvatar: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
   },
 });
