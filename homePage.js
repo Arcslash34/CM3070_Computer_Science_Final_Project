@@ -45,7 +45,6 @@ import {
   getNowWeather,
   fetchOWForecast5d,
   groupOWForecastByDay,
-  // snapshot helpers (NEW)
   loadEnvDatasetsFromFile,
 } from './api';
 
@@ -180,7 +179,7 @@ function distKm(a, b) {
   return getDistanceFromLatLonInKm(a.latitude, a.longitude, b.latitude, b.longitude);
 }
 
-// ---------------- NEW (re-added): ChatbotModal ----------------
+// ---------------- ChatbotModal ----------------
 function ChatbotModal({ visible, onClose, ChatbotComponent }) {
   return (
     <Modal
@@ -206,7 +205,7 @@ function ChatbotModal({ visible, onClose, ChatbotComponent }) {
   );
 }
 
-// ---------------- NEW (re-added): EmergencyContactsModal ----------------
+// ---------------- EmergencyContactsModal ----------------
 const EMERGENCY_CONTACTS = [
   { key: 'scdf', name: 'SCDF (Fire / Ambulance)', number: '995', icon: 'flame', color: '#EF4444' },
   { key: 'ambulance', name: 'Non-Emergency Ambulance', number: '1777', icon: 'medkit', color: '#F59E0B' },
@@ -312,7 +311,7 @@ export default function HomeScreen() {
 
   const [areaAdvisoryActive, setAreaAdvisoryActive] = useState(false);
 
-  // NEW: full datasets for the map (rain is single nearest object; others are arrays)
+  // Full datasets for the map (rain is single nearest object; others are arrays)
   const [envDatasets, setEnvDatasets] = useState(null);
 
   const triggerAreaAdvisoryForCoords = useCallback(async (c) => {

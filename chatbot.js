@@ -37,7 +37,7 @@ export default function ChatbotScreen() {
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://your-app.com',
+          'HTTP-Referer': 'http://localhost',
           'X-Title': 'DisasterChatApp',
         },
         body: JSON.stringify({

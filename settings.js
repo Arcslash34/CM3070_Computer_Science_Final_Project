@@ -5,7 +5,8 @@ import {
   TextInput, Linking, ScrollView, ActivityIndicator, Animated
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
@@ -15,7 +16,6 @@ import { supabase } from './supabase';
 import DefaultProfileImage from './assets/profile.png';
 import { LanguageContext } from './language';
 import { MaterialIcons } from '@expo/vector-icons';
-
 
 const TOGGLE_KEYS = {
   notifications: 'settings:notifications',
@@ -30,7 +30,9 @@ const countryCodeToFlagEmoji = (code = '') =>
   code.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
 
 export default function Settings() {
+  const navigation = useNavigation();
   const { lang, setLang } = useContext(LanguageContext);
+  const insets = useSafeAreaInsets(); // bottom inset only
 
   // Auth/session + profile
   const [session, setSession] = useState(null);
@@ -110,8 +112,8 @@ export default function Settings() {
         if (s !== null) setSound(s === '1');
         if (v !== null) setVibration(v === '1');
       } catch (err) {
-          console.warn('Failed to load toggles', err);
-        }
+        console.warn('Failed to load toggles', err);
+      }
     })();
   }, []);
 
@@ -342,136 +344,137 @@ export default function Settings() {
 
   /* ---------- RENDER ---------- */
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <LinearGradient colors={['#f8fafc', '#eef2ff']} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.container}>
-          {/* Profile header (tap to edit) */}
-          <TouchableOpacity activeOpacity={0.9} onPress={openEditProfile} style={styles.headerCard}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image
-                source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
-                style={styles.avatar}
-              />
-              <View style={{ marginLeft: 12, flex: 1 }}>
-                <Text style={styles.name}>{userDisplay}</Text>
-                {!!email && <Text style={styles.email}>{email}</Text>}
-              </View>
-              <Ionicons name="chevron-forward" size={18} color="#111827" />
+    <LinearGradient colors={['#f8fafc', '#eef2ff']} style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={[styles.container, { paddingBottom: 16 + insets.bottom }]} // ✅ only bottom safe area
+        contentInsetAdjustmentBehavior="never" // prevent iOS auto-inset at top
+      >
+        {/* Profile header (tap to edit) */}
+        <TouchableOpacity activeOpacity={0.9} onPress={openEditProfile} style={styles.headerCard}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image
+              source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
+              style={styles.avatar}
+            />
+            <View style={{ marginLeft: 12, flex: 1 }}>
+              <Text style={styles.name}>{userDisplay}</Text>
+              {!!email && <Text style={styles.email}>{email}</Text>}
             </View>
-            {/* Bio sits below avatar + name */}
-            <Text style={styles.bio}>
-              {profile?.bio || 'I am determined to become an expert in disaster management.'}
-            </Text>
-          </TouchableOpacity>
+            <Ionicons name="chevron-forward" size={18} color="#111827" />
+          </View>
+          {/* Bio sits below avatar + name */}
+          <Text style={styles.bio}>
+            {profile?.bio || 'I am determined to become an expert in disaster management.'}
+          </Text>
+        </TouchableOpacity>
 
-          {/* Game Settings */}
-          <SectionTitle>Game Settings</SectionTitle>
-          <CardRow
-            icon="notifications"
-            label="Notifications"
-            right={
-              <Switch
-                value={notifications}
-                onValueChange={(v) => { setNotifications(v); persistToggle(TOGGLE_KEYS.notifications, v); }}
-              />
-            }
-          />
-          <CardRow
-            icon="volume-high"
-            label="Sound"
-            right={
-              <Switch
-                value={sound}
-                onValueChange={(v) => { setSound(v); persistToggle(TOGGLE_KEYS.sound, v); }}
-              />
-            }
-          />
-          <CardRow
-            icon="phone-portrait"
-            label="Vibration"
-            right={
-              <Switch
-                value={vibration}
-                onValueChange={(v) => { setVibration(v); persistToggle(TOGGLE_KEYS.vibration, v); }}
-              />
-            }
-          />
+        {/* Game Settings */}
+        <SectionTitle>Game Settings</SectionTitle>
+        <CardRow
+          icon="notifications"
+          label="Notifications"
+          right={
+            <Switch
+              value={notifications}
+              onValueChange={(v) => { setNotifications(v); persistToggle(TOGGLE_KEYS.notifications, v); }}
+            />
+          }
+        />
+        <CardRow
+          icon="volume-high"
+          label="Sound"
+          right={
+            <Switch
+              value={sound}
+              onValueChange={(v) => { setSound(v); persistToggle(TOGGLE_KEYS.sound, v); }}
+            />
+          }
+        />
+        <CardRow
+          icon="phone-portrait"
+          label="Vibration"
+          right={
+            <Switch
+              value={vibration}
+              onValueChange={(v) => { setVibration(v); persistToggle(TOGGLE_KEYS.vibration, v); }}
+            />
+          }
+        />
 
-          {/* Language & Certificates */}
-          <SectionTitle>Language & Certificates</SectionTitle>
-          <CardRow
-            icon="language"
-            label={`Language: ${lang.toUpperCase()}`}
-            onPress={() => setShowLang(true)}
-            chevron
-          />
-          {/* Region row (center piece) */}
-          <TouchableOpacity
-            style={[styles.regionCard, loadingRegion && { opacity: 0.6 }]}
-            onPress={loadingRegion ? undefined : detectRegion}
-            activeOpacity={loadingRegion ? 1 : 0.8}
-          >
-            <View style={styles.regionInner}>
-              <View style={styles.regionLeft}>
-                <Ionicons name="earth" size={18} color="#111827" style={{ marginRight: 10 }} />
-                <Text style={styles.rowText}>
-                  Region: <Text style={styles.regionValue}>{region || 'Tap to detect'}</Text>
-                </Text>
-              </View>
-
-              {loadingRegion ? (
-                <ActivityIndicator size="small" />
-              ) : (
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate: spinAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['0deg', '360deg'],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <MaterialIcons name="refresh" size={22} color="#6b7280" />
-                </Animated.View>
-              )}
+        {/* Language & Certificates */}
+        <SectionTitle>Language & Certificates</SectionTitle>
+        <CardRow
+          icon="language"
+          label={`Language: ${lang.toUpperCase()}`}
+          onPress={() => setShowLang(true)}
+          chevron
+        />
+        {/* Region row (center piece) */}
+        <TouchableOpacity
+          style={[styles.regionCard, loadingRegion && { opacity: 0.6 }]}
+          onPress={loadingRegion ? undefined : detectRegion}
+          activeOpacity={loadingRegion ? 1 : 0.8}
+        >
+          <View style={styles.regionInner}>
+            <View style={styles.regionLeft}>
+              <Ionicons name="earth" size={18} color="#111827" style={{ marginRight: 10 }} />
+              <Text style={styles.rowText}>
+                Region: <Text style={styles.regionValue}>{region || 'Tap to detect'}</Text>
+              </Text>
             </View>
-          </TouchableOpacity>
-          <CardRow
-            icon="document-text"
-            label="Download Certificates"
-            onPress={() => Alert.alert('Certificates', 'This would download your certificates.')}
-            chevron
-          />
 
-          {/* Contacts List */}
-          <SectionTitle>Contacts List</SectionTitle>
-          <CardRow
-            icon="people"
-            label="Emergency Contacts"
-            onPress={() => setShowContacts(true)}
-            chevron
-          />
+            {loadingRegion ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate: spinAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '360deg'],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <MaterialIcons name="refresh" size={22} color="#6b7280" />
+              </Animated.View>
+            )}
+          </View>
+        </TouchableOpacity>
+        <CardRow
+          icon="document-text"
+          label="Certificates"
+          onPress={() => navigation.navigate('Certificates')}
+          chevron
+        />
 
-          {/* Account */}
-          <SectionTitle>Account Settings</SectionTitle>
-          <CardRow
-            icon="key"
-            label="Change Password"
-            onPress={() => setShowPassword(true)}
-            chevron
-          />
-          <CardRow
-            icon="log-out"
-            label="Logout"
-            onPress={onLogout}
-            chevron
-          />
-          <View style={{ height: 24 }} />
-        </ScrollView>
-      </LinearGradient>
+        {/* Contacts List */}
+        <SectionTitle>Contacts List</SectionTitle>
+        <CardRow
+          icon="people"
+          label="Emergency Contacts"
+          onPress={() => setShowContacts(true)}
+          chevron
+        />
+
+        {/* Account */}
+        <SectionTitle>Account Settings</SectionTitle>
+        <CardRow
+          icon="key"
+          label="Change Password"
+          onPress={() => setShowPassword(true)}
+          chevron
+        />
+        <CardRow
+          icon="log-out"
+          label="Logout"
+          onPress={onLogout}
+          chevron
+        />
+        <View style={{ height: 24 }} />
+      </ScrollView>
 
       {/* Language modal */}
       <Modal visible={showLang} transparent animationType="fade" onRequestClose={() => setShowLang(false)}>
@@ -646,7 +649,7 @@ export default function Settings() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -691,7 +694,7 @@ function ModalButton({ text, onPress, variant = 'primary' }) {
 
 /* ---------- styles ---------- */
 const styles = StyleSheet.create({
-  container: { padding: 16 },
+  container: { padding: 16 }, // no top safe-area padding here
   headerCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -811,6 +814,7 @@ const styles = StyleSheet.create({
   },
   cancelBtn: { height: 56, alignItems: 'center', justifyContent: 'center' },
   cancelBtnText: { fontSize: 16, fontWeight: '700', color: '#111827' },
+
   // Detect region button
   regionCard: {
     backgroundColor: '#fff',

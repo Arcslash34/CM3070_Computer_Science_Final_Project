@@ -1,5 +1,11 @@
 // quizzes.js
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
 import {
   View,
   Text,
@@ -14,6 +20,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from './supabase';
 
@@ -26,7 +33,8 @@ export const quizSets = {
       question: 'What should you do first during a flash flood?',
       options: ['Evacuate immediately', 'Take a selfie', 'Call your neighbor'],
       correctIndex: 0,
-      explanation: 'Evacuating immediately helps you avoid dangerous rising waters.',
+      explanation:
+        'Evacuating immediately helps you avoid dangerous rising waters.',
     },
     {
       question: 'Which area should be avoided?',
@@ -36,21 +44,32 @@ export const quizSets = {
     },
     {
       question: 'Who should you follow for updates during a flood?',
-      options: ['Social media influencers', 'Official government sources', 'Friends group chat'],
+      options: [
+        'Social media influencers',
+        'Official government sources',
+        'Friends group chat',
+      ],
       correctIndex: 1,
-      explanation: 'Government sources provide reliable and verified information.',
+      explanation:
+        'Government sources provide reliable and verified information.',
     },
     {
       question: 'What should you do if you see water rising around your car?',
-      options: ['Stay in the car', 'Drive faster', 'Abandon the car and move to higher ground'],
+      options: [
+        'Stay in the car',
+        'Drive faster',
+        'Abandon the car and move to higher ground',
+      ],
       correctIndex: 2,
-      explanation: 'It’s safer to leave the car and reach higher ground quickly.',
+      explanation:
+        'It’s safer to leave the car and reach higher ground quickly.',
     },
     {
       question: 'What should you pack in a basic flood emergency kit?',
       options: ['Board games', 'Flashlight, food, water', 'Sunglasses'],
       correctIndex: 1,
-      explanation: 'Essential items like flashlight, food, and water help you survive emergencies.',
+      explanation:
+        'Essential items like flashlight, food, and water help you survive emergencies.',
     },
   ],
   medium: [
@@ -68,19 +87,32 @@ export const quizSets = {
     },
     {
       question: 'Why is bottled water important in emergencies?',
-      options: ['For cleaning wounds', 'Safe drinking water may be unavailable', 'It tastes better'],
+      options: [
+        'For cleaning wounds',
+        'Safe drinking water may be unavailable',
+        'It tastes better',
+      ],
       correctIndex: 1,
       explanation: 'Tap water may be contaminated during floods.',
     },
     {
       question: 'When should you turn off electricity during a flood?',
-      options: ['When water enters your home', 'Only if it’s a power outage', 'After it floods completely'],
+      options: [
+        'When water enters your home',
+        'Only if it’s a power outage',
+        'After it floods completely',
+      ],
       correctIndex: 0,
       explanation: 'Turning off electricity prevents electrocution.',
     },
     {
-      question: 'How often should you check for weather alerts in flood-prone areas?',
-      options: ['Once a month', 'When it rains', 'Regularly and during heavy rain'],
+      question:
+        'How often should you check for weather alerts in flood-prone areas?',
+      options: [
+        'Once a month',
+        'When it rains',
+        'Regularly and during heavy rain',
+      ],
       correctIndex: 2,
       explanation: 'Frequent checks help you act early and stay informed.',
     },
@@ -100,7 +132,11 @@ export const quizSets = {
     },
     {
       question: 'What should you do if trapped in a building during a flood?',
-      options: ['Go to the roof and signal for help', 'Wait in the basement', 'Open windows wide'],
+      options: [
+        'Go to the roof and signal for help',
+        'Wait in the basement',
+        'Open windows wide',
+      ],
       correctIndex: 0,
       explanation: 'The roof provides safety and visibility for rescuers.',
     },
@@ -112,7 +148,11 @@ export const quizSets = {
     },
     {
       question: 'Why should you avoid using elevators during floods?',
-      options: ['They are slow', 'They may malfunction and trap you', 'They use electricity'],
+      options: [
+        'They are slow',
+        'They may malfunction and trap you',
+        'They use electricity',
+      ],
       correctIndex: 1,
       explanation: 'Elevators can fail during floods and trap occupants.',
     },
@@ -133,6 +173,7 @@ const getBadge = (score) => {
    Screen (single-file)
 ------------------------------------------------------------------- */
 export default function Quiz() {
+  const isAbortingRef = useRef(false);
   const navigation = useNavigation();
 
   // Step 1: choose difficulty
@@ -149,7 +190,7 @@ export default function Quiz() {
   const [totalXP, setTotalXP] = useState(0);
 
   const [userAnswers, setUserAnswers] = useState([]); // record answers
-  const [uploading, setUploading] = useState(false);  // saving overlay
+  const [uploading, setUploading] = useState(false); // saving overlay
 
   const [eliminatedOption, setEliminatedOption] = useState(null);
   const [usedHint, setUsedHint] = useState(false);
@@ -157,14 +198,56 @@ export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(60);
   const progressAnim = useRef(new Animated.Value(1)).current;
   const flashAnim = useRef(new Animated.Value(1)).current;
+  const timerRef = useRef(null);
 
   // Derived
-  const quizzes = useMemo(() => (difficulty ? quizSets[difficulty] : []), [difficulty]);
+  const quizzes = useMemo(
+    () => (difficulty ? quizSets[difficulty] : []),
+    [difficulty]
+  );
   const current = useMemo(() => quizzes[index], [quizzes, index]);
   const totalTime = useMemo(
     () => (difficulty ? durationByDifficulty[difficulty] : 60),
     [difficulty]
   );
+
+  // fully stop the quiz (timer, animations, state)
+  const abortQuiz = useCallback(() => {
+    isAbortingRef.current = true;
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    progressAnim.stopAnimation();
+    flashAnim.stopAnimation();
+    setRemainingTime(0);
+    // reset gameplay so user must re-select difficulty next time
+    setDifficulty(null);
+    setIndex(0);
+    setSelected(null);
+    setSubmitted(false);
+    setShowExplanation(false);
+    setEliminatedOption(null);
+    setUsedHint(false);
+  }, [flashAnim, progressAnim]);
+
+  const confirmExit = useCallback(() => {
+    Alert.alert(
+      'Exit Quiz?',
+      'Your progress will be discarded and you must restart.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Exit',
+          style: 'destructive',
+          onPress: () => {
+            abortQuiz();
+            setTimeout(() => navigation.goBack(), 0);
+          },
+        },
+      ]
+    );
+  }, [abortQuiz, navigation]);
 
   // Reset when difficulty chosen
   useEffect(() => {
@@ -207,9 +290,35 @@ export default function Quiz() {
       });
     }, 1000);
 
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, difficulty]);
+    timerRef.current = t;
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [
+    index,
+    difficulty,
+    current,
+    onSubmit,
+    progressAnim,
+    submitted,
+    totalTime,
+  ]);
+
+  useEffect(() => {
+    if (!difficulty) return;
+    const onHardwareBack = () => {
+      confirmExit();
+      return true; // prevent default/back
+    };
+    const sub = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onHardwareBack
+    );
+    return () => sub.remove();
+  }, [difficulty, confirmExit]);
 
   // Flash when <= 10s
   const isFlashing = remainingTime <= 10 && !submitted;
@@ -220,8 +329,16 @@ export default function Quiz() {
     }
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(flashAnim, { toValue: 0.2, duration: 300, useNativeDriver: true }),
-        Animated.timing(flashAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        Animated.timing(flashAnim, {
+          toValue: 0.2,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(flashAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
       ])
     );
     loop.start();
@@ -239,8 +356,8 @@ export default function Quiz() {
     setUsedHint(true);
   };
 
-  // Submit logic
-  const onSubmit = () => {
+  // Submit logic (memoized so effects depending on it don't re-run)
+  const onSubmit = useCallback(() => {
     if (!current || submitted) return;
 
     const correct = selected === current.correctIndex;
@@ -261,7 +378,15 @@ export default function Quiz() {
     }
 
     setShowExplanation(true);
-  };
+  }, [
+    current,
+    submitted,
+    selected,
+    remainingTime,
+    totalTime,
+    usedHint,
+    difficulty,
+  ]);
 
   // Next question or finish
   const goNext = () => {
@@ -291,11 +416,15 @@ export default function Quiz() {
       try {
         setUploading(true);
 
-        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
         const userId = userData?.user?.id;
 
         if (userError || !userId) {
-          console.warn('Not authenticated; skipping Supabase save.', userError?.message);
+          console.warn(
+            'Not authenticated; skipping Supabase save.',
+            userError?.message
+          );
         } else {
           // Optional: keep a summary on profiles (ignore if you don’t have these cols)
           await supabase
@@ -304,14 +433,16 @@ export default function Quiz() {
             .eq('id', userId);
 
           // Save to quiz_results (matches your schema)
-          const { error: insertErr } = await supabase.from('quiz_results').insert({
-            user_id: userId,
-            quiz_title: 'Disaster Quiz',
-            difficulty,
-            score,
-            badge,
-            answers: finalAnswers, // jsonb array of indices
-          });
+          const { error: insertErr } = await supabase
+            .from('quiz_results')
+            .insert({
+              user_id: userId,
+              quiz_title: 'Disaster Quiz',
+              difficulty,
+              score,
+              badge,
+              answers: finalAnswers, // jsonb array of indices
+            });
           if (insertErr) console.error('Insert error:', insertErr.message);
         }
       } catch (e) {
@@ -338,15 +469,29 @@ export default function Quiz() {
   useEffect(() => {
     if (!difficulty) return;
     const unsub = navigation.addListener('beforeRemove', (e) => {
-      if (!difficulty) return; // not in a running quiz
+      if (!difficulty || isAbortingRef.current) {
+        // allow the navigation without prompting
+        return;
+      }
       e.preventDefault();
-      Alert.alert('Exit Quiz?', 'Your progress will be lost.', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Exit', style: 'destructive', onPress: () => navigation.dispatch(e.data.action) },
-      ]);
+      Alert.alert(
+        'Exit Quiz?',
+        'Your progress will be discarded and you must restart.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Exit',
+            style: 'destructive',
+            onPress: () => {
+              abortQuiz();
+              navigation.dispatch(e.data.action);
+            },
+          },
+        ]
+      );
     });
     return () => unsub();
-  }, [navigation, difficulty]);
+  }, [navigation, difficulty, abortQuiz]);
 
   // LIGHT MODE colors
   const barColor = progressAnim.interpolate({
@@ -363,10 +508,14 @@ export default function Quiz() {
         <View style={styles.levelContainer}>
           <Text style={styles.selectTitle}>🎯 Select Difficulty</Text>
           {['easy', 'medium', 'hard'].map((lvl) => (
-            <TouchableOpacity key={lvl} style={styles.levelButton} onPress={() => setDifficulty(lvl)}>
+            <TouchableOpacity
+              key={lvl}
+              style={styles.levelButton}
+              onPress={() => setDifficulty(lvl)}>
               <Text style={styles.levelText}>{lvl.toUpperCase()}</Text>
               <Text style={styles.levelSub}>
-                {durationByDifficulty[lvl]}s • {pointsPerDifficulty[lvl]} pts per correct
+                {durationByDifficulty[lvl]}s • {pointsPerDifficulty[lvl]} pts
+                per correct
               </Text>
             </TouchableOpacity>
           ))}
@@ -387,7 +536,9 @@ export default function Quiz() {
   // Option styling based on state
   const getOptionStyle = (idx) => {
     if (!submitted) {
-      return selected === idx ? [styles.option, styles.optionSelected] : styles.option;
+      return selected === idx
+        ? [styles.option, styles.optionSelected]
+        : styles.option;
     }
     if (idx === current.correctIndex) {
       return [styles.option, styles.optionCorrect];
@@ -403,13 +554,18 @@ export default function Quiz() {
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header: back, progress, hint */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <TouchableOpacity
+            onPress={confirmExit}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
-        <Text style={styles.headerText}>
+          <Text style={styles.headerText}>
             {index + 1}/{quizzes.length}
           </Text>
-          <TouchableOpacity onPress={handleHint} disabled={usedHint} style={{ opacity: usedHint ? 0.4 : 1 }}>
+          <TouchableOpacity
+            onPress={handleHint}
+            disabled={usedHint}
+            style={{ opacity: usedHint ? 0.4 : 1 }}>
             <Ionicons name="bulb-outline" size={22} color="#6C63FF" />
           </TouchableOpacity>
         </View>
@@ -440,8 +596,7 @@ export default function Quiz() {
             style={[
               styles.timerText,
               { color: barColor, opacity: isFlashing ? flashAnim : 1 },
-            ]}
-          >
+            ]}>
             {remainingTime}s
           </Animated.Text>
         </View>
@@ -455,9 +610,9 @@ export default function Quiz() {
               style={getOptionStyle(idx)}
               onPress={() => !submitted && setSelected(idx)}
               disabled={submitted}
-              activeOpacity={0.8}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              activeOpacity={0.8}>
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                 <Ionicons
                   name={
                     !submitted
@@ -494,7 +649,11 @@ export default function Quiz() {
         {/* Footer: XP + Submit */}
         <View style={{ marginTop: 10, alignItems: 'center' }}>
           {submitted ? (
-            <Text style={[styles.xpText, { color: earnedXP > 0 ? '#059669' : '#DC2626' }]}>
+            <Text
+              style={[
+                styles.xpText,
+                { color: earnedXP > 0 ? '#059669' : '#DC2626' },
+              ]}>
               {earnedXP > 0 ? `+${earnedXP} XP` : 'No XP earned'}
               {usedHint && earnedXP > 0 ? ' (halved by hint)' : ''}
             </Text>
@@ -504,21 +663,33 @@ export default function Quiz() {
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, !selected && !submitted ? styles.submitDisabled : null]}
+          style={[
+            styles.submitButton,
+            !selected && !submitted ? styles.submitDisabled : null,
+          ]}
           onPress={onSubmit}
           disabled={submitted || selected === null}
-          activeOpacity={0.9}
-        >
-          <Text style={styles.submitText}>{submitted ? 'Submitted' : 'Submit'}</Text>
+          activeOpacity={0.9}>
+          <Text style={styles.submitText}>
+            {submitted ? 'Submitted' : 'Submit'}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       {/* Explanation Modal */}
-      <Modal visible={showExplanation} transparent animationType="fade" onRequestClose={() => {}}>
+      <Modal
+        visible={showExplanation}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {}}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>
-              {selected === current.correctIndex ? '✅ Correct' : selected === null ? '⏰ Time Up' : '❌ Incorrect'}
+              {selected === current.correctIndex
+                ? '✅ Correct'
+                : selected === null
+                ? '⏰ Time Up'
+                : '❌ Incorrect'}
             </Text>
             <Text style={styles.modalExplanation}>{current.explanation}</Text>
             <TouchableOpacity onPress={goNext} style={styles.modalButton}>
@@ -552,7 +723,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
     padding: 20,
   },
-  selectTitle: { fontSize: 22, fontWeight: '800', marginBottom: 20, color: '#111827' },
+  selectTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    marginBottom: 20,
+    color: '#111827',
+  },
   levelButton: {
     width: 260,
     backgroundColor: '#FFFFFF',
@@ -584,7 +760,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  questionText: { color: '#111827', fontSize: 18, fontWeight: '700', textAlign: 'center' },
+  questionText: {
+    color: '#111827',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
 
   timerRow: {
     flexDirection: 'row',
@@ -656,7 +837,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  modalTitle: { fontSize: 18, fontWeight: '800', marginBottom: 8, color: '#111827' },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 8,
+    color: '#111827',
+  },
   modalExplanation: { fontSize: 15, color: '#374151', marginBottom: 14 },
   modalButton: {
     backgroundColor: '#6C63FF',

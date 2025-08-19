@@ -8,10 +8,12 @@ import HomeScreen from './homePage';
 import QuizzesScreen from './quizzes';
 import resultScreen from './resultScreen';
 import ResultSummary from './resultSummary';
-import AuthScreen from './authscreen';
 import { LogoHeader } from './drawerapp';
 import Settings from './settings';
 import Checklist from './checklist';
+import ResourceHub from './resourceHub';
+import ResourceArticle from './resourceArticle';
+import CertificatesScreen from './CertificatesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,7 +29,7 @@ function TabNavigator() {
             case 'Quizzes': iconName = 'game-controller'; break;
             case 'Result': iconName = 'stats-chart'; break;
             case 'Assistant': iconName = 'chatbubbles'; break;
-            case 'Profile': iconName = 'person'; break;
+            case 'Resource': iconName = 'medkit'; break;
             case 'Settings': iconName = 'settings'; break;
             default: iconName = 'apps';
           }
@@ -42,6 +44,11 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Quizzes" component={QuizzesScreen} />
       <Tab.Screen name="Result" component={resultScreen} />
+      <Tab.Screen
+        name="Resource"
+        component={ResourceHub}
+        options={{ headerTitle: 'Resource Hub' }}
+      />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
@@ -56,11 +63,28 @@ export default function MainNavigator() {
         component={ResultSummary}
         options={{ headerShown: true, headerTitle: 'Quiz Summary', headerTitleAlign: 'center' }}
       />
-      {/* Checklist page (opened from Home FAB menu) */}
       <Stack.Screen
         name="Checklist"
         component={Checklist}
-        options={{ headerShown: false }}  // Checklist has its own header UI
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ResourceArticle"
+        component={ResourceArticle}
+        options={{
+          headerShown: true,
+          headerTitleAlign: 'center',
+          headerTitle: 'Guide',
+        }}
+      />
+      <Stack.Screen
+        name="Certificates"
+        component={CertificatesScreen}
+        options={{
+          headerShown: true,
+          headerTitle: 'Certificates',
+          headerTitleAlign: 'center',
+        }}
       />
     </Stack.Navigator>
   );

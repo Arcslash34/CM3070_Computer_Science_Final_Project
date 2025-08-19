@@ -8,11 +8,9 @@ import {
   StyleSheet,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageContext, LanguageProvider } from './language';
 import MainNavigator from './mainNavigator';
-import QuizLevels from './quizzes';
 
 export function LogoHeader() {
   return (
@@ -25,13 +23,6 @@ export function LogoHeader() {
     </View>
   );
 }
-
-// QUIZZES SCREEN
-function QuizzesScreen() {
-  return <QuizLevels />;
-}
-
-const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
