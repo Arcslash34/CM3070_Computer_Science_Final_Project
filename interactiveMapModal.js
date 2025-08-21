@@ -1,5 +1,5 @@
 // interactiveMapModal.js
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Modal,
   View,
@@ -9,30 +9,28 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 export default function InteractiveMapModal({ visible, onClose, userCoords, datasets }) {
-  const [activeLayer, setActiveLayer] = React.useState('rain');
+  const [activeLayer, setActiveLayer] = useState('rain');
+  const insets = useSafeAreaInsets(); // ✅ always called, safe even if no provider
 
-  // Build HTML payload from preloaded datasets; no fetching here
+  // Build HTML payload from preloaded datasets
   const { html, ready } = useMemo(() => {
     const uc = userCoords || { latitude: 1.3521, longitude: 103.8198 };
     const d = datasets || {};
     const packaged = {
       activeLayer,
       user: { lat: uc.latitude, lng: uc.longitude },
-      rain: d.rain
-        ? [
-            {
-              lat: d.rain?.station?.location?.latitude,
-              lng: d.rain?.station?.location?.longitude,
-              name: d.rain?.station?.name,
-              rainfall: d.rain?.rainfall,
-              lastHour: d.rain?.lastHour,
-            },
-          ]
-        : [],
+      rain: (d.rain?.stations || []).map((s) => ({
+        lat: s?.location?.latitude,
+        lng: s?.location?.longitude,
+        name: s?.name,
+        rainfall: s?.rainfall,
+        lastHour: s?.lastHour,
+        // risk computed later in JS (or precompute here if you prefer)
+      })),
       pm25: (d.pm25 || []).map((x) => ({
         lat: x?.location?.latitude,
         lng: x?.location?.longitude,
@@ -63,7 +61,8 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
     const dataStr = JSON.stringify(packaged).replace(/<\/script>/g, '<\\/script>');
 
     const htmlStr = `
-      <!DOCTYPE html><html><head>
+      <!DOCTYPE html>
+      <html><head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -77,12 +76,12 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
           .legend div { margin:2px 0; white-space:nowrap; }
           .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
         </style>
-      </head><body>
+      </head>
+      <body>
         <div id="map"></div>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
           const APP_DATA = ${dataStr};
-
           const map = L.map('map').setView([APP_DATA.user.lat, APP_DATA.user.lng], 15);
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
@@ -93,36 +92,61 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
           L.marker([APP_DATA.user.lat, APP_DATA.user.lng], { icon: userIcon })
             .addTo(map).bindPopup('You are here');
 
-          function addMarkers(list, color){
+          // Same thresholds as your app:
+          function estimateFloodRisk(rainfall, lastHour){
+            if ((rainfall ?? 0) > 10 || (lastHour ?? 0) > 30) return 'High';
+            if ((rainfall ?? 0) > 5  || (lastHour ?? 0) > 15) return 'Moderate';
+            return 'Low';
+          }
+          function riskColor(risk){
+            if (risk === 'High') return '#EF4444';
+            if (risk === 'Moderate') return '#F59E0B';
+            return '#10B981'; // Low
+          }
+
+          function addMarkers(list, getColor){
             (list || []).filter(p => p && p.lat && p.lng).forEach(p => {
+              const risk = estimateFloodRisk(p.rainfall, p.lastHour);
+              const color = getColor ? getColor(p, risk) : '#00BCD4';
               const marker = L.circleMarker([p.lat, p.lng], {
                 radius: 7, color, weight: 2, fillColor: color, fillOpacity: 0.75
               }).addTo(map);
-              let desc = '';
-              if (p.rainfall != null) desc = 'Rainfall: ' + p.rainfall + ' mm\\nLast 1hr: ' + (p.lastHour ?? 'N/A') + ' mm';
-              if (p.value != null && !desc) desc = 'Value: ' + p.value;
-              if (p.speed != null && !desc) desc = 'Wind: ' + (p.speed ?? '?') + ' km/h\\nDir: ' + (p.direction ?? '?') + '°';
-              marker.bindPopup((p.name || 'Station') + (desc ? '<br/>' + desc.replace(/\\n/g,'<br/>') : ''));
+              const desc = [
+                p.rainfall != null ? ('Rainfall: ' + p.rainfall + ' mm') : null,
+                p.lastHour != null ? ('Last 1h: ' + p.lastHour + ' mm') : null,
+                'Risk: ' + risk
+              ].filter(Boolean).join('<br/>');
+              marker.bindPopup((p.name || 'Station') + '<br/>' + desc);
             });
           }
 
           switch (APP_DATA.activeLayer) {
-            case 'rain':     addMarkers(APP_DATA.rain,     '#00BCD4'); break;
-            case 'pm25':     addMarkers(APP_DATA.pm25,     '#FF9800'); break;
-            case 'wind':     addMarkers(APP_DATA.wind,     '#9C27B0'); break;
-            case 'temp':     addMarkers(APP_DATA.temp,     '#F44336'); break;
-            case 'humidity': addMarkers(APP_DATA.humidity, '#009688'); break;
+            case 'rain':
+              // Show ALL rainfall; color by risk
+              addMarkers(APP_DATA.rain, (_, risk) => riskColor(risk));
+              break;
+            case 'pm25': addMarkers(APP_DATA.pm25, () => '#FF9800'); break;
+            case 'wind': addMarkers(APP_DATA.wind, () => '#9C27B0'); break;
+            case 'temp': addMarkers(APP_DATA.temp, () => '#F44336'); break;
+            case 'humidity': addMarkers(APP_DATA.humidity, () => '#009688'); break;
           }
 
+          // Legend: add risk colors when on "rain"
           const legend = L.control({position:'bottomleft'});
           legend.onAdd = function(){
             const div = L.DomUtil.create('div', 'legend');
-            const items = { rain:'#00BCD4', pm25:'#FF9800', wind:'#9C27B0', temp:'#F44336', humidity:'#009688' };
             div.innerHTML = '<strong>Layer</strong>';
-            Object.keys(items).forEach(k => {
-              const c = items[k], name = k.toUpperCase();
-              div.innerHTML += '<div><span class="dot" style="background:'+c+'"></span>'+name+'</div>';
-            });
+            if (APP_DATA.activeLayer === 'rain') {
+              div.innerHTML += '<div><span class="dot" style="background:#EF4444"></span>High Risk</div>';
+              div.innerHTML += '<div><span class="dot" style="background:#F59E0B"></span>Moderate Risk</div>';
+              div.innerHTML += '<div><span class="dot" style="background:#10B981"></span>Low Risk</div>';
+            } else {
+              const items = { pm25:'#FF9800', wind:'#9C27B0', temp:'#F44336', humidity:'#009688' };
+              Object.keys(items).forEach(k => {
+                const c = items[k], name = k.toUpperCase();
+                div.innerHTML += '<div><span class="dot" style="background:'+c+'"></span>'+name+'</div>';
+              });
+            }
             return div;
           };
           legend.addTo(map);
@@ -142,19 +166,6 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
 
   if (!visible) return null;
 
-  if (Platform.OS === 'web') {
-    return (
-      <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }}>
-          <Text>🗺️ Full-screen map not supported on web preview.</Text>
-          <TouchableOpacity onPress={onClose} style={{ marginTop: 16 }}>
-            <Text style={{ color: '#007AFF', fontSize: 16 }}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    );
-  }
-
   return (
     <Modal
       visible={visible}
@@ -164,7 +175,17 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
       hardwareAccelerated
       presentationStyle="fullScreen"
     >
-     <SafeAreaView style={styles.container} edges={['top','bottom','left','right']}>
+      <View
+        style={[
+          styles.container,
+          {
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+            paddingLeft: insets.left,
+            paddingRight: insets.right,
+          },
+        ]}
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🌍 Live Environmental Map</Text>
@@ -206,7 +227,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             </View>
           )}
         </View>
-     </SafeAreaView>
+      </View>
     </Modal>
   );
 }

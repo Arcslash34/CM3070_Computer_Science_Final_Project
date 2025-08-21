@@ -294,7 +294,7 @@ export default function HomeScreen() {
 
   const [forecastText, setForecastText] = useState(null);
   const [updatedAt, setUpdatedAt] = useState(null);
-  const [rainInfo, setRainInfo] = useState(null);
+  const [rainNearest, setRainNearest] = useState(null);
 
   // nearest stat cards
   const [pm25Nearest, setPm25Nearest] = useState(null);
@@ -311,7 +311,7 @@ export default function HomeScreen() {
 
   const [areaAdvisoryActive, setAreaAdvisoryActive] = useState(false);
 
-  // Full datasets for the map (rain is single nearest object; others are arrays)
+  // Full datasets for the map (rain = { stations: [...] }, others = arrays)
   const [envDatasets, setEnvDatasets] = useState(null);
 
   const triggerAreaAdvisoryForCoords = useCallback(async (c) => {
@@ -364,19 +364,32 @@ export default function HomeScreen() {
         setForecastText(areaForecast?.forecast ?? null);
       }
 
-      // 2) Rainfall + Flood risk (nearest station)
-      const rain = await fetchRainfallData(c);
-      if (rain) {
-        setRainInfo(rain);
-        const risk = estimateFloodRisk(rain.rainfall, rain.lastHour);
-        if (risk === 'High' || risk === 'Moderate') {
-          await triggerAlert({
-            title: `🚨 Flood Risk: ${risk}`,
-            body: `Heavy rain detected at ${rain.station?.name ?? 'nearby station'}. Stay alert and follow safety procedures.`,
-            type: 'risk',
-            showPopup: true,
-            onViewMap: () => setMapExpanded(true),
-          });
+      // 2) Rainfall + Flood risk (ALL stations)
+      const rainAll = await fetchRainfallData(c);
+      if (rainAll) {
+        // nearest for the stat card
+        if (Array.isArray(rainAll.stations) && rainAll.stations.length) {
+          let nearest = null, best = Infinity;
+          for (const st of rainAll.stations) {
+            if (typeof st?.location?.latitude !== 'number' || typeof st?.location?.longitude !== 'number') continue;
+            const d = getDistanceFromLatLonInKm(c.latitude, c.longitude, st.location.latitude, st.location.longitude);
+            if (d < best) { best = d; nearest = st; }
+          }
+          setRainNearest(nearest || null);
+
+          // Alert if the **nearest** indicates Moderate/High risk (keeps your UX intent)
+          if (nearest) {
+            const risk = estimateFloodRisk(nearest.rainfall, nearest.lastHour);
+            if (risk === 'High' || risk === 'Moderate') {
+              await triggerAlert({
+                title: `🚨 Flood Risk: ${risk}`,
+                body: `Heavy rain detected at ${nearest.name ?? 'nearby station'}. Stay alert and follow safety procedures.`,
+                type: 'risk',
+                showPopup: true,
+                onViewMap: () => setMapExpanded(true),
+              });
+            }
+          }
         }
       }
 
@@ -407,11 +420,12 @@ export default function HomeScreen() {
         fetchWindData().catch(() => []),
       ]);
 
-      // 5) Fallback/merge with bundled snapshot only (no runtime writes)
+      // 5) Fallback/merge
       const base = await loadEnvDatasetsFromFile();
 
       const merged = {
-        rain: rain || base?.rain || null,
+        // NEW: keep full rainfall object with stations array (prefer live)
+        rain: (rainAll && Array.isArray(rainAll.stations)) ? rainAll : (base?.rain || { stations: [] }),
         pm25: (Array.isArray(pm25) && pm25.length) ? pm25 : (base?.pm25 || []),
         temp: (Array.isArray(temp) && temp.length) ? temp : (base?.temp || []),
         humidity: (Array.isArray(humidity) && humidity.length) ? humidity : (base?.humidity || []),
@@ -456,7 +470,7 @@ export default function HomeScreen() {
           const seedCoords = coords || (usingMockRef.current ? mockDefault : null);
           if (seedCoords) pickNearestFrom(fileSnap, seedCoords);
         }
-      } catch {
+      } catch (err) {
           console.warn('[snapshot] failed to load env_snapshot.json:', err);
           setEnvDatasets(null);
       }
@@ -654,20 +668,20 @@ export default function HomeScreen() {
      Derived UI bits
      ========================= */
   const rainSeverity = useMemo(
-    () => getRainSeverity(rainInfo?.rainfall ?? null),
-    [rainInfo]
+    () => getRainSeverity(rainNearest?.rainfall ?? null),
+    [rainNearest]
   );
 
   const statusLevel = useMemo(() => {
     let level = 'Low';
-    if (rainInfo) {
-      const r = estimateFloodRisk(rainInfo.rainfall, rainInfo.lastHour);
+    if (rainNearest) {
+      const r = estimateFloodRisk(rainNearest.rainfall, rainNearest.lastHour);
       if (r === 'High') return 'High';
       if (r === 'Moderate') level = 'Advisory';
     }
     if (areaAdvisoryActive && level === 'Low') level = 'Advisory';
     return level;
-  }, [rainInfo, areaAdvisoryActive]);
+  }, [rainNearest, areaAdvisoryActive]);
 
   const formattedUpdated = updatedAt ? new Date(updatedAt).toLocaleTimeString() : '--:--';
 
@@ -753,12 +767,13 @@ export default function HomeScreen() {
           <StatCard
             icon="rainy"
             label="Rainfall"
-            value={rainInfo?.rainfall != null ? `${rainInfo.rainfall} mm` : '—'}
+            value={rainNearest?.rainfall != null ? `${rainNearest.rainfall} mm` : '—'}
+            sub={rainNearest?.name || 'Nearest Station'}
             chipLabel={
-              translations[lang].weatherPhrases?.[getRainSeverity(rainInfo?.rainfall ?? null).label] ||
-              getRainSeverity(rainInfo?.rainfall ?? null).label
+              translations[lang].weatherPhrases?.[getRainSeverity(rainNearest?.rainfall ?? null).label] ||
+              getRainSeverity(rainNearest?.rainfall ?? null).label
             }
-            chipColor={getRainSeverity(rainInfo?.rainfall ?? null).color}
+            chipColor={getRainSeverity(rainNearest?.rainfall ?? null).color}
           />
           <StatCard
             icon="leaf"

@@ -1,27 +1,30 @@
 // scripts/snapshot.js
 // Fetch live data and write ./assets/env_snapshot.json (for bundling)
+//
+// Runtime: Node 18+ (native fetch & AbortController).
+// For Node <18, uncomment the line below and add node-fetch@3:
+// const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+'use strict';
 
-// If you're on Node <18, install node-fetch and import it.
-// import fetch from 'node-fetch';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('node:fs');
+const path = require('node:path');
 
 // ---- Config ----
 const OUT_PATH = path.resolve(__dirname, '../assets/env_snapshot.json');
-const OW_API_KEY = process.env.OW_API_KEY || '01850dee0efccf6a94d704212d11bbc3';
 
-// Small helper to fetch with timeout
+// ---- Utils ----
+const isFiniteNumber = (v) => typeof v === 'number' && Number.isFinite(v);
+
+// Small helper to fetch with timeout (aborts the request)
 async function fetchWithTimeout(url, ms = 8000) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), ms);
+  if (typeof t.unref === 'function') t.unref(); // don't keep event loop alive
+
   try {
     const res = await fetch(url, { signal: ctl.signal });
-    if (!res.ok) throw new Error(`${url} -> ${res.status}`);
+    if (!res.ok) throw new Error(`${url} -> HTTP ${res.status}`);
     return await res.json();
   } finally {
     clearTimeout(t);
@@ -38,14 +41,15 @@ const NEA = {
   rainfall: 'https://api-open.data.gov.sg/v2/real-time/api/rainfall',
 };
 
+// ---- Data fetchers ----
 async function getPm25() {
   const json = await fetchWithTimeout(NEA.pm25);
   const readings = json.data?.items?.[0]?.readings?.pm25_one_hourly ?? {};
   const regions = json.data?.regionMetadata ?? [];
-  return regions.map(r => ({
+  return regions.map((r) => ({
     name: r.name,
     location: r.labelLocation,
-    value: readings[r.name] ?? null,
+    value: isFiniteNumber(readings[r.name]) ? readings[r.name] : null,
   }));
 }
 
@@ -54,13 +58,21 @@ async function getWind() {
     fetchWithTimeout(NEA.windSpeed),
     fetchWithTimeout(NEA.windDir),
   ]);
+
   const stations = speedJson.data?.stations ?? [];
   const speedReadings = speedJson.data?.readings?.[0]?.data ?? [];
   const dirReadings = dirJson.data?.readings?.[0]?.data ?? [];
-  return stations.map(stn => {
-    const speed = speedReadings.find(r => r.stationId === stn.id)?.value ?? null;
-    const direction = dirReadings.find(r => r.stationId === stn.id)?.value ?? null;
-    return { id: stn.id, name: stn.name, location: stn.location, speed, direction };
+
+  return stations.map((stn) => {
+    const speed = speedReadings.find((r) => r.stationId === stn.id)?.value;
+    const direction = dirReadings.find((r) => r.stationId === stn.id)?.value;
+    return {
+      id: stn.id,
+      name: stn.name,
+      location: stn.location,
+      speed: isFiniteNumber(speed) ? speed : null,
+      direction: isFiniteNumber(direction) ? direction : null,
+    };
   });
 }
 
@@ -68,54 +80,81 @@ async function getHumidity() {
   const json = await fetchWithTimeout(NEA.humidity);
   const stations = json.data?.stations ?? [];
   const readings = json.data?.readings?.[0]?.data ?? [];
-  return stations.map(stn => ({
-    id: stn.id, name: stn.name, location: stn.location,
-    value: readings.find(r => r.stationId === stn.id)?.value ?? null,
-  }));
+
+  return stations.map((stn) => {
+    const v = readings.find((r) => r.stationId === stn.id)?.value;
+    return {
+      id: stn.id,
+      name: stn.name,
+      location: stn.location,
+      value: isFiniteNumber(v) ? v : null,
+    };
+  });
 }
 
 async function getTemp() {
   const json = await fetchWithTimeout(NEA.temp);
   const stations = json.data?.stations ?? [];
   const readings = json.data?.readings?.[0]?.data ?? [];
-  return stations.map(stn => ({
-    id: stn.id, name: stn.name, location: stn.location,
-    value: readings.find(r => r.stationId === stn.id)?.value ?? null,
-  }));
+
+  return stations.map((stn) => {
+    const v = readings.find((r) => r.stationId === stn.id)?.value;
+    return {
+      id: stn.id,
+      name: stn.name,
+      location: stn.location,
+      value: isFiniteNumber(v) ? v : null,
+    };
+  });
 }
 
 /**
  * Rainfall: capture ALL stations, plus computed lastHour per station.
- * NEA returns multiple "readings" arrays (most recent first).
- * We sum the first 12 sets for lastHour (5-min bins -> ~60min).
+ * NEA returns multiple "readings" arrays. We:
+ *   1) sort them latest->oldest by timestamp (defensive)
+ *   2) include only sets within ~1 hour of the latest set (with 2-min slack)
+ *   3) sum the values per station across those sets
  */
 async function getRainAll() {
   const json = await fetchWithTimeout(NEA.rainfall);
 
   const stations = json.data?.stations ?? [];
-  const readingSets = json.data?.readings ?? [];      // array of { timestamp, data: [{stationId, value}] }
-  const latest = readingSets?.[0]?.data ?? [];
-  const timestamp = json.data?.readings?.[0]?.timestamp ?? null;
+  const readingsRaw = json.data?.readings ?? []; // [{ timestamp, data: [{stationId, value}] }]
+  const readingSets = [...readingsRaw].sort(
+    (a, b) => new Date(b?.timestamp || 0) - new Date(a?.timestamp || 0)
+  );
 
-  // Take the most recent 12 sets to approximate last hour
-  const lastHourSets = readingSets.slice(0, 12);
+  const latestSet = readingSets[0];
+  const latestTs = new Date(latestSet?.timestamp || 0).getTime();
+  const slackMs = 2 * 60 * 1000;
 
-  const stationsOut = stations.map(stn => {
-    const rainfall = latest.find(r => r.stationId === stn.id)?.value ?? null;
+  // time-gated 1-hour window
+  const lastHourSets = readingSets.filter((s) => {
+    const t = new Date(s?.timestamp || 0).getTime();
+    return Number.isFinite(t) && Number.isFinite(latestTs) && (latestTs - t) <= 60 * 60 * 1000 + slackMs;
+  });
+
+  const latest = latestSet?.data ?? [];
+  const timestamp = latestSet?.timestamp ?? null;
+
+  const stationsOut = stations.map((stn) => {
+    const nowValRaw = latest.find((r) => r.stationId === stn.id)?.value;
+    const rainfall = isFiniteNumber(nowValRaw) ? nowValRaw : null;
 
     let lastHour = 0;
     for (const set of lastHourSets) {
-      const v = set?.data?.find(d => d.stationId === stn.id)?.value ?? 0;
-      // Values are in mm per interval; sum them
-      lastHour += (typeof v === 'number' ? v : 0);
+      const v = set?.data?.find((d) => d.stationId === stn.id)?.value;
+      lastHour += isFiniteNumber(v) ? v : 0;
     }
+
+    const round2 = (x) => (isFiniteNumber(x) ? Math.round(x * 100) / 100 : x);
 
     return {
       id: stn.id,
       name: stn.name,
       location: stn.location,
-      rainfall,
-      lastHour,
+      rainfall: round2(rainfall),
+      lastHour: round2(lastHour),
     };
   });
 
@@ -125,6 +164,7 @@ async function getRainAll() {
   };
 }
 
+// ---- Main ----
 async function main() {
   console.log('Generating assets/env_snapshot.json ...');
 
@@ -145,14 +185,13 @@ async function main() {
     _savedAt: Date.now(),
   };
 
-  // Ensure ./assets exists
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(snapshot, null, 2), 'utf8');
 
   console.log(`Wrote ${OUT_PATH}`);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Snapshot failed:', err);
   process.exit(1);
 });

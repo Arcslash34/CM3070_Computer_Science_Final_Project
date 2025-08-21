@@ -146,7 +146,7 @@ export const fetchWeatherForecast = async () => {
 };
 
 /* =========================================================================
-   NEA: Real-time rainfall
+   NEA: Real-time rainfall (ALL STATIONS + last-hour accumulation)
    ========================================================================= */
 export const fetchRainfallData = async (userCoords) => {
   try {
@@ -157,61 +157,75 @@ export const fetchRainfallData = async (userCoords) => {
 
     const json = await res.json();
     const stations = json?.data?.stations ?? [];
-    const readings = json?.data?.readings?.[0]?.data ?? [];
-    const timestamp = json?.data?.readings?.[0]?.timestamp ?? null;
+    const readingSets = json?.data?.readings ?? []; // multiple 5-min sets (most recent first)
+    const firstTs = readingSets?.[0]?.timestamp ?? null;
+    if (!stations.length || !readingSets.length) throw new Error('NEA rainfall payload empty');
 
-    if (!stations.length || !readings.length) {
-      throw new Error('NEA rainfall payload empty');
+    // Build a map of last-hour accumulation per station
+    const lastHourCount = Math.min(12, readingSets.length); // 12 * 5min = 60min
+    const accByStation = new Map();
+    for (let i = 0; i < lastHourCount; i++) {
+      for (const d of (readingSets[i]?.data ?? [])) {
+        const prev = accByStation.get(d.stationId) ?? 0;
+        const val = (typeof d.value === 'number' && Number.isFinite(d.value)) ? d.value : 0;
+        accByStation.set(d.stationId, prev + val);
+      }
     }
 
-    // nearest station
-    let nearest = null, min = Infinity;
-    for (const stn of stations) {
-      const { latitude, longitude } = stn.location || {};
-      if (typeof latitude !== 'number' || typeof longitude !== 'number') continue;
-      const d = getDistanceFromLatLonInKm(userCoords.latitude, userCoords.longitude, latitude, longitude);
-      if (d < min) { min = d; nearest = stn; }
-    }
-    if (!nearest) throw new Error('No nearest station');
+    // Single “current” reading set to display “now” value
+    const currentReadings = readingSets[0]?.data ?? [];
 
-    // current value + last hour accumulation
-    const rainfall = readings.find((r) => r.stationId === nearest.id)?.value ?? null;
-    const lastHourSets = json?.data?.readings?.slice(0, 12) ?? [];
-    const lastHour = lastHourSets.reduce((sum, set) => {
-      const v = set?.data?.find?.((d) => d.stationId === nearest.id)?.value ?? 0;
-      return sum + v;
-    }, 0);
+    const all = stations.map((stn) => {
+      const rainfallNow = currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
+      const lastHour = accByStation.get(stn.id) ?? 0;
+      const distanceKm = (userCoords && stn?.location)
+        ? getDistanceFromLatLonInKm(
+            userCoords.latitude, userCoords.longitude,
+            stn.location.latitude, stn.location.longitude
+          )
+        : null;
 
-    return { station: nearest, rainfall, lastHour, timestamp };
+      return {
+        id: stn.id,
+        name: stn.name,
+        location: stn.location,       // { latitude, longitude }
+        rainfall: rainfallNow,        // mm in the latest 5-min window
+        lastHour,                     // mm accumulated over last hour
+        distanceKm,                   // convenience for UI
+      };
+    });
+
+    return { stations: all, timestamp: firstTs };
   } catch (err) {
     console.warn('fetchRainfallData -> fallback to bundled:', err?.message || err);
-    return await snapOr((snap) => {
+
+    // Fallback attempts to normalize snapshot into the same { stations: [], timestamp } shape
+    const norm = await snapOr((snap) => {
       const r = snap?.rain;
       if (!r) return null;
 
-      // already normalized?
-      if ('station' in r || 'rainfall' in r) return r;
-
-      // has stations[]? pick nearest
-      const list = r?.stations || r?.readings || [];
-      if (!Array.isArray(list) || !list.length || !userCoords) return null;
-
-      let nearest = null, best = Infinity;
-      for (const s of list) {
-        const lat = s?.location?.latitude, lon = s?.location?.longitude;
-        if (typeof lat !== 'number' || typeof lon !== 'number') continue;
-        const d = getDistanceFromLatLonInKm(userCoords.latitude, userCoords.longitude, lat, lon);
-        if (d < best) { best = d; nearest = s; }
+      // Case 1: already normalized
+      if (Array.isArray(r?.stations)) {
+        return { stations: r.stations, timestamp: r.timestamp ?? null };
       }
-      if (!nearest) return null;
 
-      return {
-        station: { id: nearest.id, name: nearest.name, location: nearest.location },
-        rainfall: nearest.rainfall ?? nearest.value ?? nearest.readings?.[0]?.value ?? null,
-        lastHour: nearest.lastHour ?? 0,
-        timestamp: r.timestamp ?? nearest.timestamp ?? nearest.readings?.[0]?.timestamp ?? null,
-      };
-    }, { station: null, rainfall: null, lastHour: 0, timestamp: null });
+      // Case 2: legacy arrays
+      const list = r?.stations || r?.readings || [];
+      if (!Array.isArray(list) || !list.length) return null;
+
+      const stations = list.map((s) => ({
+        id: s.id,
+        name: s.name,
+        location: s.location,
+        rainfall: s.rainfall ?? s.value ?? s.readings?.[0]?.value ?? null,
+        lastHour: s.lastHour ?? 0,
+        distanceKm: null,
+      }));
+
+      return { stations, timestamp: r.timestamp ?? null };
+    }, null);
+
+    return norm || { stations: [], timestamp: null };
   }
 };
 

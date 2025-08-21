@@ -98,8 +98,8 @@
           "latitude": 1.34583,
           "longitude": 103.68166
         },
-        "rainfall": 0.6,
-        "lastHour": 0.6
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S88",
@@ -138,8 +138,8 @@
           "latitude": 1.28987,
           "longitude": 103.82364
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S08",
@@ -198,8 +198,8 @@
           "latitude": 1.32311,
           "longitude": 103.76714
         },
-        "rainfall": 0.8,
-        "lastHour": 0.8
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S90",
@@ -238,8 +238,8 @@
           "latitude": 1.3337,
           "longitude": 103.7768
         },
-        "rainfall": 1.4,
-        "lastHour": 1.4
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S94",
@@ -258,8 +258,8 @@
           "latitude": 1.44003,
           "longitude": 103.76904
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S211",
@@ -268,8 +268,8 @@
           "latitude": 1.42918,
           "longitude": 103.75711
         },
-        "rainfall": 1,
-        "lastHour": 1
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S119",
@@ -328,8 +328,8 @@
           "latitude": 1.3824,
           "longitude": 103.7603
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S66",
@@ -338,8 +338,8 @@
           "latitude": 1.4387,
           "longitude": 103.7363
         },
-        "rainfall": 4.2,
-        "lastHour": 4.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S24",
@@ -388,8 +388,8 @@
           "latitude": 1.35167,
           "longitude": 103.72195
         },
-        "rainfall": 2.2,
-        "lastHour": 2.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S900",
@@ -448,8 +448,8 @@
           "latitude": 1.34703,
           "longitude": 103.70073
         },
-        "rainfall": 0.8,
-        "lastHour": 0.8
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S104",
@@ -488,8 +488,8 @@
           "latitude": 1.29984,
           "longitude": 103.80264
         },
-        "rainfall": 1.8,
-        "lastHour": 1.8
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S224",
@@ -518,8 +518,8 @@
           "latitude": 1.3081,
           "longitude": 103.71
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S77",
@@ -528,8 +528,8 @@
           "latitude": 1.2937,
           "longitude": 103.8125
         },
-        "rainfall": 0.6,
-        "lastHour": 0.6
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S79",
@@ -568,8 +568,8 @@
           "latitude": 1.43854,
           "longitude": 103.70131
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2
+        "rainfall": 0,
+        "lastHour": 0
       },
       {
         "id": "S230",
@@ -582,7 +582,7 @@
         "lastHour": 0
       }
     ],
-    "timestamp": "2025-08-18T12:00:00+08:00"
+    "timestamp": "2025-08-21T09:20:00+08:00"
   },
   "pm25": [
     {
@@ -591,7 +591,7 @@
         "latitude": 1.35735,
         "longitude": 103.7
       },
-      "value": 7
+      "value": 12
     },
     {
       "name": "east",
@@ -599,7 +599,7 @@
         "latitude": 1.35735,
         "longitude": 103.94
       },
-      "value": 7
+      "value": 6
     },
     {
       "name": "central",
@@ -607,7 +607,7 @@
         "latitude": 1.35735,
         "longitude": 103.82
       },
-      "value": 11
+      "value": 13
     },
     {
       "name": "south",
@@ -623,7 +623,7 @@
         "latitude": 1.41803,
         "longitude": 103.82
       },
-      "value": 9
+      "value": 16
     }
   ],
   "wind": [
@@ -634,8 +634,8 @@
         "latitude": 1.2799,
         "longitude": 103.8703
       },
-      "speed": 4.3,
-      "direction": 183
+      "speed": 1.1,
+      "direction": 151
     },
     {
       "id": "S109",
@@ -644,8 +644,8 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "speed": 3.3,
-      "direction": 147
+      "speed": 1.6,
+      "direction": 129
     },
     {
       "id": "S106",
@@ -654,8 +654,8 @@
         "latitude": 1.4168,
         "longitude": 103.9673
       },
-      "speed": 3.3,
-      "direction": 180
+      "speed": 1,
+      "direction": 50
     },
     {
       "id": "S117",
@@ -664,8 +664,8 @@
         "latitude": 1.256,
         "longitude": 103.679
       },
-      "speed": 5.7,
-      "direction": 216
+      "speed": 2.4,
+      "direction": 124
     },
     {
       "id": "S107",
@@ -674,8 +674,8 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "speed": 7.3,
-      "direction": 228
+      "speed": 3.6,
+      "direction": 257
     },
     {
       "id": "S104",
@@ -684,8 +684,8 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "speed": 9.6,
-      "direction": 230
+      "speed": 1.6,
+      "direction": 135
     },
     {
       "id": "S115",
@@ -694,8 +694,8 @@
         "latitude": 1.29377,
         "longitude": 103.61843
       },
-      "speed": 4.1,
-      "direction": 175
+      "speed": 1.7,
+      "direction": 141
     },
     {
       "id": "S60",
@@ -704,8 +704,8 @@
         "latitude": 1.25,
         "longitude": 103.8279
       },
-      "speed": 5.7,
-      "direction": 169
+      "speed": 1.5,
+      "direction": 72
     },
     {
       "id": "S50",
@@ -714,8 +714,8 @@
         "latitude": 1.3337,
         "longitude": 103.7768
       },
-      "speed": 4.9,
-      "direction": 241
+      "speed": 1.2,
+      "direction": 104
     },
     {
       "id": "S44",
@@ -724,8 +724,8 @@
         "latitude": 1.34583,
         "longitude": 103.68166
       },
-      "speed": 0.9,
-      "direction": 55
+      "speed": 1.9,
+      "direction": 183
     },
     {
       "id": "S43",
@@ -734,8 +734,8 @@
         "latitude": 1.3399,
         "longitude": 103.8878
       },
-      "speed": 5.9,
-      "direction": 188
+      "speed": 2.2,
+      "direction": 189
     },
     {
       "id": "S111",
@@ -744,8 +744,8 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "speed": 6.7,
-      "direction": 186
+      "speed": 3.7,
+      "direction": 115
     },
     {
       "id": "S121",
@@ -754,8 +754,8 @@
         "latitude": 1.37288,
         "longitude": 103.72244
       },
-      "speed": 5.2,
-      "direction": 216
+      "speed": 2,
+      "direction": 144
     }
   ],
   "temp": [
@@ -766,7 +766,7 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "value": 30.6
+      "value": 27.9
     },
     {
       "id": "S106",
@@ -775,7 +775,7 @@
         "latitude": 1.4168,
         "longitude": 103.9673
       },
-      "value": 31.9
+      "value": 28
     },
     {
       "id": "S117",
@@ -784,7 +784,7 @@
         "latitude": 1.256,
         "longitude": 103.679
       },
-      "value": 28.6
+      "value": 27.8
     },
     {
       "id": "S107",
@@ -793,7 +793,7 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "value": 29.3
+      "value": 28
     },
     {
       "id": "S104",
@@ -802,7 +802,7 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "value": 26.3
+      "value": 27.6
     },
     {
       "id": "S115",
@@ -820,7 +820,7 @@
         "latitude": 1.189,
         "longitude": 103.768
       },
-      "value": 28.6
+      "value": 28.2
     },
     {
       "id": "S60",
@@ -829,7 +829,7 @@
         "latitude": 1.25,
         "longitude": 103.8279
       },
-      "value": 30.2
+      "value": 28
     },
     {
       "id": "S50",
@@ -838,7 +838,7 @@
         "latitude": 1.3337,
         "longitude": 103.7768
       },
-      "value": 27
+      "value": 27.7
     },
     {
       "id": "S44",
@@ -847,7 +847,7 @@
         "latitude": 1.34583,
         "longitude": 103.68166
       },
-      "value": 26.2
+      "value": 28
     },
     {
       "id": "S43",
@@ -856,7 +856,7 @@
         "latitude": 1.3399,
         "longitude": 103.8878
       },
-      "value": 31.1
+      "value": 28.3
     },
     {
       "id": "S24",
@@ -865,7 +865,7 @@
         "latitude": 1.3678,
         "longitude": 103.9826
       },
-      "value": 30.4
+      "value": 28.3
     },
     {
       "id": "S111",
@@ -874,7 +874,7 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "value": 29
+      "value": 27.4
     }
   ],
   "humidity": [
@@ -885,7 +885,7 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "value": 66.5
+      "value": 78.9
     },
     {
       "id": "S106",
@@ -894,7 +894,7 @@
         "latitude": 1.4168,
         "longitude": 103.9673
       },
-      "value": 70.1
+      "value": 88
     },
     {
       "id": "S117",
@@ -903,7 +903,7 @@
         "latitude": 1.256,
         "longitude": 103.679
       },
-      "value": 82.6
+      "value": 83.6
     },
     {
       "id": "S107",
@@ -912,7 +912,7 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "value": 77.9
+      "value": 76.5
     },
     {
       "id": "S104",
@@ -921,7 +921,7 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "value": 97
+      "value": 99.4
     },
     {
       "id": "S115",
@@ -930,7 +930,7 @@
         "latitude": 1.29377,
         "longitude": 103.61843
       },
-      "value": 85.7
+      "value": 80.1
     },
     {
       "id": "S102",
@@ -939,7 +939,7 @@
         "latitude": 1.189,
         "longitude": 103.768
       },
-      "value": 86.7
+      "value": 82.2
     },
     {
       "id": "S60",
@@ -948,7 +948,7 @@
         "latitude": 1.25,
         "longitude": 103.8279
       },
-      "value": 75.1
+      "value": 81.2
     },
     {
       "id": "S50",
@@ -957,7 +957,7 @@
         "latitude": 1.3337,
         "longitude": 103.7768
       },
-      "value": 92.6
+      "value": 82
     },
     {
       "id": "S44",
@@ -966,7 +966,7 @@
         "latitude": 1.34583,
         "longitude": 103.68166
       },
-      "value": 97.2
+      "value": 81.1
     },
     {
       "id": "S43",
@@ -975,7 +975,7 @@
         "latitude": 1.3399,
         "longitude": 103.8878
       },
-      "value": 71.6
+      "value": 76.7
     },
     {
       "id": "S24",
@@ -984,7 +984,7 @@
         "latitude": 1.3678,
         "longitude": 103.9826
       },
-      "value": 70.3
+      "value": 74
     },
     {
       "id": "S111",
@@ -993,8 +993,8 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "value": 75.7
+      "value": 75.9
     }
   ],
-  "_savedAt": 1755489993809
+  "_savedAt": 1755739825853
 }

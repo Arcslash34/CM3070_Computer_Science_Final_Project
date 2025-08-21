@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';   // 👈 import haptics
 import congratsAnim from './assets/lottie/congrats.json';
 
 const LottieWeb = Platform.OS === 'web' ? require('lottie-react').default : null;
@@ -42,7 +43,7 @@ export default function Checklist() {
   const navigation = useNavigation();
 
   const [items, setItems] = useState(DEFAULT_ITEMS);
-  const [checked, setChecked] = useState({});  // { [id]: true }
+  const [checked, setChecked] = useState({});
   const [showCongrats, setShowCongrats] = useState(false);
 
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -82,24 +83,27 @@ export default function Checklist() {
     }).start();
   }, [percent, progressAnim]);
 
- const progressWidth = progressAnim.interpolate({
-   inputRange: [0, 100],
-   outputRange: ['0%', '100%'],
- });
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+  });
 
   // Fire congrats animation when crossing to 100%
   useEffect(() => {
     if (prevPercentRef.current < 100 && percent === 100) {
       setShowCongrats(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // 🎉 strong success haptic
     }
     prevPercentRef.current = percent;
   }, [percent]);
 
   const toggle = useCallback((id) => {
+    Haptics.selectionAsync(); // 👈 light tap haptic
     setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
   const resetAll = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // 👈 medium haptic
     setChecked({});
   }, []);
 
@@ -107,11 +111,17 @@ export default function Checklist() {
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn} accessibilityLabel="Back">
+        <TouchableOpacity
+          onPress={() => { Haptics.selectionAsync(); navigation.goBack(); }}
+          style={styles.headerBtn}
+          accessibilityLabel="Back">
           <Ionicons name="chevron-back" size={22} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Disaster Preparedness Checklist</Text>
-        <TouchableOpacity onPress={resetAll} style={styles.headerBtn} accessibilityLabel="Reset">
+        <TouchableOpacity
+          onPress={resetAll}
+          style={styles.headerBtn}
+          accessibilityLabel="Reset">
           <Ionicons name="refresh" size={20} color="#6C63FF" />
         </TouchableOpacity>
       </View>
@@ -186,7 +196,7 @@ export default function Checklist() {
                   />
                 )}
             </View>
-            <TouchableOpacity onPress={() => setShowCongrats(false)} style={styles.closeCongrats}>
+            <TouchableOpacity onPress={() => { Haptics.selectionAsync(); setShowCongrats(false); }} style={styles.closeCongrats}>
               <Text style={styles.closeCongratsText}>Nice!</Text>
             </TouchableOpacity>
           </View>

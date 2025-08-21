@@ -1,5 +1,5 @@
-// resourceArticle.js
-import React, { useLayoutEffect } from 'react';
+// resourceArticle.js with Pinch-to-Zoom (Snack Compatible)
+import React, { useLayoutEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,29 +8,49 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
+  Image,
+  Modal,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  GestureHandlerRootView,
+  PinchGestureHandler,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 export default function ResourceArticle() {
   const { params } = useRoute();
   const navigation = useNavigation();
   const article = params?.article;
+  const [zoomVisible, setZoomVisible] = useState(false);
+
+  const scale = useSharedValue(1);
+
+  const pinchHandler = useAnimatedGestureHandler({
+    onActive: (event) => {
+      scale.value = event.scale;
+    },
+    onEnd: () => {
+      scale.value = withTiming(1);
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerTitle: article?.title ?? 'Guide' });
   }, [article, navigation]);
 
-  if (!article) {
-    return (
-      <View style={styles.center}>
-        <Text style={{ color: '#6B7280' }}>No article data.</Text>
-      </View>
-    );
-  }
-
   const callEmergency = async () => {
-    // Singapore: 995. You can localize via device region later.
     const number = '995';
     const url = `tel:${number}`;
     try {
@@ -42,88 +62,113 @@ export default function ResourceArticle() {
     }
   };
 
+  const imageUri = article?.image
+    ? Image.resolveAssetSource(article.image).uri
+    : null;
+
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingBottom: 28 }}>
-      {/* Title area */}
-      <View style={styles.headerCard}>
-        <View style={styles.iconWrap}>
-          <Ionicons
-            name={article.icon || 'information-circle'}
-            size={24}
-            color="#4F46E5"
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>{article.title}</Text>
-          <Text style={styles.category}>{article.category}</Text>
-        </View>
-
-        {/* Quick emergency call */}
-        <TouchableOpacity onPress={callEmergency} style={styles.sos}>
-          <Ionicons name="call" size={16} color="#FFFFFF" />
-          <Text style={styles.sosText}>995</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Quick steps */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Steps</Text>
-        {article.quick.map((q, i) => (
-          <View key={i} style={styles.stepRow}>
-            <View style={styles.bullet}>
-              <Text style={styles.bulletText}>{i + 1}</Text>
-            </View>
-            <Text style={styles.stepText}>{q}</Text>
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 28 }}>
+        <View style={styles.headerCard}>
+          <View style={styles.iconWrap}>
+            <Ionicons
+              name={article.icon || 'information-circle'}
+              size={24}
+              color="#4F46E5"
+            />
           </View>
-        ))}
-      </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>{article.title}</Text>
+            <Text style={styles.category}>{article.category}</Text>
+          </View>
+          <TouchableOpacity onPress={callEmergency} style={styles.sos}>
+            <Ionicons name="call" size={16} color="#FFFFFF" />
+            <Text style={styles.sosText}>995</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Full guidance */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Detailed Guidance</Text>
-        {article.body.map((p, i) => (
-          <Text key={i} style={styles.paragraph}>
-            {p}
-          </Text>
-        ))}
-      </View>
-
-      {/* External links */}
-      {article.links?.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>References</Text>
-          {article.links.map((l, i) => (
-            <TouchableOpacity
-              key={i}
-              onPress={() => Linking.openURL(l.url)}
-              style={styles.linkRow}>
-              <Ionicons name="link" size={16} color="#6366F1" />
-              <Text style={styles.linkText}>{l.label}</Text>
-            </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Quick Steps</Text>
+          {article.quick.map((q, i) => (
+            <View key={i} style={styles.stepRow}>
+              <View style={styles.bullet}>
+                <Text style={styles.bulletText}>{i + 1}</Text>
+              </View>
+              <Text style={styles.stepText}>{q}</Text>
+            </View>
           ))}
         </View>
-      )}
 
-      {/* Disclaimer */}
-      <Text style={styles.disclaimer}>
-        This guide is for general first-aid education only and does not replace
-        professional medical training or advice. In emergencies, call your local
-        emergency number immediately.
-      </Text>
-    </ScrollView>
+        {imageUri && (
+          <>
+            <TouchableOpacity onPress={() => setZoomVisible(true)} activeOpacity={0.9}>
+              <View style={styles.imageWrap}>
+                <Image
+                  source={article.image}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+                <Text style={styles.imageCaption}>Tap to view fullscreen</Text>
+              </View>
+            </TouchableOpacity>
+
+            <Modal visible={zoomVisible} animationType="fade" transparent={true}>
+              <GestureHandlerRootView style={styles.modalBackground}>
+                <PinchGestureHandler onGestureEvent={pinchHandler}>
+                  <Animated.View style={styles.zoomContainer}>
+                    <Animated.Image
+                      source={{ uri: imageUri }}
+                      style={[styles.zoomedImage, animatedStyle]}
+                      resizeMode="contain"
+                    />
+                  </Animated.View>
+                </PinchGestureHandler>
+                <TouchableOpacity onPress={() => setZoomVisible(false)} style={styles.closeButton}>
+                  <Ionicons name="close" size={28} color="#fff" />
+                </TouchableOpacity>
+              </GestureHandlerRootView>
+            </Modal>
+          </>
+        )}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Detailed Guidance</Text>
+          {article.body.map((p, i) => (
+            <Text key={i} style={styles.paragraph}>
+              {p}
+            </Text>
+          ))}
+        </View>
+
+        {article.links?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>References</Text>
+            {article.links.map((l, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => Linking.openURL(l.url)}
+                style={styles.linkRow}>
+                <Ionicons name="link" size={16} color="#6366F1" />
+                <Text style={styles.linkText}>{l.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        <Text style={styles.disclaimer}>
+          This guide is for general first-aid education only and does not replace
+          professional medical training or advice. In emergencies, call your local
+          emergency number immediately.
+        </Text>
+      </ScrollView>
+    </>
   );
 }
 
+const { width, height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 16 },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-  },
   headerCard: {
     marginTop: 14,
     marginBottom: 10,
@@ -192,5 +237,44 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     paddingVertical: 18,
+  },
+  imageWrap: {
+    marginTop: 14,
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 220,
+    borderRadius: 12,
+    backgroundColor: '#F9FAFB',
+  },
+  imageCaption: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: '#000000DD',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomedImage: {
+    width: width,
+    height: height,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: '#00000099',
+    padding: 8,
+    borderRadius: 20,
   },
 });
