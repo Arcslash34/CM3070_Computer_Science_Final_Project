@@ -11,6 +11,118 @@ import { useNavigation } from '@react-navigation/native';
 /* ---------------- data ---------------- */
 const RESOURCES = [
   {
+    id: 'flooding',
+    title: 'Flooding (Heavy Rain & Flash Floods)',
+    category: 'Flooding',
+    icon: 'rainy',
+    quick: [
+      'F.L.A.S.H.: Follow • Look • Avoid • Share • Help',
+      'Subscribe alerts (myENV, @pubfloodalerts)',
+      'Avoid floodwater; move to higher ground',
+      'Don’t drive into flooded roads',
+      'Turn off mains before evacuating'
+    ],
+    body: [
+      // Awareness & alerts
+      'Stay Flood-Wise: Enable “Heavy Rain”, “Drain Water Level” and “Flash Flood Alerts” in the myENV app. Follow PUB Flood Alerts on Telegram (@pubfloodalerts) or X (@PUBsingapore).',
+
+      // F.L.A.S.H. mnemonic
+      'F.L.A.S.H.: Follow PUB flood alerts • Look out for flood-prone or waterlogged areas • Avoid walking/driving through floodwater • Share PUB updates • Help others where safe.',
+
+      // Role-based tips
+      'Pedestrians — Avoid water deeper than your ankles. Use a stick or umbrella to check for open drains and unstable ground. Keep to higher ground and stay away from canals and large drains.',
+      'Motorists — Do not enter water above kerb height or when road markings are not visible. If passage is unavoidable and safe, drive slowly and steadily, one vehicle at a time, keeping revs up. If the car stalls, do not restart. Switch on hazard lights and move to higher ground.',
+      'Homeowners — Keep compound drains choke-free and maintain flood barriers. Move essential items to upper levels. If evacuating, switch off the main electrical supply and disconnect appliances. Never touch switches if wet or standing in water.',
+      'Business / Building Owners — Maintain on-site drainage and deploy flood barriers early. Prepare a flood plan covering access, stock relocation and electrical isolation.',
+
+      // Devices offered via PUB
+      'Flood protection options: Inflatable Flood Bag (self-inflates on contact with water) and Portable Flood Barrier (modular, self-anchoring). Enquire via 1800-CALL-PUB (1800-2255-782).',
+
+      // After
+      'After water recedes: Watch for hidden damage and contamination. Avoid moving water and beware of slippery debris, open covers or eroded ground. Re-enter only when authorities or qualified persons confirm it is safe.'
+    ],
+    image: require('./assets/resource/flood.jpg'), // replace/remove if you don’t have this asset
+    links: [
+      { label: 'PUB: Flood Safety Tips (brochure PDF)', url: 'http://pub.gov.sg/-/media/PUB/Flood-Resilience/Documents/Flood-Safety-Tips-Brochure.pdf' },
+      { label: 'PUB: Get Flood-Wise (alerts, tips, quiz)', url: 'https://go.gov.sg/be-flood-ready' }
+    ],
+    tags: [
+      'Flood', 'Flash flood', 'Heavy rain',
+      'F.L.A.S.H.', 'PUB', 'myENV', 'Drain water level',
+      'Pedestrian', 'Motorist', 'Homeowner', 'Business'
+    ]
+  },
+  {
+    id: 'fire-safety',
+    title: 'Fire Safety & What To Do in a Fire',
+    category: 'Fire',
+    icon: 'flame',
+    quick: [
+      'Call 995 (SCDF) immediately',
+      'Don’t use lifts; use stairs to evacuate',
+      'If trapped: enter safe room, block smoke, call for help',
+      'Know how to use a fire extinguisher: P.A.S.S.',
+    ],
+    body: [
+      // If you discover a fire
+      'Stay calm. Shout for help and call 995 for SCDF. Alert others and evacuate quickly.',
+      'Close doors and windows of the fire room (if safe) to slow spread. Turn off gas mains if accessible.',
+      'Never use lifts. Always use stairs and head downwards. If smoke fills stairwell, stay put in a safe room.',
+      
+      // If trapped
+      'Enter a room with a window facing the road. Shut the door but don’t lock it. Block smoke entry at the bottom gap using wet towels, blankets or rugs.',
+      'Call 995, state your exact location, what is on fire, and how many people are trapped. If no phone, shout for help from the window. Do not climb or jump.',
+      
+      // Extinguishers
+      'Know the P.A.S.S. method: Pull pin • Aim at base • Squeeze handle • Sweep side-to-side. Only attempt if fire is small and escape route is clear.',
+      'Dry Powder (ABC) extinguishers work on Class A (wood/paper), B (flammable liquids), and C (electrical) fires. Avoid use on delicate electronics (messy residue).',
+      
+      // Prevention
+      'Switch off appliances when not in use. Do not overload sockets or leave devices charging overnight.',
+      'Install smoke detectors in bedrooms and hallways. Keep exits, corridors, and hose reels clear at all times.',
+      'Store flammables properly. Never leave cooking unattended. Extinguish cigarette butts fully before disposal.',
+      'Keep a 1-kg dry powder extinguisher in the bedroom, and consider a smoke escape mask for extra protection.',
+      
+      // Evacuation
+      'During evacuation: stop all work, switch off electricals, take only light belongings, do not re-enter until authorities give the all-clear.'
+    ],
+    image: require('./assets/resource/learntousefireextinguisher.jpg'),
+    links: [
+      { label: 'HealthXchange: Fire Safety Tips', url: 'https://www.healthxchange.sg/explore/health-safety/fire-safety-tips-what-to-do-fire' },
+      { label: 'NUS Fire Safety Training (PDF)', url: 'https://inetapps.nus.edu.sg/osh/portal/training/training-materials/fs/ivle-courseware.pdf' },
+      { label: 'SCDF: Fire Safety at Home', url: 'https://www.scdf.gov.sg/docs/default-source/media-room-(publications)/posters--leaflets--booklets/leaflets/fire-safety-at-home-(eng).jpg?sfvrsn=7119fa48_1' },
+    { label: 'SCDF: Learn to Use Fire Extinguisher', url: 'https://www.scdf.gov.sg/docs/default-source/media-room-(publications)/posters--leaflets--booklets/poster/learntousefireextinguisher_en-amp-ch.jpg?sfvrsn=4f43ea1c_1' },
+    { label: 'SCDF: Fire in High-Rise Building', url: 'https://www.scdf.gov.sg/docs/default-source/media-room-(publications)/posters--leaflets--booklets/poster/super_high_rise_fire.jpg?sfvrsn=6d149605_1' }
+    ],
+    tags: [
+      'Fire', 'SCDF', 'Fire extinguisher', 'High-rise', 'Smoke', 
+      'Prevention', 'Evacuation', 'Singapore'
+    ]
+  },
+  {
+    id: 'mosquito-dengue',
+    title: 'Mosquito & Dengue: Symptoms and Prevention',
+    category: 'Infectious',
+    icon: 'bug',
+    quick: [
+      'Know symptoms: fever, aches, rash, nausea',
+      'Prevent bites: S-A-W — Spray, Apply repellent, Wear long sleeves',
+      'Stop breeding: B-L-O-C-K stagnant water',
+    ],
+    body: [
+      'Common dengue symptoms: sudden fever (2–7 days), headache (behind the eyes), muscle/joint pain, rash, nausea/vomiting, and mild bleeding (nose/gum). Seek medical care if symptoms worsen.',
+      'Protect yourself with S-A-W: Spray insecticide in dark corners, Apply mosquito repellent regularly, Wear long sleeves and pants.',
+      'Prevent breeding with B-L-O-C-K: Break up hardened soil • Lift and empty flowerpot plates • Overturn pails • Change water in vases • Keep gutters clear.',
+      'Even small amounts of clean stagnant water (size of a 20¢ coin) can breed mosquitoes.',
+    ],
+    image: require('./assets/resource/mosquito.png'),
+    links: [
+      { label: 'gov.sg: Dengue — Symptoms & Protection', url: 'https://www.gov.sg/explainers/dengue-know-the-symptoms-and-how-to-protect-yourself' },
+      { label: 'Clean & Green SG: Dengue Prevention (B-L-O-C-K & S-A-W)', url: 'https://www.cgs.gov.sg/blockdengue/home/' }
+    ],
+    tags: ['Dengue', 'Mosquito', 'S-A-W', 'B-L-O-C-K', 'Repellent', 'Singapore']
+  },
+  {
     id: 'cpr-aed-adult',
     title: 'CPR + AED (Adult)',
     category: 'Cardiac',

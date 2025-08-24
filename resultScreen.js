@@ -45,10 +45,14 @@ export default function ResultScreen() {
 
   const openSummary = (quiz) => {
     navigation.navigate('ResultSummary', {
-      score: quiz.score,
-      badge: quiz.badge,
-      userAnswers: quiz.answers, // jsonb array -> JS array
+      reviewData: quiz.review_data || quiz.answers, // prefer review_data; fallback to legacy indices
+      quizTitle: quiz.quiz_title,
+      scorePercent: quiz.score != null ? quiz.score : 0, // or compute if you stored percentage elsewhere
+      xp: 0, // pass XP if/when you store it per attempt
+      // legacy props (only used if review_data is missing and you still rely on old view)
+      userAnswers: quiz.answers,
       difficulty: quiz.difficulty,
+      score: quiz.score,
     });
   };
 
@@ -62,20 +66,35 @@ export default function ResultScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>📚 Past Quiz Results</Text>
 
-      {results.map((r) => (
-        <TouchableOpacity key={r.id} onPress={() => openSummary(r)} style={styles.item}>
-          <Text style={styles.titleText}>{r.quiz_title}</Text>
-          <Text style={styles.meta}>
-            Score: {r.score} • Difficulty: {r.difficulty} • {r.badge}
+      {results.length === 0 ? (
+        <View style={styles.emptyBox}>
+          <Text style={styles.emptyBig}>No past quizzes yet</Text>
+          <Text style={styles.emptySmall}>
+            Complete a quiz and your results will appear here.
           </Text>
-          <Text style={styles.date}>{new Date(r.created_at).toLocaleString()}</Text>
-        </TouchableOpacity>
-      ))}
+        </View>
+      ) : (
+        <>
+          {results.map((r) => (
+            <TouchableOpacity
+              key={r.id}
+              onPress={() => openSummary(r)}
+              style={styles.item}
+            >
+              <Text style={styles.titleText}>{r.quiz_title}</Text>
+              <Text style={styles.meta}>
+                Score: {r.score} • Difficulty: {r.difficulty} • {r.badge}
+              </Text>
+              <Text style={styles.date}>
+                {new Date(r.created_at).toLocaleString()}
+              </Text>
+            </TouchableOpacity>
+          ))}
 
-      {results.length > 0 && (
-        <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteBtn}>
-          <Text style={styles.deleteText}>🗑️ Clear All Results</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteBtn}>
+            <Text style={styles.deleteText}>🗑️ Clear All Results</Text>
+          </TouchableOpacity>
+        </>
       )}
     </ScrollView>
   );
@@ -124,5 +143,27 @@ const styles = StyleSheet.create({
   deleteText: {
     color: '#fff',
     fontWeight: '600',
+  },
+  emptyBox: {
+    width: '100%',
+    backgroundColor: '#f9f9f9',
+    borderColor: '#e5e7eb',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 30,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  emptyBig: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 6,
+  },
+  emptySmall: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
   },
 });

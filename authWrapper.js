@@ -1,4 +1,4 @@
-// authwrapper.js
+// authWrapper.js
 import React, { useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import AuthScreen from './authscreen';
@@ -14,14 +14,14 @@ export default function AuthWrapper() {
       setLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
     });
-
     return () => listener.subscription.unsubscribe();
   }, []);
 
   if (loading) return null;
 
+  // Just render one of these — the stack will be at the ROOT now
   return session ? <DrawerApp /> : <AuthScreen />;
 }

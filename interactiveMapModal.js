@@ -1,5 +1,5 @@
 // interactiveMapModal.js
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -14,9 +14,17 @@ import { WebView } from 'react-native-webview';
 
 export default function InteractiveMapModal({ visible, onClose, userCoords, datasets }) {
   const [activeLayer, setActiveLayer] = useState('rain');
-  const insets = useSafeAreaInsets(); // ✅ always called, safe even if no provider
+  const [webviewReady, setWebviewReady] = useState(false);
+  const insets = useSafeAreaInsets();
+  const webViewRef = useRef(null);
 
-  // Build HTML payload from preloaded datasets
+  // Generate a stable key that doesn't change with every render
+  const webviewKey = useMemo(() => {
+    const lat = userCoords?.latitude?.toFixed(2) || '1.35';
+    const lng = userCoords?.longitude?.toFixed(2) || '103.82';
+    return `map-${activeLayer}-${lat}-${lng}`;
+  }, [activeLayer, userCoords?.latitude, userCoords?.longitude]);
+
   const { html, ready } = useMemo(() => {
     const uc = userCoords || { latitude: 1.3521, longitude: 103.8198 };
     const d = datasets || {};
@@ -29,7 +37,6 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
         name: s?.name,
         rainfall: s?.rainfall,
         lastHour: s?.lastHour,
-        // risk computed later in JS (or precompute here if you prefer)
       })),
       pm25: (d.pm25 || []).map((x) => ({
         lat: x?.location?.latitude,
@@ -71,10 +78,27 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
           .legend {
             position:absolute; bottom:10px; left:10px; background:#fff;
             padding:6px 8px; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.2);
-            font:12px/1.2 sans-serif; min-width:120px;
+            font:12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; min-width:140px;
           }
           .legend div { margin:2px 0; white-space:nowrap; }
           .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+
+          .chip {
+            display:flex; align-items:center; justify-content:center;
+            width:40px; height:40px; border-radius:50%;
+            border:2px solid rgba(0,0,0,0.25);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            font: 800 11px/1.05 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            color:#fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+          }
+          .chip.rain { }
+          .chip.pm25 { background:#FF9800; }
+          .chip.wind { background:#9C27B0; }
+          .chip.temp { background:#F44336; }
+          .chip.humidity { background:#009688; }
+
+          .leaflet-popup-content { margin: 8px 12px; font: 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+          .leaflet-popup-content b { font-weight: 800; }
         </style>
       </head>
       <body>
@@ -82,74 +106,174 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
           const APP_DATA = ${dataStr};
-          const map = L.map('map').setView([APP_DATA.user.lat, APP_DATA.user.lng], 15);
-          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+          let map, currentMarkers = [];
 
-          const userIcon = L.icon({
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            iconSize: [25,41], iconAnchor:[12,41], popupAnchor:[1,-34]
-          });
-          L.marker([APP_DATA.user.lat, APP_DATA.user.lng], { icon: userIcon })
-            .addTo(map).bindPopup('You are here');
+          function initMap() {
+            if (map) return; // Map already initialized
+            
+            map = L.map('map', { zoomControl: true }).setView([APP_DATA.user.lat, APP_DATA.user.lng], 13);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
-          // Same thresholds as your app:
+            const userIcon = L.icon({
+              iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+              iconSize: [25,41], iconAnchor:[12,41], popupAnchor:[1,-34]
+            });
+            L.marker([APP_DATA.user.lat, APP_DATA.user.lng], { icon: userIcon })
+              .addTo(map).bindPopup('You are here');
+              
+            updateLayer(APP_DATA.activeLayer);
+          }
+
+          // Flood risk helpers
           function estimateFloodRisk(rainfall, lastHour){
             if ((rainfall ?? 0) > 10 || (lastHour ?? 0) > 30) return 'High';
             if ((rainfall ?? 0) > 5  || (lastHour ?? 0) > 15) return 'Moderate';
             return 'Low';
           }
+          
           function riskColor(risk){
             if (risk === 'High') return '#EF4444';
             if (risk === 'Moderate') return '#F59E0B';
-            return '#10B981'; // Low
+            return '#10B981';
           }
 
-          function addMarkers(list, getColor){
-            (list || []).filter(p => p && p.lat && p.lng).forEach(p => {
-              const risk = estimateFloodRisk(p.rainfall, p.lastHour);
-              const color = getColor ? getColor(p, risk) : '#00BCD4';
-              const marker = L.circleMarker([p.lat, p.lng], {
-                radius: 7, color, weight: 2, fillColor: color, fillOpacity: 0.75
-              }).addTo(map);
-              const desc = [
-                p.rainfall != null ? ('Rainfall: ' + p.rainfall + ' mm') : null,
-                p.lastHour != null ? ('Last 1h: ' + p.lastHour + ' mm') : null,
-                'Risk: ' + risk
-              ].filter(Boolean).join('<br/>');
-              marker.bindPopup((p.name || 'Station') + '<br/>' + desc);
+          // Clear all markers
+          function clearMarkers() {
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            currentMarkers = [];
+          }
+
+          // Add a chip marker
+          function addChip({ lat, lng, label, popupTitle, popupLines, klass, inlineBg }){
+            if (!(lat && lng)) return null;
+            const html = '<div class="chip '+klass+'" style="'+(inlineBg ? ('background:'+inlineBg+';') : '')+'">'+label+'</div>';
+            const icon = L.divIcon({
+              html,
+              className: '',
+              iconSize: [40,40],
+              iconAnchor: [20,20],
+              popupAnchor: [0,-20],
             });
+            const m = L.marker([lat, lng], { icon }).addTo(map);
+            const content = '<b>'+(popupTitle || 'Location')+'</b><br/>'+ (popupLines || []).join('<br/>');
+            m.bindPopup(content);
+            return m;
           }
 
-          switch (APP_DATA.activeLayer) {
-            case 'rain':
-              // Show ALL rainfall; color by risk
-              addMarkers(APP_DATA.rain, (_, risk) => riskColor(risk));
-              break;
-            case 'pm25': addMarkers(APP_DATA.pm25, () => '#FF9800'); break;
-            case 'wind': addMarkers(APP_DATA.wind, () => '#9C27B0'); break;
-            case 'temp': addMarkers(APP_DATA.temp, () => '#F44336'); break;
-            case 'humidity': addMarkers(APP_DATA.humidity, () => '#009688'); break;
+          // Update legend
+          function updateLegend(layer) {
+            // Remove existing legend if any
+            const existingLegend = document.querySelector('.legend-control');
+            if (existingLegend) existingLegend.remove();
+            
+            const legend = L.control({position:'bottomleft'});
+            legend.onAdd = function(){
+              const div = L.DomUtil.create('div', 'legend legend-control');
+              if (layer === 'rain') {
+                div.innerHTML = '<strong>Flood Risk</strong>';
+                div.innerHTML += '<div><span class="dot" style="background:#EF4444"></span>High</div>';
+                div.innerHTML += '<div><span class="dot" style="background:#F59E0B"></span>Moderate</div>';
+                div.innerHTML += '<div><span class="dot" style="background:#10B981"></span>Low</div>';
+              } else if (layer === 'pm25') {
+                div.innerHTML = '<strong>PM2.5</strong><div>Chip: µg/m³</div>';
+              } else if (layer === 'wind') {
+                div.innerHTML = '<strong>Wind</strong><div>Chip: km/s</div>';
+              } else if (layer === 'temp') {
+                div.innerHTML = '<strong>Temperature</strong><div>Chip: °C</div>';
+              } else if (layer === 'humidity') {
+                div.innerHTML = '<strong>Humidity</strong><div>Chip: %</div>';
+              }
+              return div;
+            };
+            legend.addTo(map);
           }
 
-          // Legend: add risk colors when on "rain"
-          const legend = L.control({position:'bottomleft'});
-          legend.onAdd = function(){
-            const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = '<strong>Layer</strong>';
-            if (APP_DATA.activeLayer === 'rain') {
-              div.innerHTML += '<div><span class="dot" style="background:#EF4444"></span>High Risk</div>';
-              div.innerHTML += '<div><span class="dot" style="background:#F59E0B"></span>Moderate Risk</div>';
-              div.innerHTML += '<div><span class="dot" style="background:#10B981"></span>Low Risk</div>';
-            } else {
-              const items = { pm25:'#FF9800', wind:'#9C27B0', temp:'#F44336', humidity:'#009688' };
-              Object.keys(items).forEach(k => {
-                const c = items[k], name = k.toUpperCase();
-                div.innerHTML += '<div><span class="dot" style="background:'+c+'"></span>'+name+'</div>';
+          // Update the visible layer
+          function updateLayer(layerName) {
+            if (!map) return;
+            
+            clearMarkers();
+            updateLegend(layerName);
+            
+            if (layerName === 'rain') {
+              (APP_DATA.rain || []).forEach(p => {
+                if (!(p && p.lat && p.lng)) return;
+                const risk = estimateFloodRisk(p.rainfall, p.lastHour);
+                const color = riskColor(risk);
+                const val = (p.rainfall != null) ? (Math.round(p.rainfall) + ' mm') : '-';
+                const marker = addChip({
+                  lat: p.lat, lng: p.lng,
+                  label: val,
+                  popupTitle: (p.name || 'Station'),
+                  popupLines: [
+                    (p.rainfall != null ? ('Rainfall: ' + p.rainfall + ' mm') : 'Rainfall: n/a'),
+                    (p.lastHour != null ? ('Last 1h: ' + p.lastHour + ' mm') : 'Last 1h: n/a'),
+                    ('Flood Risk: ' + risk)
+                  ],
+                  klass: 'rain',
+                  inlineBg: color
+                });
+                if (marker) currentMarkers.push(marker);
+              });
+            } else if (layerName === 'pm25') {
+              (APP_DATA.pm25 || []).forEach(p => {
+                const value = (p.value != null) ? Math.round(p.value) : null;
+                const marker = addChip({
+                  lat: p.lat, lng: p.lng,
+                  label: (value != null ? (value + ' µg') : '-'),
+                  popupTitle: (p.name || 'Region'),
+                  popupLines: [ (value != null ? ('PM2.5: ' + value + ' µg/m³') : 'PM2.5: n/a') ],
+                  klass: 'pm25'
+                });
+                if (marker) currentMarkers.push(marker);
+              });
+            } else if (layerName === 'wind') {
+              (APP_DATA.wind || []).forEach(p => {
+                const sp = (p.speed != null ? Math.round(p.speed) : null);
+                const marker = addChip({
+                  lat: p.lat, lng: p.lng,
+                  label: (sp != null ? (sp + ' km/s') : '-'),
+                  popupTitle: (p.name || 'Station'),
+                  popupLines: [
+                    (sp != null ? ('Wind speed: ' + sp + ' km/s') : 'Wind speed: n/a')
+                    + (p.direction ? (' ('+p.direction+')') : '')
+                  ],
+                  klass: 'wind'
+                });
+                if (marker) currentMarkers.push(marker);
+              });
+            } else if (layerName === 'temp') {
+              (APP_DATA.temp || []).forEach(p => {
+                const t = (p.value != null) ? Math.round(p.value) : null;
+                const marker = addChip({
+                  lat: p.lat, lng: p.lng,
+                  label: (t != null ? (t + ' °C') : '-'),
+                  popupTitle: (p.name || 'Station'),
+                  popupLines: [ (t != null ? ('Temperature: ' + t + ' °C') : 'Temperature: n/a') ],
+                  klass: 'temp'
+                });
+                if (marker) currentMarkers.push(marker);
+              });
+            } else if (layerName === 'humidity') {
+              (APP_DATA.humidity || []).forEach(p => {
+                const h = (p.value != null) ? Math.round(p.value) : null;
+                const marker = addChip({
+                  lat: p.lat, lng: p.lng,
+                  label: (h != null ? (h + ' %') : '-'),
+                  popupTitle: (p.name || 'Station'),
+                  popupLines: [ (h != null ? ('Humidity: ' + h + ' %') : 'Humidity: n/a') ],
+                  klass: 'humidity'
+                });
+                if (marker) currentMarkers.push(marker);
               });
             }
-            return div;
-          };
-          legend.addTo(map);
+          }
+
+          // Initialize the map when the page loads
+          window.addEventListener('load', initMap);
+          
+          // Expose the updateLayer function to the parent
+          window.updateLayer = updateLayer;
         </script>
       </body></html>
     `;
@@ -162,7 +286,15 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
       packaged.humidity.length;
 
     return { html: htmlStr, ready: !!readyNow };
-  }, [activeLayer, userCoords, datasets]);
+  }, [userCoords, datasets, activeLayer]);
+
+  // Update the WebView when activeLayer changes
+  useEffect(() => {
+    if (webviewReady && webViewRef.current) {
+      const js = `window.updateLayer && window.updateLayer('${activeLayer}');`;
+      webViewRef.current.injectJavaScript(js);
+    }
+  }, [activeLayer, webviewReady]);
 
   if (!visible) return null;
 
@@ -213,12 +345,15 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
         <View style={styles.mapBox}>
           {ready ? (
             <WebView
+              ref={webViewRef}
               originWhitelist={['*']}
               javaScriptEnabled
               domStorageEnabled
-              key={`${activeLayer}-${userCoords?.latitude ?? 'na'}-${userCoords?.longitude ?? 'na'}`}
+              key={webviewKey}
               source={{ html }}
               style={{ flex: 1 }}
+              onLoadEnd={() => setWebviewReady(true)}
+              onLoadStart={() => setWebviewReady(false)}
             />
           ) : (
             <View style={styles.loadingOverlay}>

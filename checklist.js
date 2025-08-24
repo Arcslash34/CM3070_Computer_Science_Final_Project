@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';   // 👈 import haptics
+import * as Haptics from 'expo-haptics';
 import congratsAnim from './assets/lottie/congrats.json';
 
 const LottieWeb = Platform.OS === 'web' ? require('lottie-react').default : null;

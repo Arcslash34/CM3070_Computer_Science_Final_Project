@@ -580,13 +580,7 @@ function MainApp() {
   );
 }
 
-export default function App() {
-  return (
-    <SafeAreaProvider>
-      <MainApp />
-    </SafeAreaProvider>
-  );
-}
+export default MainApp;
 
 const styles = StyleSheet.create({
   container: {

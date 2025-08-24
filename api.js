@@ -67,13 +67,19 @@ const setCache = (k, data, ttlMs) => _cache.set(k, { data, exp: Date.now() + ttl
    Snapshot (bundled-only)
    ========================================================================= */
 let _lastSnapshotSource = null; // 'assets' | null
+let _bundledSnapshotCache = null;
 export const getSnapshotDebugInfo = () => ({ source: _lastSnapshotSource });
 
 async function loadBundledSnapshot() {
   try {
+    if (_bundledSnapshotCache) {
+      // Already loaded once; don’t spam logs
+      return _bundledSnapshotCache;
+    }
     _lastSnapshotSource = 'assets';
     if (__DEV__) console.log('[snapshot] Loaded bundled env_snapshot.json');
-    return bundledSnapshot; // Metro already parsed it
+    _bundledSnapshotCache = bundledSnapshot; // Metro already parsed it
+    return _bundledSnapshotCache;
   } catch (e) {
     console.warn('Bundled env_snapshot.json import failed:', e?.message || e);
     _lastSnapshotSource = null;
@@ -380,133 +386,133 @@ export const fetchTemperatureData = async () => {
   }
 };
 
-/* =========================================================================
-   OpenWeather (fallback/augment)
-   ========================================================================= */
-const OPENWEATHER_API_KEY = '01850dee0efccf6a94d704212d11bbc3'; // consider env var in production
-const OW_BASE = 'https://api.openweathermap.org/data/2.5';
+// /* =========================================================================
+//    OpenWeather (fallback/augment)
+//    ========================================================================= */
+// const OPENWEATHER_API_KEY = '01850dee0efccf6a94d704212d11bbc3'; // consider env var in production
+// const OW_BASE = 'https://api.openweathermap.org/data/2.5';
 
-export const fetchOWCurrent = async (userCoords, opts = {}) => {
-  if (!(await isConnected())) {
-    console.warn('No internet connection – skipping OpenWeather current fetch.');
-    return null;
-  }
-  const { latitude, longitude } = userCoords || {};
-  if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
+// export const fetchOWCurrent = async (userCoords, opts = {}) => {
+//   if (!(await isConnected())) {
+//     console.warn('No internet connection – skipping OpenWeather current fetch.');
+//     return null;
+//   }
+//   const { latitude, longitude } = userCoords || {};
+//   if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
 
-  const lang = opts.lang || 'en';
-  const cacheKey = `ow:current:${latitude.toFixed(3)},${longitude.toFixed(3)}:${lang}`;
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
+//   const lang = opts.lang || 'en';
+//   const cacheKey = `ow:current:${latitude.toFixed(3)},${longitude.toFixed(3)}:${lang}`;
+//   const cached = getCache(cacheKey);
+//   if (cached) return cached;
 
-  const params = new URLSearchParams({
-    lat: String(latitude),
-    lon: String(longitude),
-    appid: OPENWEATHER_API_KEY,
-    units: 'metric',
-    lang,
-  });
+//   const params = new URLSearchParams({
+//     lat: String(latitude),
+//     lon: String(longitude),
+//     appid: OPENWEATHER_API_KEY,
+//     units: 'metric',
+//     lang,
+//   });
 
-  try {
-    const res = await fetchWithTimeout(`${OW_BASE}/weather?${params.toString()}`);
-    requireOk(res, 'OW current');
-    const json = await res.json();
-    setCache(cacheKey, json, 2 * 60 * 1000);
-    return json;
-  } catch (err) {
-    console.error('Error fetching OpenWeather current:', err);
-    return null;
-  }
-};
+//   try {
+//     const res = await fetchWithTimeout(`${OW_BASE}/weather?${params.toString()}`);
+//     requireOk(res, 'OW current');
+//     const json = await res.json();
+//     setCache(cacheKey, json, 2 * 60 * 1000);
+//     return json;
+//   } catch (err) {
+//     console.error('Error fetching OpenWeather current:', err);
+//     return null;
+//   }
+// };
 
-export const fetchOWForecast5d = async (userCoords, opts = {}) => {
-  if (!(await isConnected())) {
-    console.warn('No internet connection – skipping OpenWeather forecast fetch.');
-    return null;
-  }
-  const { latitude, longitude } = userCoords || {};
-  if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
+// export const fetchOWForecast5d = async (userCoords, opts = {}) => {
+//   if (!(await isConnected())) {
+//     console.warn('No internet connection – skipping OpenWeather forecast fetch.');
+//     return null;
+//   }
+//   const { latitude, longitude } = userCoords || {};
+//   if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
 
-  const lang = opts.lang || 'en';
-  const cnt = opts.cnt ? Number(opts.cnt) : undefined;
-  const cacheKey = `ow:5d:${latitude.toFixed(3)},${longitude.toFixed(3)}:${lang}:${cnt || 'all'}`;
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
+//   const lang = opts.lang || 'en';
+//   const cnt = opts.cnt ? Number(opts.cnt) : undefined;
+//   const cacheKey = `ow:5d:${latitude.toFixed(3)},${longitude.toFixed(3)}:${lang}:${cnt || 'all'}`;
+//   const cached = getCache(cacheKey);
+//   if (cached) return cached;
 
-  const params = new URLSearchParams({
-    lat: String(latitude),
-    lon: String(longitude),
-    appid: OPENWEATHER_API_KEY,
-    units: 'metric',
-    lang,
-  });
-  if (cnt) params.set('cnt', String(cnt));
+//   const params = new URLSearchParams({
+//     lat: String(latitude),
+//     lon: String(longitude),
+//     appid: OPENWEATHER_API_KEY,
+//     units: 'metric',
+//     lang,
+//   });
+//   if (cnt) params.set('cnt', String(cnt));
 
-  try {
-    const res = await fetchWithTimeout(`${OW_BASE}/forecast?${params.toString()}`);
-    requireOk(res, 'OW forecast');
-    const json = await res.json();
-    setCache(cacheKey, json, 45 * 60 * 1000);
-    return json;
-  } catch (err) {
-    console.error('Error fetching OpenWeather 5-day forecast:', err);
-    return null;
-  }
-};
+//   try {
+//     const res = await fetchWithTimeout(`${OW_BASE}/forecast?${params.toString()}`);
+//     requireOk(res, 'OW forecast');
+//     const json = await res.json();
+//     setCache(cacheKey, json, 45 * 60 * 1000);
+//     return json;
+//   } catch (err) {
+//     console.error('Error fetching OpenWeather 5-day forecast:', err);
+//     return null;
+//   }
+// };
 
-/* =========================================================================
-   Convenience aggregators
-   ========================================================================= */
-export const getNowWeather = async (userCoords, lang = 'en') => {
-  const nea = await fetchWeatherForecast();
-  let nearestArea = null;
-  let neaForecastText = null;
+// /* =========================================================================
+//    Convenience aggregators
+//    ========================================================================= */
+// export const getNowWeather = async (userCoords, lang = 'en') => {
+//   const nea = await fetchWeatherForecast();
+//   let nearestArea = null;
+//   let neaForecastText = null;
 
-  if (nea?.metadata?.length && userCoords) {
-    const areaName = getNearestForecastArea(userCoords, nea.metadata);
-    nearestArea = areaName || null;
-    if (areaName) {
-      neaForecastText = nea?.forecasts?.find((f) => f.area === areaName)?.forecast || null;
-    }
-  }
+//   if (nea?.metadata?.length && userCoords) {
+//     const areaName = getNearestForecastArea(userCoords, nea.metadata);
+//     nearestArea = areaName || null;
+//     if (areaName) {
+//       neaForecastText = nea?.forecasts?.find((f) => f.area === areaName)?.forecast || null;
+//     }
+//   }
 
-  const ow = await fetchOWCurrent(userCoords, { lang });
+//   const ow = await fetchOWCurrent(userCoords, { lang });
 
-  return {
-    area: nearestArea,
-    neaForecastText,                 // e.g., "Light Rain"
-    temp: ow?.main?.temp ?? null,    // °C
-    feelsLike: ow?.main?.feels_like ?? null,
-    pressure: ow?.main?.pressure ?? null, // hPa
-    humidity: ow?.main?.humidity ?? null, // %
-    visibility: ow?.visibility ?? null,   // m
-    windSpeed: ow?.wind?.speed ?? null,   // m/s (OW)
-    windDeg: ow?.wind?.deg ?? null,
-    clouds: ow?.clouds?.all ?? null,      // %
-    rain1h: ow?.rain?.['1h'] ?? null,     // mm
-    timestamp: ow?.dt ? new Date(ow.dt * 1000).toISOString() : null,
-    source: { nea: Boolean(nea), openweather: Boolean(ow) },
-  };
-};
+//   return {
+//     area: nearestArea,
+//     neaForecastText,                 // e.g., "Light Rain"
+//     temp: ow?.main?.temp ?? null,    // °C
+//     feelsLike: ow?.main?.feels_like ?? null,
+//     pressure: ow?.main?.pressure ?? null, // hPa
+//     humidity: ow?.main?.humidity ?? null, // %
+//     visibility: ow?.visibility ?? null,   // m
+//     windSpeed: ow?.wind?.speed ?? null,   // m/s (OW)
+//     windDeg: ow?.wind?.deg ?? null,
+//     clouds: ow?.clouds?.all ?? null,      // %
+//     rain1h: ow?.rain?.['1h'] ?? null,     // mm
+//     timestamp: ow?.dt ? new Date(ow.dt * 1000).toISOString() : null,
+//     source: { nea: Boolean(nea), openweather: Boolean(ow) },
+//   };
+// };
 
-export const groupOWForecastByDay = (ow5d) => {
-  if (!ow5d?.list?.length) return [];
-  const byDay = {};
-  ow5d.list.forEach((slot) => {
-    const d = new Date((slot.dt || 0) * 1000);
-    const key = d.toISOString().slice(0, 10);
-    (byDay[key] ||= []).push(slot);
-  });
-  return Object.entries(byDay).map(([date, slots]) => {
-    const temps = slots.map((s) => s?.main?.temp).filter((v) => typeof v === 'number');
-    const popMax = Math.max(0, ...slots.map((s) => (typeof s.pop === 'number' ? s.pop : 0)));
-    const min = temps.length ? Math.min(...temps) : null;
-    const max = temps.length ? Math.max(...temps) : null;
-    const midday = slots.find((s) => (s.dt_txt || '').includes('12:00:00')) || slots[0];
-    const icon = midday?.weather?.[0]?.icon || null;
-    const desc = midday?.weather?.[0]?.description || null;
-    return { date, min, max, popMax, icon, desc, slots };
-  });
-};
+// export const groupOWForecastByDay = (ow5d) => {
+//   if (!ow5d?.list?.length) return [];
+//   const byDay = {};
+//   ow5d.list.forEach((slot) => {
+//     const d = new Date((slot.dt || 0) * 1000);
+//     const key = d.toISOString().slice(0, 10);
+//     (byDay[key] ||= []).push(slot);
+//   });
+//   return Object.entries(byDay).map(([date, slots]) => {
+//     const temps = slots.map((s) => s?.main?.temp).filter((v) => typeof v === 'number');
+//     const popMax = Math.max(0, ...slots.map((s) => (typeof s.pop === 'number' ? s.pop : 0)));
+//     const min = temps.length ? Math.min(...temps) : null;
+//     const max = temps.length ? Math.max(...temps) : null;
+//     const midday = slots.find((s) => (s.dt_txt || '').includes('12:00:00')) || slots[0];
+//     const icon = midday?.weather?.[0]?.icon || null;
+//     const desc = midday?.weather?.[0]?.description || null;
+//     return { date, min, max, popMax, icon, desc, slots };
+//   });
+// };
 
 export { getDistanceFromLatLonInKm };

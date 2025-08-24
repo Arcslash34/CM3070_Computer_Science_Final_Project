@@ -1,4 +1,5 @@
 // resourceArticle.js with Pinch-to-Zoom (Snack Compatible)
+// resourceArticle.js with enhanced pinch and double-tap zoom support
 import React, { useLayoutEffect, useState } from 'react';
 import {
   View,
@@ -17,6 +18,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   GestureHandlerRootView,
   PinchGestureHandler,
+  TapGestureHandler,
 } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,
@@ -32,35 +34,45 @@ export default function ResourceArticle() {
   const [zoomVisible, setZoomVisible] = useState(false);
 
   const scale = useSharedValue(1);
+  const focalX = useSharedValue(0);
+  const focalY = useSharedValue(0);
+  const doubleTapRef = React.useRef();
 
   const pinchHandler = useAnimatedGestureHandler({
     onActive: (event) => {
       scale.value = event.scale;
-    },
-    onEnd: () => {
-      scale.value = withTiming(1);
+      focalX.value = event.focalX;
+      focalY.value = event.focalY;
     },
   });
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const doubleTapHandler = useAnimatedGestureHandler({
+    onActive: (event) => {
+      if (scale.value > 1) {
+        scale.value = withTiming(1);
+      } else {
+        scale.value = withTiming(2);
+        focalX.value = event.x;
+        focalY.value = event.y;
+      }
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const originX = focalX.value - width / 2;
+    const originY = focalY.value - height / 2;
+    return {
+      transform: [
+        { translateX: originX * (1 - scale.value) },
+        { translateY: originY * (1 - scale.value) },
+        { scale: scale.value },
+      ],
+    };
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerTitle: article?.title ?? 'Guide' });
   }, [article, navigation]);
-
-  const callEmergency = async () => {
-    const number = '995';
-    const url = `tel:${number}`;
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) Linking.openURL(url);
-      else Alert.alert('Unable to place a call on this device.');
-    } catch {
-      Alert.alert('Unable to place a call on this device.');
-    }
-  };
 
   const imageUri = article?.image
     ? Image.resolveAssetSource(article.image).uri
@@ -81,10 +93,6 @@ export default function ResourceArticle() {
             <Text style={styles.title}>{article.title}</Text>
             <Text style={styles.category}>{article.category}</Text>
           </View>
-          <TouchableOpacity onPress={callEmergency} style={styles.sos}>
-            <Ionicons name="call" size={16} color="#FFFFFF" />
-            <Text style={styles.sosText}>995</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
@@ -114,15 +122,21 @@ export default function ResourceArticle() {
 
             <Modal visible={zoomVisible} animationType="fade" transparent={true}>
               <GestureHandlerRootView style={styles.modalBackground}>
-                <PinchGestureHandler onGestureEvent={pinchHandler}>
+                <TapGestureHandler
+                  onGestureEvent={doubleTapHandler}
+                  numberOfTaps={2}
+                  ref={doubleTapRef}
+                >
                   <Animated.View style={styles.zoomContainer}>
-                    <Animated.Image
-                      source={{ uri: imageUri }}
-                      style={[styles.zoomedImage, animatedStyle]}
-                      resizeMode="contain"
-                    />
+                    <PinchGestureHandler onGestureEvent={pinchHandler}>
+                      <Animated.Image
+                        source={{ uri: imageUri }}
+                        style={[styles.zoomedImage, animatedStyle]}
+                        resizeMode="contain"
+                      />
+                    </PinchGestureHandler>
                   </Animated.View>
-                </PinchGestureHandler>
+                </TapGestureHandler>
                 <TouchableOpacity onPress={() => setZoomVisible(false)} style={styles.closeButton}>
                   <Ionicons name="close" size={28} color="#fff" />
                 </TouchableOpacity>
@@ -157,7 +171,7 @@ export default function ResourceArticle() {
 
         <Text style={styles.disclaimer}>
           This guide is for general first-aid education only and does not replace
-          professional medical training or advice. In emergencies, call your local
+          professional medical training or advice. In emergencies, call the local
           emergency number immediately.
         </Text>
       </ScrollView>
@@ -191,16 +205,6 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 18, fontWeight: '800', color: '#111827' },
   category: { fontSize: 12, color: '#6B7280', marginTop: 2 },
-  sos: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#EF4444',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-  },
-  sosText: { color: '#FFFFFF', fontWeight: '700' },
   section: { marginTop: 14 },
   sectionTitle: {
     fontSize: 14,

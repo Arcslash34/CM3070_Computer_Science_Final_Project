@@ -19,7 +19,6 @@ import {
   AppState,
   Modal,
   TouchableWithoutFeedback,
-  Image,
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
@@ -42,9 +41,6 @@ import {
   fetchWindData,
   fetchHumidityData,
   fetchTemperatureData,
-  getNowWeather,
-  fetchOWForecast5d,
-  groupOWForecastByDay,
   loadEnvDatasetsFromFile,
 } from './api';
 
@@ -302,9 +298,6 @@ export default function HomeScreen() {
   const [humidityNearest, setHumidityNearest] = useState(null);
   const [windNearest, setWindNearest] = useState(null);
 
-  const [nowWx, setNowWx] = useState(null);
-  const [owDays, setOwDays] = useState([]);
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [emergencyOpen, setEmergencyOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -377,7 +370,7 @@ export default function HomeScreen() {
           }
           setRainNearest(nearest || null);
 
-          // Alert if the **nearest** indicates Moderate/High risk (keeps your UX intent)
+          // Alert if the **nearest** indicates Moderate/High risk
           if (nearest) {
             const risk = estimateFloodRisk(nearest.rainfall, nearest.lastHour);
             if (risk === 'High' || risk === 'Moderate') {
@@ -421,39 +414,31 @@ export default function HomeScreen() {
       ]);
 
       // 5) Fallback/merge
-      const base = await loadEnvDatasetsFromFile();
+      const needSnapshot =
+        !(rainAll?.stations?.length) ||
+        !(pm25?.length) ||
+        !(temp?.length) ||
+        !(humidity?.length) ||
+        !(wind?.length);
+
+      const base = needSnapshot ? await loadEnvDatasetsFromFile() : null;
 
       const merged = {
-        // NEW: keep full rainfall object with stations array (prefer live)
         rain: (rainAll && Array.isArray(rainAll.stations)) ? rainAll : (base?.rain || { stations: [] }),
-        pm25: (Array.isArray(pm25) && pm25.length) ? pm25 : (base?.pm25 || []),
-        temp: (Array.isArray(temp) && temp.length) ? temp : (base?.temp || []),
-        humidity: (Array.isArray(humidity) && humidity.length) ? humidity : (base?.humidity || []),
-        wind: (Array.isArray(wind) && wind.length) ? wind : (base?.wind || []),
+        pm25: (pm25?.length ? pm25 : (base?.pm25 || [])),
+        temp: (temp?.length ? temp : (base?.temp || [])),
+        humidity: (humidity?.length ? humidity : (base?.humidity || [])),
+        wind: (wind?.length ? wind : (base?.wind || [])),
       };
-
-      // Save merged snapshot for next offline session (FILE primary; AsyncStorage optional)
 
       setEnvDatasets(merged);
 
-      // 6) OpenWeather "now" + 5-day grouped (optional UI)
-      const owNow = await getNowWeather(c, lang);
-      setNowWx(owNow);
-
-      const ow5d = await fetchOWForecast5d(c, { lang });
-      const grouped = groupOWForecastByDay(ow5d);
-      const labeled = grouped.map((d) => {
-        const dt = new Date(d.date);
-        return { ...d, label: dt.toLocaleDateString(undefined, { weekday: 'short' }) };
-      });
-      setOwDays(labeled);
-
-      // 7) Derive nearest stats for cards from merged arrays
+      // 6) Derive nearest stats for cards from merged arrays
       pickNearestFrom(merged, c);
 
       setUpdatedAt(new Date().toISOString());
     },
-    [coords, triggerAreaAdvisoryForCoords, lang, pickNearestFrom]
+    [coords, triggerAreaAdvisoryForCoords, pickNearestFrom]
   );
 
   /* ---- Initial load ---- */
@@ -753,14 +738,6 @@ export default function HomeScreen() {
         {/* Updates Strip */}
         <UpdatesStrip />
 
-        {/* 5-day forecast strip */}
-        {owDays?.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Next 5 days</Text>
-            <FiveDayStrip days={owDays} />
-          </>
-        )}
-
         {/* Quick Stats */}
         <Text style={styles.sectionTitle}>Now near you</Text>
         <View style={styles.statsGrid}>
@@ -1012,31 +989,6 @@ function UpdatesStrip() {
   );
 }
 
-function FiveDayStrip({ days = [] }) {
-  return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 2 }}>
-      {days.slice(0, 5).map((d) => (
-        <View key={d.date || d.label} style={styles.fxPill}>
-          <Text style={styles.fxLabel}>{d.label || d.date}</Text>
-          {d.icon ? (
-            <Image
-              source={{ uri: `https://openweathermap.org/img/wn/${d.icon}@2x.png` }}
-              style={{ width: 38, height: 38 }}
-              resizeMode="contain"
-            />
-          ) : (
-            <Ionicons name="cloud-outline" size={24} color="#6B7280" />
-          )}
-          <Text style={styles.fxTemps}>
-            {d.max != null ? Math.round(d.max) : '--'}° / {d.min != null ? Math.round(d.min) : '--'}°
-          </Text>
-          {typeof d.popMax === 'number' && <Text style={styles.fxPop}>{Math.round(d.popMax * 100)}% rain</Text>}
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
-
 function StatCard({ icon, label, value, sub, chipLabel, chipColor }) {
   return (
     <View style={styles.statCard}>
@@ -1176,21 +1128,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 4,
   },
-
-  fxPill: {
-    width: 90,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-    gap: 4,
-  },
-  fxLabel: { color: '#374151', fontWeight: '700', fontSize: 12 },
-  fxTemps: { color: '#111827', fontWeight: '800' },
-  fxPop: { color: '#6B7280', fontSize: 12 },
 
   statsGrid: {
     flexDirection: 'row',
