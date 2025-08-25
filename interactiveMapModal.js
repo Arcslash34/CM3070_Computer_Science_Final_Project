@@ -177,7 +177,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
               } else if (layer === 'pm25') {
                 div.innerHTML = '<strong>PM2.5</strong><div>Chip: µg/m³</div>';
               } else if (layer === 'wind') {
-                div.innerHTML = '<strong>Wind</strong><div>Chip: km/s</div>';
+                div.innerHTML = '<strong>Wind</strong><div>Chip: m/s</div>';
               } else if (layer === 'temp') {
                 div.innerHTML = '<strong>Temperature</strong><div>Chip: °C</div>';
               } else if (layer === 'humidity') {
@@ -232,10 +232,10 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
                 const sp = (p.speed != null ? Math.round(p.speed) : null);
                 const marker = addChip({
                   lat: p.lat, lng: p.lng,
-                  label: (sp != null ? (sp + ' km/s') : '-'),
+                  label: (sp != null ? (sp + ' m/s') : '-'),
                   popupTitle: (p.name || 'Station'),
                   popupLines: [
-                    (sp != null ? ('Wind speed: ' + sp + ' km/s') : 'Wind speed: n/a')
+                    (sp != null ? ('Wind speed: ' + sp + ' m/s') : 'Wind speed: n/a')
                     + (p.direction ? (' ('+p.direction+')') : '')
                   ],
                   klass: 'wind'

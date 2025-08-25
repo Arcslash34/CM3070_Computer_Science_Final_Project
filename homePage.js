@@ -773,7 +773,7 @@ export default function HomeScreen() {
           <StatCard
             icon="navigate"
             label="Wind"
-            value={windNearest?.speed != null ? `${windNearest.speed} km/h` : '—'}
+            value={windNearest?.speed != null ? `${windNearest.speed} m/s` : '—'}
             sub={
               windNearest?.direction != null
                 ? `Dir ${windNearest.direction}°`

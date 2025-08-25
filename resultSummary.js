@@ -1,3 +1,4 @@
+// ResultSummary.js
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
 

@@ -1,5 +1,4 @@
-// resourceArticle.js with Pinch-to-Zoom (Snack Compatible)
-// resourceArticle.js with enhanced pinch and double-tap zoom support
+// resourceArticle.js
 import React, { useLayoutEffect, useState } from 'react';
 import {
   View,
