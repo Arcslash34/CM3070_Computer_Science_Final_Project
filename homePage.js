@@ -31,7 +31,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 
-import ChatbotScreen from "./chatbot";
 import InteractiveMapModal from "./interactiveMapModal";
 import translations from "./translations";
 
@@ -172,33 +171,7 @@ function distKm(a, b) {
   );
 }
 
-/* ----------------- Modals (kept) ----------------- */
-function ChatbotModal({ visible, onClose, ChatbotComponent }) {
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalBackdrop} />
-      </TouchableWithoutFeedback>
-      <View style={[styles.modalSheet, { height: "80%" }]}>
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>Assistant</Text>
-          <TouchableOpacity onPress={onClose} accessibilityLabel="Close">
-            <Ionicons name="close" size={20} color="#111827" />
-          </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1 }}>
-          <ChatbotComponent />
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
+/* ----------------- Emergency Contacts Modal ----------------- */
 const EMERGENCY_CONTACTS = [
   { key: "scdf", name: "SCDF (Fire / Ambulance)", number: "995", icon: "flame", color: "#EF4444" },
   { key: "ambulance", name: "Non-Emergency Ambulance", number: "1777", icon: "medkit", color: "#F59E0B" },
@@ -245,15 +218,6 @@ function EmergencyContactsModal({ visible, onClose }) {
   );
 }
 
-/* ----------------- Helpers ----------------- */
-const getRainSeverity = (mm) => {
-  if (mm == null) return { label: "N/A", color: "#9CA3AF" };
-  if (mm === 0) return { label: "No Rain", color: "#10B981" };
-  if (mm <= 2) return { label: "Light Rain", color: "#3B82F6" };
-  if (mm <= 10) return { label: "Moderate Rain", color: "#F59E0B" };
-  return { label: "Heavy Rain", color: "#EF4444" };
-};
-
 /* =========================================================================
    SCREEN
    ========================================================================= */
@@ -288,7 +252,6 @@ export default function HomeScreen() {
   const [windNearest, setWindNearest] = useState(null);
 
   const [emergencyOpen, setEmergencyOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
 
   const [areaAdvisoryActive, setAreaAdvisoryActive] = useState(false);
   const [envDatasets, setEnvDatasets] = useState(null);
@@ -615,26 +578,6 @@ export default function HomeScreen() {
         contentContainerStyle={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {/* Location banner (kept) */}
-        {locDeniedBanner && (
-          <View style={[styles.banner, { borderLeftColor: "#3B82F6" }]}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.bannerTitle}>
-                {!servicesEnabled ? "Location Services Off" : "Location Permission Denied"}
-              </Text>
-              <Text style={styles.bannerBody}>
-                Using demo data near Taman Jurong. Enable location for precise readings.
-              </Text>
-              <TouchableOpacity onPress={onEnableLocationPress} style={styles.enableBtn}>
-                <Text style={styles.enableBtnText}>Enable Location</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={() => setLocDeniedBanner(false)} accessibilityLabel="Dismiss alert">
-              <Ionicons name="close" size={18} color="#111827" />
-            </TouchableOpacity>
-          </View>
-        )}
-
         {/* HERO IMAGE */}
         <View style={styles.heroWrap}>
           <Image source={HERO_SRC} style={styles.heroImg} />
@@ -665,6 +608,26 @@ export default function HomeScreen() {
         {/* Updated time BELOW the map, right-aligned */}
         <Text style={styles.updatedBelow}>Updated at: {formattedUpdated}</Text>
 
+        {/* Location banner — below the map */}
+        {locDeniedBanner && (
+          <View style={[styles.banner, { borderLeftColor: "#3B82F6", marginTop: 8 }]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.bannerTitle}>
+                {!servicesEnabled ? "Location Services Off" : "Location Permission Denied"}
+              </Text>
+              <Text style={styles.bannerBody}>
+                Using demo data near Taman Jurong. Enable location for precise readings.
+              </Text>
+              <TouchableOpacity onPress={onEnableLocationPress} style={styles.enableBtn}>
+                <Text style={styles.enableBtnText}>Enable Location</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => setLocDeniedBanner(false)} accessibilityLabel="Dismiss alert">
+              <Ionicons name="close" size={18} color="#111827" />
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* LOCAL CONDITIONS */}
         <Text style={[styles.sectionTitle, { marginTop: 16, marginBottom: 8 }]}>Local Conditions</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsRow}>
@@ -677,7 +640,7 @@ export default function HomeScreen() {
           <HStatCard
             icon="leaf"
             label="PM2.5"
-            value={pm25Nearest?.value != null ? `${pm25Nearest.value}` : "—"}
+            value={pm25Nearest?.value != null ? `${pm25Nearest.value} µg/m³` : "—"}
             sub={pm25Nearest?.name || "Nearest Region"}
           />
           <HStatCard
@@ -695,7 +658,7 @@ export default function HomeScreen() {
           <HStatCard
             icon="navigate"
             label="Wind"
-            value={windNearest?.speed != null ? `${windNearest.speed} m/s` : "—"}
+            value={windNearest?.speed != null ? `${windNearest.speed} kn` : "—"}
             sub={windNearest?.direction != null ? `Dir ${windNearest.direction}°` : windNearest?.name || "Nearest"}
           />
         </ScrollView>
@@ -728,19 +691,19 @@ export default function HomeScreen() {
         <View style={{ height: 10 }} />
       </ScrollView>
 
-      {/* Chatbot FAB */}
+      {/* Chatbot FAB — now navigates to a full screen */}
       <TouchableOpacity
         style={styles.chatBubble}
         activeOpacity={0.9}
-        onPress={() => setChatOpen(true)}
+        onPress={() => navigation.navigate("Chatbot")}
         accessibilityLabel="Open chatbot"
       >
         <Ionicons name="chatbubbles" size={20} color="#fff" />
       </TouchableOpacity>
 
       <EmergencyContactsModal visible={emergencyOpen} onClose={() => setEmergencyOpen(false)} />
-      <ChatbotModal visible={chatOpen} onClose={() => setChatOpen(false)} ChatbotComponent={ChatbotScreen} />
 
+      {/* Keep interactive map as a modal */}
       <InteractiveMapModal
         visible={mapExpanded}
         onClose={() => setMapExpanded(false)}
@@ -844,7 +807,7 @@ const styles = StyleSheet.create({
   heroImg: {
     width: "100%",
     height: HERO_HEIGHT,
-    resizeMode: "contain", // shows full image (no crop)
+    resizeMode: "contain",
   },
   heroText: { marginTop: 12 },
   heroTitle: { fontSize: 20, fontWeight: "800", color: "#111827" },
@@ -869,7 +832,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
   },
   mapShellInner: { height: 220, width: "100%" },
-  updatedBelow: { color: "#6B7280", fontSize: 12, marginTop: 6, alignSelf: "flex-start" },
+  updatedBelow: { color: "#6B7280", fontSize: 12, marginTop: 6, alignSelf: "flex-end" },
 
   /* Horizontal stats row */
   statsRow: { gap: 10, paddingRight: 4 },

@@ -5,12 +5,13 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Image,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context"; // 👈 use the context version
 
 // Load quiz data from JSON
 import quizData from "./assets/quiz.json";
@@ -24,10 +25,28 @@ const CATEGORY_IMAGES = {
   fire: require("./assets/fire.jpg"),
   dengue: require("./assets/dengue.jpg"),
   firstaid: require("./assets/first_aid.jpg"),
-  disease: require("./assets/disease.jpg"), // add this file when ready
-  earthquake: require("./assets/earthquake.jpg"), // add this file when ready
+  disease: require("./assets/disease.jpg"),
+  earthquake: require("./assets/earthquake.jpg"),
   daily: require("./assets/daily.jpg"),
 };
+
+function HeaderBar({ title, onBack }) {
+  return (
+    <View style={s.header}>
+      <TouchableOpacity
+        onPress={onBack}
+        style={s.headerBtn}
+        accessibilityLabel="Back"
+      >
+        <Ionicons name="chevron-back" size={22} color="#111827" />
+      </TouchableOpacity>
+      <Text style={s.headerTitle} numberOfLines={1}>
+        {title}
+      </Text>
+      <View style={s.headerBtn} />
+    </View>
+  );
+}
 
 export default function QuizSet() {
   const navigation = useNavigation();
@@ -50,14 +69,6 @@ export default function QuizSet() {
   }, [topicNameParam, isDaily, category?.title]);
 
   const topicImage = CATEGORY_IMAGES[topicId] || CATEGORY_IMAGES.daily;
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      title: topicTitle,
-      headerTitleAlign: "center",
-    });
-  }, [navigation, topicTitle]);
 
   // Build sets from JSON (or a single Daily card)
   const sets = useMemo(() => {
@@ -88,16 +99,17 @@ export default function QuizSet() {
     navigation.navigate("QuizGame", {
       topicId,
       topicTitle,
-      setIndex: set.index, // for non-daily this identifies the chosen set
+      setIndex: set.index,
       isDaily,
-      difficulty: "standard", // kept for compatibility (ignored by your new flow)
+      difficulty: "standard",
       duration: 30,
       questionCount: set.questions,
     });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
+    <SafeAreaView style={s.safeArea} edges={["top", "left", "right"]}>
+      <HeaderBar title={topicTitle} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={s.container}>
         <Text style={s.pageTitle}>Choose a set</Text>
         <Text style={s.pageSub}>
@@ -141,6 +153,33 @@ export default function QuizSet() {
 }
 
 const s = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: "#F8FAFC" },
+
+  /* Static header (prevents native header slide-left animation) */
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingTop: 0, // SafeAreaView handles top inset
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    backgroundColor: "#fff",
+  },
+  headerBtn: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "600",
+    color: "#111827",
+    fontSize: 22,
+  },
+
   container: {
     padding: 10,
     paddingHorizontal: 16,
@@ -180,9 +219,7 @@ const s = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "cover",
   },
-  setInfo: {
-    flex: 1,
-  },
+  setInfo: { flex: 1 },
   setTitle: {
     color: "#111827",
     fontSize: 17,

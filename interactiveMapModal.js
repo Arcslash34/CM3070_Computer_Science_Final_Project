@@ -9,16 +9,16 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function InteractiveMapModal({ visible, onClose, userCoords, datasets }) {
   const [activeLayer, setActiveLayer] = useState('rain');
   const [webviewReady, setWebviewReady] = useState(false);
-  const insets = useSafeAreaInsets();
   const webViewRef = useRef(null);
 
-  // Generate a stable key that doesn't change with every render
+  // Stable key so WebView refreshes when layer or starting center changes
   const webviewKey = useMemo(() => {
     const lat = userCoords?.latitude?.toFixed(2) || '1.35';
     const lng = userCoords?.longitude?.toFixed(2) || '103.82';
@@ -109,8 +109,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
           let map, currentMarkers = [];
 
           function initMap() {
-            if (map) return; // Map already initialized
-            
+            if (map) return;
             map = L.map('map', { zoomControl: true }).setView([APP_DATA.user.lat, APP_DATA.user.lng], 13);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
@@ -120,30 +119,26 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             });
             L.marker([APP_DATA.user.lat, APP_DATA.user.lng], { icon: userIcon })
               .addTo(map).bindPopup('You are here');
-              
+
             updateLayer(APP_DATA.activeLayer);
           }
 
-          // Flood risk helpers
           function estimateFloodRisk(rainfall, lastHour){
             if ((rainfall ?? 0) > 10 || (lastHour ?? 0) > 30) return 'High';
             if ((rainfall ?? 0) > 5  || (lastHour ?? 0) > 15) return 'Moderate';
             return 'Low';
           }
-          
           function riskColor(risk){
             if (risk === 'High') return '#EF4444';
             if (risk === 'Moderate') return '#F59E0B';
             return '#10B981';
           }
 
-          // Clear all markers
           function clearMarkers() {
             currentMarkers.forEach(marker => map.removeLayer(marker));
             currentMarkers = [];
           }
 
-          // Add a chip marker
           function addChip({ lat, lng, label, popupTitle, popupLines, klass, inlineBg }){
             if (!(lat && lng)) return null;
             const html = '<div class="chip '+klass+'" style="'+(inlineBg ? ('background:'+inlineBg+';') : '')+'">'+label+'</div>';
@@ -160,12 +155,10 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             return m;
           }
 
-          // Update legend
           function updateLegend(layer) {
-            // Remove existing legend if any
             const existingLegend = document.querySelector('.legend-control');
             if (existingLegend) existingLegend.remove();
-            
+
             const legend = L.control({position:'bottomleft'});
             legend.onAdd = function(){
               const div = L.DomUtil.create('div', 'legend legend-control');
@@ -177,7 +170,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
               } else if (layer === 'pm25') {
                 div.innerHTML = '<strong>PM2.5</strong><div>Chip: µg/m³</div>';
               } else if (layer === 'wind') {
-                div.innerHTML = '<strong>Wind</strong><div>Chip: m/s</div>';
+                div.innerHTML = '<strong>Wind</strong><div>Chip: knots</div>';
               } else if (layer === 'temp') {
                 div.innerHTML = '<strong>Temperature</strong><div>Chip: °C</div>';
               } else if (layer === 'humidity') {
@@ -188,13 +181,11 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             legend.addTo(map);
           }
 
-          // Update the visible layer
           function updateLayer(layerName) {
             if (!map) return;
-            
             clearMarkers();
             updateLegend(layerName);
-            
+
             if (layerName === 'rain') {
               (APP_DATA.rain || []).forEach(p => {
                 if (!(p && p.lat && p.lng)) return;
@@ -232,10 +223,10 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
                 const sp = (p.speed != null ? Math.round(p.speed) : null);
                 const marker = addChip({
                   lat: p.lat, lng: p.lng,
-                  label: (sp != null ? (sp + ' m/s') : '-'),
+                  label: (sp != null ? (sp + ' kn') : '-'),
                   popupTitle: (p.name || 'Station'),
                   popupLines: [
-                    (sp != null ? ('Wind speed: ' + sp + ' m/s') : 'Wind speed: n/a')
+                    (sp != null ? ('Wind speed: ' + sp + ' kn') : 'Wind speed: n/a')
                     + (p.direction ? (' ('+p.direction+')') : '')
                   ],
                   klass: 'wind'
@@ -269,10 +260,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             }
           }
 
-          // Initialize the map when the page loads
           window.addEventListener('load', initMap);
-          
-          // Expose the updateLayer function to the parent
           window.updateLayer = updateLayer;
         </script>
       </body></html>
@@ -288,7 +276,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
     return { html: htmlStr, ready: !!readyNow };
   }, [userCoords, datasets, activeLayer]);
 
-  // Update the WebView when activeLayer changes
+  // Update layer from RN when user taps filter
   useEffect(() => {
     if (webviewReady && webViewRef.current) {
       const js = `window.updateLayer && window.updateLayer('${activeLayer}');`;
@@ -307,38 +295,43 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
       hardwareAccelerated
       presentationStyle="fullScreen"
     >
-      <View
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
-          },
-        ]}
-      >
+      {/* Safe area wrapper */}
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🌍 Live Environmental Map</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.closeBtn}>✕</Text>
+          <TouchableOpacity onPress={onClose} accessibilityLabel="Close map">
+            <Ionicons name="close" size={22} color="#111827" />
           </TouchableOpacity>
         </View>
 
-        {/* Filters */}
+        {/* Filters with icons below label */}
         <View style={styles.filters}>
-          {['rain', 'pm25', 'wind', 'temp', 'humidity'].map((key) => (
-            <TouchableOpacity
-              key={key}
-              style={[styles.filterButton, activeLayer === key && styles.activeFilterButton]}
-              onPress={() => setActiveLayer(key)}
-            >
-              <Text style={[styles.filterText, activeLayer === key && styles.activeFilterText]}>
-                {key.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {[
+            { key: 'rain', label: 'RAIN', icon: 'rainy' },
+            { key: 'pm25', label: 'PM2.5', icon: 'leaf' },      // using leaf for air quality
+            { key: 'wind', label: 'WIND', icon: 'navigate' },
+            { key: 'temp', label: 'TEMP', icon: 'thermometer' },
+            { key: 'humidity', label: 'HUMID', icon: 'water' },
+          ].map(({ key, label, icon }) => {
+            const active = activeLayer === key;
+            return (
+              <TouchableOpacity
+                key={key}
+                style={[styles.filterButton, active && styles.activeFilterButton]}
+                onPress={() => setActiveLayer(key)}
+                accessibilityRole="button"
+                accessibilityLabel={`Show ${label.toLowerCase()} layer`}>
+                <Text style={[styles.filterText, active && styles.activeFilterText]}>{label}</Text>
+                <Ionicons
+                  name={icon}
+                  size={18}
+                  color={active ? '#fff' : '#374151'}
+                  style={{ marginTop: 4 }}
+                />
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Map */}
@@ -362,38 +355,47 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             </View>
           )}
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
-  headerTitle: { fontSize: 18, fontWeight: 'bold' },
-  closeBtn: { fontSize: 22, color: '#d00', padding: 4 },
+  headerTitle: { fontSize: 16, fontWeight: '800', color: '#111827' },
+
   filters: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 8,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#F9FAFB',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   filterButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    backgroundColor: '#ddd',
-    marginHorizontal: 4,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#E5E7EB',
+    minWidth: 64,
   },
-  activeFilterButton: { backgroundColor: '#007AFF' },
-  filterText: { fontSize: 12, fontWeight: '600', color: '#333' },
+  activeFilterButton: { backgroundColor: '#4F46E5' },
+  filterText: { fontSize: 12, fontWeight: '800', color: '#374151', letterSpacing: 0.5 },
   activeFilterText: { color: '#fff' },
+
   mapBox: { flex: 1, position: 'relative' },
   loadingOverlay: {
     position: 'absolute',
@@ -401,5 +403,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
   },
-  loadingText: { marginTop: 10, fontSize: 16, color: '#333' },
+  loadingText: { marginTop: 10, fontSize: 14, color: '#374151' },
 });

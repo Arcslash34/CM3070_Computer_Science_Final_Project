@@ -293,7 +293,7 @@ export const fetchWindData = async () => {
     if (!stations.length) throw new Error('NEA wind payload empty');
 
     const out = stations.map((stn) => {
-      const speed     = speedReadings.find((r) => r.stationId === stn.id)?.value ?? null;   // m/s
+      const speed     = speedReadings.find((r) => r.stationId === stn.id)?.value ?? null;   // knots (NEA unit)
       const direction = dirReadings.find((r) => r.stationId === stn.id)?.value ?? null;     // degrees
       return { id: stn.id, name: stn.name, location: stn.location, speed, direction };
     });

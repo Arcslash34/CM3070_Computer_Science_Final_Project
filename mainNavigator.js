@@ -17,6 +17,7 @@ import ResourceArticle from "./resourceArticle";
 import CertificatesScreen from "./CertificatesScreen";
 import BadgesScreen from "./badges";
 import Checklist from "./checklist";
+import ChatbotScreen from "./chatbot";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -64,11 +65,18 @@ export default function MainNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MainTabs" component={TabNavigator} />
+      <Stack.Screen
+        name="Chatbot"
+        component={ChatbotScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       {/* Quiz flow screens with native headers */}
       <Stack.Screen
         name="QuizSet"
         component={QuizSet}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="QuizGame"
@@ -98,17 +106,12 @@ export default function MainNavigator() {
           headerTitle: "Guide",
         }}
       />
-      <Stack.Screen
-        name="Checklist"
-        component={Checklist}
-      />
+      <Stack.Screen name="Checklist" component={Checklist} />
       <Stack.Screen
         name="Certificates"
         component={CertificatesScreen}
         options={{
-          headerShown: true,
-          headerTitle: "Certificates",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
