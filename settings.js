@@ -1,38 +1,62 @@
 // settings.js
-import React, { useEffect, useState, useCallback, useContext, useRef } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import {
-  View, Text, StyleSheet, Image, TouchableOpacity, Switch, Alert, Modal,
-  TextInput, Linking, ScrollView, ActivityIndicator, Animated
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
-import { v4 as uuidv4 } from 'uuid';
-import { supabase } from './supabase';
-import DefaultProfileImage from './assets/profile.png';
-import { LanguageContext } from './language';
-import { MaterialIcons } from '@expo/vector-icons';
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Switch,
+  Alert,
+  Modal,
+  TextInput,
+  Linking,
+  ScrollView,
+  ActivityIndicator,
+  Animated,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "./supabase";
+import DefaultProfileImage from "./assets/profile.png";
+import { LanguageContext } from "./language";
+import { MaterialIcons } from "@expo/vector-icons";
+import Logo1 from "./assets/logo1.png";
 
 const TOGGLE_KEYS = {
-  notifications: 'settings:notifications',
-  sound: 'settings:sound',
-  vibration: 'settings:vibration',
+  notifications: "settings:notifications",
+  sound: "settings:sound",
+  vibration: "settings:vibration",
 };
-const CONTACTS_KEY = 'settings:close-contacts';
+const CONTACTS_KEY = "settings:close-contacts";
 const MAX_CONTACTS = 5;
 
 // helper: ISO code => flag emoji
-const countryCodeToFlagEmoji = (code = '') =>
-  code.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
+const countryCodeToFlagEmoji = (code = "") =>
+  code
+    .toUpperCase()
+    .replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt()));
 
 export default function Settings() {
   const navigation = useNavigation();
   const { lang, setLang } = useContext(LanguageContext);
   const insets = useSafeAreaInsets(); // bottom inset only
+  useLayoutEffect(() => {
+    navigation.setOptions?.({ headerShown: false });
+  }, [navigation]);
 
   // Auth/session + profile
   const [session, setSession] = useState(null);
@@ -46,26 +70,26 @@ export default function Settings() {
   // UI state
   const [showLang, setShowLang] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
 
   // Edit profile modal
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editUsername, setEditUsername] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [editBio, setEditBio] = useState('');
+  const [editName, setEditName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [editBio, setEditBio] = useState("");
 
   // Contacts
   const [contacts, setContacts] = useState([]);
   const [showContacts, setShowContacts] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [cName, setCName] = useState('');
-  const [cRelation, setCRelation] = useState('');
-  const [cPhone, setCPhone] = useState('');
+  const [cName, setCName] = useState("");
+  const [cRelation, setCRelation] = useState("");
+  const [cPhone, setCPhone] = useState("");
 
   // Region
-  const [region, setRegion] = useState('');
+  const [region, setRegion] = useState("");
   const [loadingRegion, setLoadingRegion] = useState(false);
   const spinAnim = useRef(new Animated.Value(0)).current;
 
@@ -77,15 +101,22 @@ export default function Settings() {
       setSession(sess);
       if (sess?.user?.id) {
         const { data: p } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', sess.user.id)
+          .from("profiles")
+          .select("*")
+          .eq("id", sess.user.id)
           .single();
 
-        const prof = p || { id: sess.user.id, name: '', username: '', avatar_url: '', bio: '', region: '' };
+        const prof = p || {
+          id: sess.user.id,
+          name: "",
+          username: "",
+          avatar_url: "",
+          bio: "",
+          region: "",
+        };
         setProfile(prof);
-        setAvatarUrl(prof.avatar_url || '');
-        setRegion(prof.region || '');
+        setAvatarUrl(prof.avatar_url || "");
+        setRegion(prof.region || "");
       }
     })();
 
@@ -93,7 +124,7 @@ export default function Settings() {
       setSession(s);
       if (!s) {
         setProfile(null);
-        setAvatarUrl('');
+        setAvatarUrl("");
       }
     });
     return () => sub.subscription.unsubscribe();
@@ -108,17 +139,17 @@ export default function Settings() {
           AsyncStorage.getItem(TOGGLE_KEYS.sound),
           AsyncStorage.getItem(TOGGLE_KEYS.vibration),
         ]);
-        if (n !== null) setNotifications(n === '1');
-        if (s !== null) setSound(s === '1');
-        if (v !== null) setVibration(v === '1');
+        if (n !== null) setNotifications(n === "1");
+        if (s !== null) setSound(s === "1");
+        if (v !== null) setVibration(v === "1");
       } catch (err) {
-        console.warn('Failed to load toggles', err);
+        console.warn("Failed to load toggles", err);
       }
     })();
   }, []);
 
   const persistToggle = useCallback((key, value) => {
-    AsyncStorage.setItem(key, value ? '1' : '0').catch(() => {});
+    AsyncStorage.setItem(key, value ? "1" : "0").catch(() => {});
   }, []);
 
   /* ---------- Load contacts ---------- */
@@ -153,16 +184,16 @@ export default function Settings() {
   }, [loadingRegion, spinAnim]);
 
   /* ---------- Derived profile display ---------- */
-  const userDisplay = profile?.username || session?.user?.email || 'Guest';
-  const email = session?.user?.email || '';
+  const userDisplay = profile?.username || session?.user?.email || "Guest";
+  const email = session?.user?.email || "";
 
   /* ---------- Actions ---------- */
   const onLogout = useCallback(() => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
       {
-        text: 'Logout',
-        style: 'destructive',
+        text: "Logout",
+        style: "destructive",
         onPress: async () => {
           await supabase.auth.signOut();
         },
@@ -173,19 +204,24 @@ export default function Settings() {
   const onChangePassword = useCallback(async () => {
     if (!newPassword) return;
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
       if (error) throw error;
-      Alert.alert('Success', 'Password updated.');
+      Alert.alert("Success", "Password updated.");
       setShowPassword(false);
-      setNewPassword('');
+      setNewPassword("");
     } catch (e) {
-      Alert.alert('Error', e.message || 'Failed to update password');
+      Alert.alert("Error", e.message || "Failed to update password");
     }
   }, [newPassword]);
 
   const pickAndUploadAvatar = useCallback(async () => {
     if (!session?.user) {
-      return Alert.alert('Not signed in', 'Please log in to update your profile.');
+      return Alert.alert(
+        "Not signed in",
+        "Please log in to update your profile."
+      );
     }
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) return;
@@ -199,33 +235,37 @@ export default function Settings() {
     if (result.canceled || !result.assets?.length) return;
 
     const { uri } = result.assets[0];
-    const ext = (uri.split('.').pop() || 'jpg').toLowerCase();
+    const ext = (uri.split(".").pop() || "jpg").toLowerCase();
     const fileName = `${uuidv4()}.${ext}`;
     const filePath = `${session.user.id}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, { uri, name: fileName, type: `image/${ext}` }, { contentType: `image/${ext}` });
+      .from("avatars")
+      .upload(
+        filePath,
+        { uri, name: fileName, type: `image/${ext}` },
+        { contentType: `image/${ext}` }
+      );
 
-    if (uploadError) return Alert.alert('Upload failed', uploadError.message);
+    if (uploadError) return Alert.alert("Upload failed", uploadError.message);
 
-    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
     const publicUrl = data.publicUrl;
 
     const { error: updateError } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({ avatar_url: publicUrl })
-      .eq('id', session.user.id);
+      .eq("id", session.user.id);
 
-    if (updateError) return Alert.alert('Error', updateError.message);
+    if (updateError) return Alert.alert("Error", updateError.message);
     setAvatarUrl(publicUrl);
     setProfile((p) => (p ? { ...p, avatar_url: publicUrl } : p));
   }, [session?.user]);
 
   const openEditProfile = () => {
-    setEditName(profile?.name || '');
-    setEditUsername(profile?.username || '');
-    setEditBio(profile?.bio || '');
+    setEditName(profile?.name || "");
+    setEditUsername(profile?.username || "");
+    setEditBio(profile?.bio || "");
     setShowEditProfile(true);
   };
 
@@ -234,13 +274,13 @@ export default function Settings() {
     // optional: uniqueness check for username
     if (editUsername && editUsername !== profile?.username) {
       const { data: existing } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', editUsername)
-        .neq('id', session.user.id)
+        .from("profiles")
+        .select("id")
+        .eq("username", editUsername)
+        .neq("id", session.user.id)
         .maybeSingle();
       if (existing) {
-        return Alert.alert('Username taken', 'Please choose another username.');
+        return Alert.alert("Username taken", "Please choose another username.");
       }
     }
 
@@ -253,11 +293,21 @@ export default function Settings() {
       // keep region as-is (edited via Detect button)
       region,
     };
-    const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
-    if (error) return Alert.alert('Error', error.message);
+    const { error } = await supabase
+      .from("profiles")
+      .upsert(payload, { onConflict: "id" });
+    if (error) return Alert.alert("Error", error.message);
     setProfile((p) => ({ ...(p || {}), ...payload, avatar_url: avatarUrl }));
     setShowEditProfile(false);
-  }, [session?.user, editName, editUsername, avatarUrl, profile?.username, editBio, region]);
+  }, [
+    session?.user,
+    editName,
+    editUsername,
+    avatarUrl,
+    profile?.username,
+    editBio,
+    region,
+  ]);
 
   /* ---------- Region detection ---------- */
   const detectRegion = useCallback(async () => {
@@ -265,8 +315,11 @@ export default function Settings() {
     setLoadingRegion(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'We need location permission to detect your region.');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "We need location permission to detect your region."
+        );
         return;
       }
 
@@ -277,53 +330,71 @@ export default function Settings() {
 
       const places = await Location.reverseGeocodeAsync(pos.coords);
       if (!places?.length) {
-        Alert.alert('Oops', 'Unable to determine your region.');
+        Alert.alert("Oops", "Unable to determine your region.");
         return;
       }
 
-      const { country = 'Unknown', isoCountryCode = '' } = places[0];
-      const value = `${country} ${countryCodeToFlagEmoji(isoCountryCode || '')}`;
+      const { country = "Unknown", isoCountryCode = "" } = places[0];
+      const value = `${country} ${countryCodeToFlagEmoji(
+        isoCountryCode || ""
+      )}`;
       setRegion(value);
 
       // persist to DB immediately
       if (session?.user?.id) {
-        const { error } = await supabase.from('profiles').update({ region: value }).eq('id', session.user.id);
+        const { error } = await supabase
+          .from("profiles")
+          .update({ region: value })
+          .eq("id", session.user.id);
         if (error) throw error;
-        setProfile(p => (p ? { ...p, region: value } : p));
+        setProfile((p) => (p ? { ...p, region: value } : p));
       }
     } catch (e) {
-      Alert.alert('Error', e.message || 'Failed to detect region');
+      Alert.alert("Error", e.message || "Failed to detect region");
     } finally {
       setLoadingRegion(false);
     }
   }, [loadingRegion, session?.user?.id]);
 
   const resetContactForm = () => {
-    setEditingId(null); setCName(''); setCRelation(''); setCPhone('');
+    setEditingId(null);
+    setCName("");
+    setCRelation("");
+    setCPhone("");
   };
   const openAddContact = () => {
     if (contacts.length >= MAX_CONTACTS) {
-      return Alert.alert('Limit reached', `You can save up to ${MAX_CONTACTS} close contacts.`);
+      return Alert.alert(
+        "Limit reached",
+        `You can save up to ${MAX_CONTACTS} close contacts.`
+      );
     }
     resetContactForm();
     setShowContactForm(true);
   };
   const openEditContact = (c) => {
-    setEditingId(c.id); setCName(c.name); setCRelation(c.relation || ''); setCPhone(c.phone);
+    setEditingId(c.id);
+    setCName(c.name);
+    setCRelation(c.relation || "");
+    setCPhone(c.phone);
     setShowContactForm(true);
   };
   const deleteContact = (id) => {
-    Alert.alert('Delete contact', 'Remove this contact?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => {
-        const next = contacts.filter(c => c.id !== id);
-        saveContacts(next);
-      } },
+    Alert.alert("Delete contact", "Remove this contact?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          const next = contacts.filter((c) => c.id !== id);
+          saveContacts(next);
+        },
+      },
     ]);
   };
   const saveContact = () => {
     if (!cName.trim() || !cPhone.trim()) {
-      return Alert.alert('Missing info', 'Name and phone are required.');
+      return Alert.alert("Missing info", "Name and phone are required.");
     }
     const item = {
       id: editingId || uuidv4(),
@@ -333,7 +404,7 @@ export default function Settings() {
     };
     let next;
     if (editingId) {
-      next = contacts.map(c => c.id === editingId ? item : c);
+      next = contacts.map((c) => (c.id === editingId ? item : c));
     } else {
       next = [...contacts, item].slice(0, MAX_CONTACTS);
     }
@@ -344,14 +415,32 @@ export default function Settings() {
 
   /* ---------- RENDER ---------- */
   return (
-    <LinearGradient colors={['#f8fafc', '#eef2ff']} style={{ flex: 1 }}>
+    <LinearGradient colors={["#f8fafc", "#eef2ff"]} style={{ flex: 1 }}>
+      <View
+        style={{
+          paddingTop: insets.top + 10,
+          paddingHorizontal: 16,
+        }}
+      >
+        <View style={styles.brandRow}>
+          <Image source={Logo1} style={styles.brandLogo} />
+          <Text style={styles.brandTitle}>Settings</Text>
+        </View>
+      </View>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 16 + insets.bottom }]} // ✅ only bottom safe area
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: 0 },
+        ]}
         contentInsetAdjustmentBehavior="never" // prevent iOS auto-inset at top
       >
         {/* Profile header (tap to edit) */}
-        <TouchableOpacity activeOpacity={0.9} onPress={openEditProfile} style={styles.headerCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={openEditProfile}
+          style={styles.headerCard}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image
               source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
               style={styles.avatar}
@@ -364,7 +453,8 @@ export default function Settings() {
           </View>
           {/* Bio sits below avatar + name */}
           <Text style={styles.bio}>
-            {profile?.bio || 'I am determined to become an expert in disaster management.'}
+            {profile?.bio ||
+              "I am determined to become an expert in disaster management."}
           </Text>
         </TouchableOpacity>
 
@@ -376,7 +466,10 @@ export default function Settings() {
           right={
             <Switch
               value={notifications}
-              onValueChange={(v) => { setNotifications(v); persistToggle(TOGGLE_KEYS.notifications, v); }}
+              onValueChange={(v) => {
+                setNotifications(v);
+                persistToggle(TOGGLE_KEYS.notifications, v);
+              }}
             />
           }
         />
@@ -386,7 +479,10 @@ export default function Settings() {
           right={
             <Switch
               value={sound}
-              onValueChange={(v) => { setSound(v); persistToggle(TOGGLE_KEYS.sound, v); }}
+              onValueChange={(v) => {
+                setSound(v);
+                persistToggle(TOGGLE_KEYS.sound, v);
+              }}
             />
           }
         />
@@ -396,7 +492,10 @@ export default function Settings() {
           right={
             <Switch
               value={vibration}
-              onValueChange={(v) => { setVibration(v); persistToggle(TOGGLE_KEYS.vibration, v); }}
+              onValueChange={(v) => {
+                setVibration(v);
+                persistToggle(TOGGLE_KEYS.vibration, v);
+              }}
             />
           }
         />
@@ -417,9 +516,17 @@ export default function Settings() {
         >
           <View style={styles.regionInner}>
             <View style={styles.regionLeft}>
-              <Ionicons name="earth" size={18} color="#111827" style={{ marginRight: 10 }} />
+              <Ionicons
+                name="earth"
+                size={18}
+                color="#111827"
+                style={{ marginRight: 10 }}
+              />
               <Text style={styles.rowText}>
-                Region: <Text style={styles.regionValue}>{region || 'Tap to detect'}</Text>
+                Region:{" "}
+                <Text style={styles.regionValue}>
+                  {region || "Tap to detect"}
+                </Text>
               </Text>
             </View>
 
@@ -432,7 +539,7 @@ export default function Settings() {
                     {
                       rotate: spinAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: ['0deg', '360deg'],
+                        outputRange: ["0deg", "360deg"],
                       }),
                     },
                   ],
@@ -446,7 +553,7 @@ export default function Settings() {
         <CardRow
           icon="document-text"
           label="Certificates"
-          onPress={() => navigation.navigate('Certificates')}
+          onPress={() => navigation.navigate("Certificates")}
           chevron
         />
 
@@ -467,34 +574,60 @@ export default function Settings() {
           onPress={() => setShowPassword(true)}
           chevron
         />
-        <CardRow
-          icon="log-out"
-          label="Logout"
-          onPress={onLogout}
-          chevron
-        />
+        <CardRow icon="log-out" label="Logout" onPress={onLogout} chevron />
         <View style={{ height: 24 }} />
       </ScrollView>
 
       {/* Language modal */}
-      <Modal visible={showLang} transparent animationType="fade" onRequestClose={() => setShowLang(false)}>
+      <Modal
+        visible={showLang}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowLang(false)}
+      >
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Choose Language</Text>
-            <ModalButton text="English" onPress={() => { setLang('en'); setShowLang(false); }} />
-            <ModalButton text="中文" onPress={() => { setLang('zh'); setShowLang(false); }} />
-            <ModalButton text="Close" variant="secondary" onPress={() => setShowLang(false)} />
+            <ModalButton
+              text="English"
+              onPress={() => {
+                setLang("en");
+                setShowLang(false);
+              }}
+            />
+            <ModalButton
+              text="中文"
+              onPress={() => {
+                setLang("zh");
+                setShowLang(false);
+              }}
+            />
+            <ModalButton
+              text="Close"
+              variant="secondary"
+              onPress={() => setShowLang(false)}
+            />
           </View>
         </View>
       </Modal>
 
       {/* Change password modal */}
-      <Modal visible={showPassword} transparent animationType="fade" onRequestClose={() => setShowPassword(false)}>
+      <Modal
+        visible={showPassword}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowPassword(false)}
+      >
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Change Password</Text>
             <View style={styles.inputWrap}>
-              <Ionicons name="lock-closed" size={18} color="#6b7280" style={{ marginRight: 6 }} />
+              <Ionicons
+                name="lock-closed"
+                size={18}
+                color="#6b7280"
+                style={{ marginRight: 6 }}
+              />
               <TextInput
                 placeholder="New password"
                 secureTextEntry
@@ -504,7 +637,11 @@ export default function Settings() {
               />
             </View>
             <ModalButton text="Update" onPress={onChangePassword} />
-            <ModalButton text="Cancel" variant="secondary" onPress={() => setShowPassword(false)} />
+            <ModalButton
+              text="Cancel"
+              variant="secondary"
+              onPress={() => setShowPassword(false)}
+            />
           </View>
         </View>
       </Modal>
@@ -521,19 +658,29 @@ export default function Settings() {
           <View style={styles.editCard}>
             <Text style={styles.editTitle}>Edit Profile</Text>
 
-            <View style={{ alignItems: 'center', marginTop: 4, marginBottom: 16 }}>
+            <View
+              style={{ alignItems: "center", marginTop: 4, marginBottom: 16 }}
+            >
               <Image
                 source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
                 style={styles.editAvatarLarge}
               />
-              <TouchableOpacity onPress={pickAndUploadAvatar} style={styles.smallBtn}>
+              <TouchableOpacity
+                onPress={pickAndUploadAvatar}
+                style={styles.smallBtn}
+              >
                 <Text style={styles.smallBtnText}>Change Photo</Text>
               </TouchableOpacity>
             </View>
 
             {/* Name */}
             <View style={styles.pillInput}>
-              <Ionicons name="person" size={18} color="#6b7280" style={styles.inputIcon} />
+              <Ionicons
+                name="person"
+                size={18}
+                color="#6b7280"
+                style={styles.inputIcon}
+              />
               <TextInput
                 placeholder="Name"
                 value={editName}
@@ -545,7 +692,12 @@ export default function Settings() {
 
             {/* Username */}
             <View style={styles.pillInput}>
-              <Ionicons name="at" size={18} color="#6b7280" style={styles.inputIcon} />
+              <Ionicons
+                name="at"
+                size={18}
+                color="#6b7280"
+                style={styles.inputIcon}
+              />
               <TextInput
                 placeholder="Username"
                 autoCapitalize="none"
@@ -558,14 +710,22 @@ export default function Settings() {
 
             {/* Bio */}
             <View style={[styles.pillInput, styles.pillInputMultiline]}>
-              <Ionicons name="book" size={18} color="#6b7280" style={[styles.inputIcon, { marginTop: 10 }]} />
+              <Ionicons
+                name="book"
+                size={18}
+                color="#6b7280"
+                style={[styles.inputIcon, { marginTop: 10 }]}
+              />
               <TextInput
                 placeholder="Bio"
                 value={editBio}
                 onChangeText={setEditBio}
                 multiline
                 numberOfLines={3}
-                style={[styles.pillField, { height: 84, textAlignVertical: 'top' }]}
+                style={[
+                  styles.pillField,
+                  { height: 84, textAlignVertical: "top" },
+                ]}
                 placeholderTextColor="#9ca3af"
               />
             </View>
@@ -578,7 +738,10 @@ export default function Settings() {
 
           {/* Separate cancel sheet */}
           <View style={styles.cancelCard}>
-            <TouchableOpacity onPress={() => setShowEditProfile(false)} style={styles.cancelBtn}>
+            <TouchableOpacity
+              onPress={() => setShowEditProfile(false)}
+              style={styles.cancelBtn}
+            >
               <Text style={styles.cancelBtnText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -586,28 +749,49 @@ export default function Settings() {
       </Modal>
 
       {/* Contacts modal */}
-      <Modal visible={showContacts} transparent animationType="fade" onRequestClose={() => setShowContacts(false)}>
+      <Modal
+        visible={showContacts}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowContacts(false)}
+      >
         <View style={styles.backdrop}>
-          <View style={[styles.modalCard, { maxHeight: '80%' }]}>
+          <View style={[styles.modalCard, { maxHeight: "80%" }]}>
             <Text style={styles.modalTitle}>Emergency Contacts</Text>
 
             {contacts.map((c) => (
               <View key={c.id} style={styles.contactRow}>
                 <View style={styles.contactLeft}>
-                  <View style={styles.emIcon}><Ionicons name="person" size={14} color="#fff" /></View>
+                  <View style={styles.emIcon}>
+                    <Ionicons name="person" size={14} color="#fff" />
+                  </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: '700' }}>{c.name} {!!c.relation && <Text style={{ color: '#6b7280' }}>({c.relation})</Text>}</Text>
-                    <Text style={{ color: '#374151' }}>{c.phone}</Text>
+                    <Text style={{ fontWeight: "700" }}>
+                      {c.name}{" "}
+                      {!!c.relation && (
+                        <Text style={{ color: "#6b7280" }}>({c.relation})</Text>
+                      )}
+                    </Text>
+                    <Text style={{ color: "#374151" }}>{c.phone}</Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                  <TouchableOpacity style={styles.iconBtn} onPress={() => call(c.phone)}>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <TouchableOpacity
+                    style={styles.iconBtn}
+                    onPress={() => call(c.phone)}
+                  >
                     <Ionicons name="call" size={16} color="#fff" />
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.iconBtn, { backgroundColor: '#2563eb' }]} onPress={() => openEditContact(c)}>
+                  <TouchableOpacity
+                    style={[styles.iconBtn, { backgroundColor: "#2563eb" }]}
+                    onPress={() => openEditContact(c)}
+                  >
                     <Ionicons name="create" size={16} color="#fff" />
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.iconBtn, { backgroundColor: '#ef4444' }]} onPress={() => deleteContact(c.id)}>
+                  <TouchableOpacity
+                    style={[styles.iconBtn, { backgroundColor: "#ef4444" }]}
+                    onPress={() => deleteContact(c.id)}
+                  >
                     <Ionicons name="trash" size={16} color="#fff" />
                   </TouchableOpacity>
                 </View>
@@ -615,37 +799,95 @@ export default function Settings() {
             ))}
 
             <TouchableOpacity
-              style={[styles.modalBtn, { marginTop: 14, backgroundColor: contacts.length >= MAX_CONTACTS ? '#9ca3af' : '#22c55e' }]}
+              style={[
+                styles.modalBtn,
+                {
+                  marginTop: 14,
+                  backgroundColor:
+                    contacts.length >= MAX_CONTACTS ? "#9ca3af" : "#22c55e",
+                },
+              ]}
               onPress={openAddContact}
               disabled={contacts.length >= MAX_CONTACTS}
             >
-              <Text style={styles.modalBtnText}>Add Contact ({contacts.length}/{MAX_CONTACTS})</Text>
+              <Text style={styles.modalBtnText}>
+                Add Contact ({contacts.length}/{MAX_CONTACTS})
+              </Text>
             </TouchableOpacity>
 
-            <ModalButton text="Close" variant="secondary" onPress={() => setShowContacts(false)} />
+            <ModalButton
+              text="Close"
+              variant="secondary"
+              onPress={() => setShowContacts(false)}
+            />
           </View>
         </View>
       </Modal>
 
       {/* Add/Edit contact form */}
-      <Modal visible={showContactForm} transparent animationType="fade" onRequestClose={() => setShowContactForm(false)}>
+      <Modal
+        visible={showContactForm}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowContactForm(false)}
+      >
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>{editingId ? 'Edit Contact' : 'Add Contact'}</Text>
+            <Text style={styles.modalTitle}>
+              {editingId ? "Edit Contact" : "Add Contact"}
+            </Text>
             <View style={styles.inputWrap}>
-              <Ionicons name="person" size={18} color="#6b7280" style={{ marginRight: 6 }} />
-              <TextInput placeholder="Full name" value={cName} onChangeText={setCName} style={{ flex: 1 }} />
+              <Ionicons
+                name="person"
+                size={18}
+                color="#6b7280"
+                style={{ marginRight: 6 }}
+              />
+              <TextInput
+                placeholder="Full name"
+                value={cName}
+                onChangeText={setCName}
+                style={{ flex: 1 }}
+              />
             </View>
             <View style={[styles.inputWrap, { marginTop: 10 }]}>
-              <Ionicons name="heart" size={18} color="#6b7280" style={{ marginRight: 6 }} />
-              <TextInput placeholder="Relation (e.g. Spouse)" value={cRelation} onChangeText={setCRelation} style={{ flex: 1 }} />
+              <Ionicons
+                name="heart"
+                size={18}
+                color="#6b7280"
+                style={{ marginRight: 6 }}
+              />
+              <TextInput
+                placeholder="Relation (e.g. Spouse)"
+                value={cRelation}
+                onChangeText={setCRelation}
+                style={{ flex: 1 }}
+              />
             </View>
             <View style={[styles.inputWrap, { marginTop: 10 }]}>
-              <Ionicons name="call" size={18} color="#6b7280" style={{ marginRight: 6 }} />
-              <TextInput placeholder="Phone number" keyboardType="phone-pad" value={cPhone} onChangeText={setCPhone} style={{ flex: 1 }} />
+              <Ionicons
+                name="call"
+                size={18}
+                color="#6b7280"
+                style={{ marginRight: 6 }}
+              />
+              <TextInput
+                placeholder="Phone number"
+                keyboardType="phone-pad"
+                value={cPhone}
+                onChangeText={setCPhone}
+                style={{ flex: 1 }}
+              />
             </View>
-            <ModalButton text={editingId ? 'Save' : 'Add'} onPress={saveContact} />
-            <ModalButton text="Cancel" variant="secondary" onPress={() => setShowContactForm(false)} />
+            <ModalButton
+              text={editingId ? "Save" : "Add"}
+              onPress={saveContact}
+            />
+            <ModalButton
+              text="Cancel"
+              variant="secondary"
+              onPress={() => setShowContactForm(false)}
+            />
           </View>
         </View>
       </Modal>
@@ -661,182 +903,301 @@ function CardRow({ icon, label, right, onPress, chevron }) {
   const content = (
     <View style={styles.rowInner}>
       <View style={styles.rowLeft}>
-        <Ionicons name={icon} size={18} color="#111827" style={{ marginRight: 10 }} />
+        <Ionicons
+          name={icon}
+          size={18}
+          color="#111827"
+          style={{ marginRight: 10 }}
+        />
         <Text style={styles.rowText}>{label}</Text>
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
         {right}
-        {chevron && <Ionicons name="chevron-forward" size={18} color="#111827" />}
+        {chevron && (
+          <Ionicons name="chevron-forward" size={18} color="#111827" />
+        )}
       </View>
     </View>
   );
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={styles.row}>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.85}
+        style={styles.row}
+      >
         {content}
       </TouchableOpacity>
     );
   }
   return <View style={styles.row}>{content}</View>;
 }
-function ModalButton({ text, onPress, variant = 'primary' }) {
+function ModalButton({ text, onPress, variant = "primary" }) {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[
         styles.modalBtn,
-        variant === 'secondary' && { backgroundColor: '#e5e7eb' },
-      ]}>
-      <Text style={[styles.modalBtnText, variant === 'secondary' && { color: '#111827' }]}>{text}</Text>
+        variant === "secondary" && { backgroundColor: "#e5e7eb" },
+      ]}
+    >
+      <Text
+        style={[
+          styles.modalBtnText,
+          variant === "secondary" && { color: "#111827" },
+        ]}
+      >
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 }
 
 /* ---------- styles ---------- */
 const styles = StyleSheet.create({
-  container: { padding: 16 }, // no top safe-area padding here
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 4
+  },
+  brandLogo: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    resizeMode: "contain",
+    backgroundColor: "#EEF2FF",
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#111827",
+    letterSpacing: 0.2,
+  },
+  container: { padding: 16 },
   headerCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     marginBottom: 16,
   },
-  avatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#eee' },
-  name: { fontWeight: '800', fontSize: 16, color: '#111827' },
-  email: { color: '#6b7280', marginTop: 2 },
-  bio: { color: '#374151', marginTop: 8 },
+  avatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: "#eee" },
+  name: { fontWeight: "800", fontSize: 16, color: "#111827" },
+  email: { color: "#6b7280", marginTop: 2 },
+  bio: { color: "#374151", marginTop: 8 },
 
-  sectionTitle: { marginTop: 10, marginBottom: 6, fontWeight: '800', color: '#111827' },
+  sectionTitle: {
+    marginTop: 8,
+    marginBottom: 6,
+    fontWeight: "800",
+    color: "#111827",
+    fontSize: 16
+  },
 
   row: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     paddingHorizontal: 12,
     marginBottom: 10,
     height: 56,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   rowInner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   rowText: {
-    color: '#111827',
-    fontWeight: '600',
+    color: "#111827",
+    fontWeight: "600",
     fontSize: 15,
   },
   backdrop: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', alignItems: 'center', justifyContent: 'center', padding: 16
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
   },
   modalCard: {
-    width: '100%', maxWidth: 380, backgroundColor: '#fff', borderRadius: 16,
-    borderWidth: 1, borderColor: '#e5e7eb', padding: 16
+    width: "100%",
+    maxWidth: 380,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    padding: 16,
   },
-  modalTitle: { fontWeight: '800', fontSize: 16, marginBottom: 10, color: '#111827' },
+  modalTitle: {
+    fontWeight: "800",
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#111827",
+  },
   modalBtn: {
-    backgroundColor: '#6366F1', paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginTop: 10
+    backgroundColor: "#6366F1",
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
   },
-  modalBtnText: { color: '#fff', fontWeight: '700' },
+  modalBtnText: { color: "#fff", fontWeight: "700" },
 
   inputWrap: {
-    flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#e5e7eb',
-    borderRadius: 10, paddingHorizontal: 10, height: 44, backgroundColor: '#fff'
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 44,
+    backgroundColor: "#fff",
   },
 
   // contacts
   contactRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 10, borderBottomWidth: 1, borderColor: '#e5e7eb'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: "#e5e7eb",
   },
-  contactLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
-  emIcon: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#10b981', alignItems: 'center', justifyContent: 'center' },
-  iconBtn: { backgroundColor: '#10b981', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 10 },
+  contactLeft: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
+  emIcon: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "#10b981",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconBtn: {
+    backgroundColor: "#10b981",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
 
   // ===== Edit Profile card (light-mode sheet look) =====
   editCard: {
-    width: '92%',
+    width: "92%",
     maxWidth: 520,
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     paddingHorizontal: 18,
     paddingTop: 18,
     paddingBottom: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
+    borderColor: "#e5e7eb",
+    shadowColor: "#000",
     shadowOpacity: 0.12,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
   },
-  editTitle: { fontSize: 20, fontWeight: '800', color: '#0f172a' },
+  editTitle: { fontSize: 20, fontWeight: "800", color: "#0f172a" },
   editAvatarLarge: {
-    width: 120, height: 120, borderRadius: 60, backgroundColor: '#eef2ff', marginTop: 8,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#eef2ff",
+    marginTop: 8,
   },
   smallBtn: {
-    marginTop: 8, paddingVertical: 6, paddingHorizontal: 12, borderRadius: 999, backgroundColor: '#EEF2FF',
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: "#EEF2FF",
   },
-  smallBtnText: { color: '#374151', fontWeight: '700' },
+  smallBtnText: { color: "#374151", fontWeight: "700" },
 
   // Inputs — soft “pill” fields with icons
   pillInput: {
-    flexDirection: 'row', alignItems: 'center', borderRadius: 14, backgroundColor: '#F5F7FB',
-    borderWidth: 1, borderColor: '#E6E9F2', height: 52, paddingHorizontal: 12, marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: "#F5F7FB",
+    borderWidth: 1,
+    borderColor: "#E6E9F2",
+    height: 52,
+    paddingHorizontal: 12,
+    marginTop: 12,
   },
   pillInputMultiline: {
-    height: 100, paddingTop: 6, alignItems: 'flex-start',
+    height: 100,
+    paddingTop: 6,
+    alignItems: "flex-start",
   },
   inputIcon: { marginRight: 8 },
-  pillField: { flex: 1, fontSize: 16, color: '#111827' },
+  pillField: { flex: 1, fontSize: 16, color: "#111827" },
 
   // Primary Save button
   primaryBtn: {
-    marginTop: 16, backgroundColor: '#6366F1', height: 54, borderRadius: 18,
-    alignItems: 'center', justifyContent: 'center', shadowColor: '#000',
-    shadowOpacity: 0.14, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 4,
+    marginTop: 16,
+    backgroundColor: "#6366F1",
+    height: 54,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
-  primaryBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  primaryBtnText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
   // Separate Cancel sheet (rounded card below)
   cancelCard: {
-    width: '92%', maxWidth: 520, borderRadius: 18, backgroundColor: '#ffffff',
-    marginTop: 12, borderWidth: 1, borderColor: '#e5e7eb', overflow: 'hidden',
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 6 }, elevation: 3,
+    width: "92%",
+    maxWidth: 520,
+    borderRadius: 18,
+    backgroundColor: "#ffffff",
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
-  cancelBtn: { height: 56, alignItems: 'center', justifyContent: 'center' },
-  cancelBtnText: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  cancelBtn: { height: 56, alignItems: "center", justifyContent: "center" },
+  cancelBtnText: { fontSize: 16, fontWeight: "700", color: "#111827" },
 
   // Detect region button
   regionCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     paddingHorizontal: 12,
     paddingVertical: 12,
     marginBottom: 10,
   },
   regionInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   regionLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flexShrink: 1,
   },
   regionValue: {
-    color: '#111827',
-    fontWeight: '700',
+    color: "#111827",
+    fontWeight: "700",
   },
 });

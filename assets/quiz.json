@@ -1,0 +1,1851 @@
+{
+  "version": "1.0",
+  "categories": [
+    {
+      "id": "flood",
+      "title": "Flood Safety",
+      "sets": [
+        {
+          "id": "flood-1",
+          "title": "Flood Safety #1",
+          "questions": [
+            {
+              "question": "Best first action during a sudden flash flood?",
+              "options": [
+                "Move to higher ground",
+                "Take photos for insurance",
+                "Walk through the water to check depth",
+                "Drive through the water slowly"
+              ],
+              "answer": "Move to higher ground",
+              "explanation": "Getting to higher ground quickly reduces your exposure to rising water and hidden hazards."
+            },
+            {
+              "question": "Which area should you avoid walking through?",
+              "options": [
+                "Water above ankle depth",
+                "A covered walkway",
+                "A pedestrian bridge",
+                "Dry sidewalks"
+              ],
+              "answer": "Water above ankle depth",
+              "explanation": "Even shallow moving water can knock you off balance and may hide open drains or debris."
+            },
+            {
+              "question": "While driving, road markings are not visible due to water. What should you do?",
+              "options": [
+                "Turn around and find another route",
+                "Maintain speed to avoid stalling",
+                "Drive in the middle quickly",
+                "Follow the car in front closely"
+              ],
+              "answer": "Turn around and find another route",
+              "explanation": "If you can't see the road, it may be washed out or deeper than expected. Turn around—don’t risk it."
+            },
+            {
+              "question": "Where should you get reliable flood updates?",
+              "options": [
+                "Official government alerts",
+                "Random social media posts",
+                "Unverified group chats",
+                "Celebrity accounts"
+              ],
+              "answer": "Official government alerts",
+              "explanation": "Use verified sources so you act on accurate, timely information."
+            },
+            {
+              "question": "Before evacuating your home (if safe), you should…",
+              "options": [
+                "Turn off main electricity",
+                "Open all windows",
+                "Move valuables to the basement",
+                "Leave all appliances plugged in"
+              ],
+              "answer": "Turn off main electricity",
+              "explanation": "Switching off power (if you can do so safely) reduces electrocution and fire risks."
+            }
+          ]
+        },
+        {
+          "id": "flood-2",
+          "title": "Flood Safety #2",
+          "questions": [
+            {
+              "question": "Floodwater is usually…",
+              "options": [
+                "Contaminated and hazardous",
+                "Safe if it looks clear",
+                "Good for washing wounds",
+                "Fine for drinking once boiled 1 minute"
+              ],
+              "answer": "Contaminated and hazardous",
+              "explanation": "Floodwater can contain sewage, chemicals, and sharp debris—avoid contact."
+            },
+            {
+              "question": "If your car stalls in rising water, you should…",
+              "options": [
+                "Try to restart repeatedly",
+                "Stay inside and wait",
+                "Exit and move to higher ground if safe",
+                "Open the hood and check the battery"
+              ],
+              "answer": "Exit and move to higher ground if safe",
+              "explanation": "Abandon the vehicle if water is rising—your safety comes first."
+            },
+            {
+              "question": "Homeowners can reduce flood impact by…",
+              "options": [
+                "Keeping drains clear of debris",
+                "Storing heavy boxes on the floor",
+                "Disabling smoke alarms",
+                "Leaving doors open in storms"
+              ],
+              "answer": "Keeping drains clear of debris",
+              "explanation": "Clear drains help water flow away and reduce waterlogging around your property."
+            },
+            {
+              "question": "After water recedes, entering buildings should happen…",
+              "options": [
+                "Only after safety is confirmed",
+                "Immediately to salvage items",
+                "While floors are still wet",
+                "At night for privacy"
+              ],
+              "answer": "Only after safety is confirmed",
+              "explanation": "Flooding can damage structures and utilities; re-enter only when it’s declared safe."
+            },
+            {
+              "question": "Walking through floodwater increases risk of…",
+              "options": [
+                "Infection and injury",
+                "Improved balance",
+                "Faster evacuation",
+                "Better traction with sandals"
+              ],
+              "answer": "Infection and injury",
+              "explanation": "Cuts, contamination, hidden holes, and moving water pose serious danger."
+            }
+          ]
+        },
+        {
+          "id": "flood-3",
+          "title": "Flood Safety #3",
+          "questions": [
+            {
+              "question": "The safest footwear in flood conditions is…",
+              "options": [
+                "Sturdy closed shoes or boots",
+                "Flip-flops",
+                "Barefoot",
+                "High heels"
+              ],
+              "answer": "Sturdy closed shoes or boots",
+              "explanation": "Closed shoes protect feet from debris and sharp objects."
+            },
+            {
+              "question": "Before heavy rain, a good preparedness step is to…",
+              "options": [
+                "Charge phones and power banks",
+                "Drain your car battery",
+                "Turn off phone alerts",
+                "Store documents on the floor"
+              ],
+              "answer": "Charge phones and power banks",
+              "explanation": "Power outages are common during floods; stay connected for alerts."
+            },
+            {
+              "question": "When crossing flowing water on foot…",
+              "options": [
+                "Use a stick to test depth and stability",
+                "Run to minimize time in water",
+                "Lock arms with strangers",
+                "Carry heavy bags for balance"
+              ],
+              "answer": "Use a stick to test depth and stability",
+              "explanation": "A stick or pole helps detect holes and unstable ground."
+            },
+            {
+              "question": "If trapped upstairs by floodwater, you should…",
+              "options": [
+                "Signal for help and stay where rescuers can see you",
+                "Jump into the water",
+                "Hide quietly in a closet",
+                "Turn off all lights"
+              ],
+              "answer": "Signal for help and stay where rescuers can see you",
+              "explanation": "Visibility speeds rescue; do not enter dangerous water."
+            },
+            {
+              "question": "Flood barriers and sandbags are most effective when…",
+              "options": [
+                "Deployed early before water arrives",
+                "Placed after the room is flooded",
+                "Kept in packaging",
+                "Stacked randomly"
+              ],
+              "answer": "Deployed early before water arrives",
+              "explanation": "Early deployment helps keep water out; late placement is far less effective."
+            }
+          ]
+        },
+        {
+          "id": "flood-4",
+          "title": "Flood Safety #4",
+          "questions": [
+            {
+              "question": "If an open manhole may be hidden by water, you should…",
+              "options": [
+                "Avoid the area completely",
+                "Step lightly to test it",
+                "Drive over it quickly",
+                "Jump across the water"
+              ],
+              "answer": "Avoid the area completely",
+              "explanation": "Hidden openings are deadly; choose another path."
+            },
+            {
+              "question": "For apartments in flood-prone areas, store important items…",
+              "options": [
+                "On higher shelves or upper floors",
+                "Under the bed",
+                "On the balcony floor",
+                "Next to drains"
+              ],
+              "answer": "On higher shelves or upper floors",
+              "explanation": "Elevated storage reduces damage from water ingress."
+            },
+            {
+              "question": "When evacuating, you should take…",
+              "options": [
+                "Light essentials like IDs and medicines",
+                "All furniture",
+                "Only cash",
+                "Heavy electronics first"
+              ],
+              "answer": "Light essentials like IDs and medicines",
+              "explanation": "Prioritize safety and essential documents/medications."
+            },
+            {
+              "question": "If electricity is on and the floor is wet…",
+              "options": [
+                "Do not touch electrical switches",
+                "Turn on fans to dry quickly",
+                "Plug in multiple heaters",
+                "Stand in water and test sockets"
+              ],
+              "answer": "Do not touch electrical switches",
+              "explanation": "There is electrocution risk—wait for professionals."
+            },
+            {
+              "question": "A household emergency plan should include…",
+              "options": [
+                "Meeting points and emergency contacts",
+                "Hiding valuables outdoors",
+                "Ignoring warnings",
+                "Relying only on neighbors"
+              ],
+              "answer": "Meeting points and emergency contacts",
+              "explanation": "Clear plans reduce confusion during evacuations."
+            }
+          ]
+        },
+        {
+          "id": "flood-5",
+          "title": "Flood Safety #5",
+          "questions": [
+            {
+              "question": "A basic emergency kit for floods should include…",
+              "options": [
+                "Water, food, flashlight, first-aid",
+                "Board games only",
+                "Perfume and candles",
+                "Multiple glass ornaments"
+              ],
+              "answer": "Water, food, flashlight, first-aid",
+              "explanation": "Essentials support you during outages and limited access."
+            },
+            {
+              "question": "If trapped in a car with water rising outside, first you should…",
+              "options": [
+                "Unbuckle, unlock doors, exit when safe",
+                "Call friends for photos",
+                "Wait until water fully covers car",
+                "Try to drive faster"
+              ],
+              "answer": "Unbuckle, unlock doors, exit when safe",
+              "explanation": "Prepare to exit quickly before pressure prevents door opening."
+            },
+            {
+              "question": "You should avoid driving through water that is…",
+              "options": [
+                "Above the curb/kerb height",
+                "Below your ankle",
+                "Slightly damp",
+                "Just puddles"
+              ],
+              "answer": "Above the curb/kerb height",
+              "explanation": "Water this deep can stall engines and sweep vehicles away."
+            },
+            {
+              "question": "Heavy-rain alerts mean you should…",
+              "options": [
+                "Delay non-essential trips",
+                "Plan water sports",
+                "Ignore updates",
+                "Park in low-lying areas"
+              ],
+              "answer": "Delay non-essential trips",
+              "explanation": "Reduce exposure to hazardous conditions on roads."
+            },
+            {
+              "question": "After cleaning up, treat small cuts from flood debris by…",
+              "options": [
+                "Washing, disinfecting, and covering",
+                "Ignoring them",
+                "Rubbing soil on them",
+                "Leaving them open to air"
+              ],
+              "answer": "Washing, disinfecting, and covering",
+              "explanation": "Floodwater is contaminated; clean and cover wounds to prevent infection."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "Fire Safety",
+      "sets": [
+        {
+          "id": "fire-1",
+          "title": "Fire Safety #1",
+          "questions": [
+            {
+              "question": "First action if you discover a fire?",
+              "options": [
+                "Call emergency & alert others",
+                "Hide quietly",
+                "Use the lift to escape",
+                "Open all doors to vent smoke"
+              ],
+              "answer": "Call emergency & alert others",
+              "explanation": "Raise the alarm and call emergency services immediately."
+            },
+            {
+              "question": "Which is TRUE for evacuation?",
+              "options": [
+                "Use lifts",
+                "Use stairs",
+                "Wait on the floor",
+                "Shout for help only"
+              ],
+              "answer": "Use stairs",
+              "explanation": "Never use lifts during a fire due to power failure and smoke risks."
+            },
+            {
+              "question": "If trapped in a room, you should…",
+              "options": [
+                "Block smoke gaps at the door",
+                "Break windows and lean out",
+                "Hide in a closet",
+                "Light candles for visibility"
+              ],
+              "answer": "Block smoke gaps at the door",
+              "explanation": "Prevent smoke entering and call for help with your exact location."
+            },
+            {
+              "question": "P.A.S.S. for extinguishers means…",
+              "options": [
+                "Pull Aim Squeeze Sweep",
+                "Push Aim Stop Spray",
+                "Press Aim Shoot Sweep",
+                "Pull Ask Spray Slowly"
+              ],
+              "answer": "Pull Aim Squeeze Sweep",
+              "explanation": "This is the standard method to operate most fire extinguishers."
+            },
+            {
+              "question": "Extinguisher suitable for electrical fires:",
+              "options": [
+                "CO₂ or Dry Powder",
+                "Water only",
+                "Foam only",
+                "Sand and water mix"
+              ],
+              "answer": "CO₂ or Dry Powder",
+              "explanation": "These types are safe for energized electrical equipment."
+            }
+          ]
+        },
+        {
+          "id": "fire-2",
+          "title": "Fire Safety #2",
+          "questions": [
+            {
+              "question": "Attempt to extinguish only when…",
+              "options": [
+                "Fire is small & exit is clear",
+                "Any fire size",
+                "You have no training",
+                "Smoke is heavy in stairwell"
+              ],
+              "answer": "Fire is small & exit is clear",
+              "explanation": "Ensure you have a safe way out before attempting to fight a fire."
+            },
+            {
+              "question": "Before evacuating (if safe), you should…",
+              "options": [
+                "Turn off gas mains",
+                "Open doors to ventilate smoke",
+                "Collect heavy valuables",
+                "Take the lift quickly"
+              ],
+              "answer": "Turn off gas mains",
+              "explanation": "Shutting gas may reduce fuel to the fire."
+            },
+            {
+              "question": "Smoke detectors should be placed…",
+              "options": [
+                "In bedrooms and hallways",
+                "Only in the kitchen",
+                "Only in the bathroom",
+                "Only in the living room"
+              ],
+              "answer": "In bedrooms and hallways",
+              "explanation": "Early detection while sleeping is critical."
+            },
+            {
+              "question": "If stairwell fills with smoke while descending…",
+              "options": [
+                "Return and shelter in a safe room",
+                "Keep going down quickly",
+                "Use the lift instead",
+                "Wait on the landing"
+              ],
+              "answer": "Return and shelter in a safe room",
+              "explanation": "Avoid smoke-filled exits; shelter and signal for help."
+            },
+            {
+              "question": "Best prevention while cooking:",
+              "options": [
+                "Never leave cooking unattended",
+                "Disable smoke alarm",
+                "Overheat oil to cook faster",
+                "Store towels near the stove"
+              ],
+              "answer": "Never leave cooking unattended",
+              "explanation": "Unattended cooking is a leading cause of home fires."
+            }
+          ]
+        },
+        {
+          "id": "fire-3",
+          "title": "Fire Safety #3",
+          "questions": [
+            {
+              "question": "For a small oil pan fire, first step:",
+              "options": [
+                "Turn off heat and cover with a lid",
+                "Splash water",
+                "Carry the pan outside",
+                "Add more oil"
+              ],
+              "answer": "Turn off heat and cover with a lid",
+              "explanation": "Smother the flames by removing oxygen; never add water to oil."
+            },
+            {
+              "question": "If clothing catches fire:",
+              "options": [
+                "Stop, Drop, Roll",
+                "Run outside",
+                "Fan the flames",
+                "Pour alcohol"
+              ],
+              "answer": "Stop, Drop, Roll",
+              "explanation": "This smothers the fire and reduces burns."
+            },
+            {
+              "question": "High-rise fires: lifts are for…",
+              "options": [
+                "Firefighting only",
+                "Public evacuation",
+                "Moving pets",
+                "Carrying luggage"
+              ],
+              "answer": "Firefighting only",
+              "explanation": "Lifts may fail or open on affected floors; use stairs."
+            },
+            {
+              "question": "Keep exits and corridors…",
+              "options": [
+                "Clear of clutter",
+                "Filled with storage",
+                "Partially blocked",
+                "Locked for safety"
+              ],
+              "answer": "Clear of clutter",
+              "explanation": "Obstructions slow evacuation and can be hazardous in smoke."
+            },
+            {
+              "question": "After a fire, re-enter a building…",
+              "options": [
+                "Only when authorities say it’s safe",
+                "Immediately to salvage items",
+                "While it’s still smoky",
+                "Through the lift shaft"
+              ],
+              "answer": "Only when authorities say it’s safe",
+              "explanation": "Structural and air-quality hazards may persist."
+            }
+          ]
+        },
+        {
+          "id": "fire-4",
+          "title": "Fire Safety #4",
+          "questions": [
+            {
+              "question": "Extinguisher label ABC means it works on…",
+              "options": [
+                "Solids, liquids, and electrical fires",
+                "Electrical only",
+                "Gas only",
+                "Metal fires only"
+              ],
+              "answer": "Solids, liquids, and electrical fires",
+              "explanation": "ABC covers common classes A, B, and C."
+            },
+            {
+              "question": "A safe-room while trapped should have…",
+              "options": [
+                "A door you can shut and a window to signal",
+                "No windows",
+                "A locked door only",
+                "Open vents to the corridor"
+              ],
+              "answer": "A door you can shut and a window to signal",
+              "explanation": "Reduce smoke entry and increase visibility to rescuers."
+            },
+            {
+              "question": "You find a hose reel blocked by items. You should…",
+              "options": [
+                "Report and keep area clear",
+                "Ignore it",
+                "Use items as seats",
+                "Lock the room"
+              ],
+              "answer": "Report and keep area clear",
+              "explanation": "Firefighting equipment must be accessible."
+            },
+            {
+              "question": "Power strips should be used…",
+              "options": [
+                "Without overloading sockets",
+                "Daisy-chained together",
+                "Under rugs",
+                "Near water sources"
+              ],
+              "answer": "Without overloading sockets",
+              "explanation": "Overloads and heat buildup can cause fires."
+            },
+            {
+              "question": "Good extinguisher location at home:",
+              "options": [
+                "Near kitchen exit",
+                "Inside the oven",
+                "In locked attic",
+                "Behind heavy furniture"
+              ],
+              "answer": "Near kitchen exit",
+              "explanation": "Place where you can access it while keeping an escape route."
+            }
+          ]
+        },
+        {
+          "id": "fire-5",
+          "title": "Fire Safety #5",
+          "questions": [
+            {
+              "question": "If a room is on fire and safe to do so, you should…",
+              "options": [
+                "Close the door to slow spread",
+                "Open windows widely",
+                "Remove the door",
+                "Fan the smoke out"
+              ],
+              "answer": "Close the door to slow spread",
+              "explanation": "Closed doors limit oxygen and slow fire growth."
+            },
+            {
+              "question": "Charging devices overnight…",
+              "options": [
+                "Can overheat and is risky",
+                "Is always safe",
+                "Improves battery life",
+                "Prevents fires"
+              ],
+              "answer": "Can overheat and is risky",
+              "explanation": "Use certified chargers and avoid covering devices."
+            },
+            {
+              "question": "Cigarette butts should be disposed…",
+              "options": [
+                "Fully extinguished in a non-combustible bin",
+                "Into dry leaves",
+                "On carpet",
+                "Into paper baskets"
+              ],
+              "answer": "Fully extinguished in a non-combustible bin",
+              "explanation": "Smoldering butts can cause fires hours later."
+            },
+            {
+              "question": "If hallway fills with smoke…",
+              "options": [
+                "Stay low and crawl",
+                "Stand upright and run",
+                "Hold your breath and sprint",
+                "Wait standing still"
+              ],
+              "answer": "Stay low and crawl",
+              "explanation": "Cleaner air is closer to the floor."
+            },
+            {
+              "question": "Fire blankets are best for…",
+              "options": [
+                "Small pan fires or clothing fires",
+                "Large room fires",
+                "Electrical cabinet fires",
+                "Forest fires"
+              ],
+              "answer": "Small pan fires or clothing fires",
+              "explanation": "They smother small flames by cutting off oxygen."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dengue",
+      "title": "Dengue",
+      "sets": [
+        {
+          "id": "dengue-1",
+          "title": "Dengue #1",
+          "questions": [
+            {
+              "question": "A common dengue symptom is…",
+              "options": [
+                "Sudden fever with aches",
+                "Chronic cough",
+                "Itchy feet only",
+                "Hearing loss"
+              ],
+              "answer": "Sudden fever with aches",
+              "explanation": "Dengue often presents with fever, headache, muscle/joint pain, and sometimes rash."
+            },
+            {
+              "question": "Main dengue vector is…",
+              "options": ["Aedes mosquito", "Housefly", "Beetle", "Butterfly"],
+              "answer": "Aedes mosquito",
+              "explanation": "Aedes aegypti and Aedes albopictus spread dengue virus."
+            },
+            {
+              "question": "Peak biting periods are typically…",
+              "options": [
+                "Early morning and evening",
+                "Midnight only",
+                "Noon only",
+                "Never at daytime"
+              ],
+              "answer": "Early morning and evening",
+              "explanation": "Aedes mosquitoes often bite at dawn and dusk."
+            },
+            {
+              "question": "A good personal protection step:",
+              "options": [
+                "Apply mosquito repellent regularly",
+                "Leave windows open without screens",
+                "Wear shorts outdoors at dusk",
+                "Avoid repellents entirely"
+              ],
+              "answer": "Apply mosquito repellent regularly",
+              "explanation": "Use repellents with DEET, picaridin (icaridin), or IR3535 as directed."
+            },
+            {
+              "question": "Seek medical care urgently if…",
+              "options": [
+                "Severe abdominal pain or bleeding appears",
+                "Mild sore throat only",
+                "You feel hungry",
+                "You can’t sleep early"
+              ],
+              "answer": "Severe abdominal pain or bleeding appears",
+              "explanation": "Warning signs of severe dengue need prompt evaluation."
+            }
+          ]
+        },
+        {
+          "id": "dengue-2",
+          "title": "Dengue #2",
+          "questions": [
+            {
+              "question": "To prevent breeding at home, you should…",
+              "options": [
+                "Eliminate stagnant water",
+                "Keep water in trays for weeks",
+                "Leave buckets uncovered",
+                "Collect rainwater in open bowls"
+              ],
+              "answer": "Eliminate stagnant water",
+              "explanation": "Mosquitoes breed in small amounts of standing water."
+            },
+            {
+              "question": "Flower pot plates should be…",
+              "options": [
+                "Emptied regularly",
+                "Filled with water",
+                "Covered with soil",
+                "Painted only"
+              ],
+              "answer": "Emptied regularly",
+              "explanation": "Water that collects in trays becomes breeding habitat."
+            },
+            {
+              "question": "Clothing choice to prevent bites:",
+              "options": [
+                "Long sleeves and pants",
+                "Sleeveless only",
+                "Shorts at dusk",
+                "Open sandals everywhere"
+              ],
+              "answer": "Long sleeves and pants",
+              "explanation": "Covering skin reduces bite exposure."
+            },
+            {
+              "question": "Repellent should be applied…",
+              "options": [
+                "As directed and re-applied as needed",
+                "Only once per month",
+                "Only to clothes labels",
+                "Only indoors"
+              ],
+              "answer": "As directed and re-applied as needed",
+              "explanation": "Follow label instructions for effective protection."
+            },
+            {
+              "question": "A small water amount that can breed mosquitoes is roughly the size of…",
+              "options": [
+                "A coin-sized puddle",
+                "A bathtub",
+                "A swimming pool",
+                "A lake"
+              ],
+              "answer": "A coin-sized puddle",
+              "explanation": "Even tiny amounts of clean stagnant water can breed mosquitoes."
+            }
+          ]
+        },
+        {
+          "id": "dengue-3",
+          "title": "Dengue #3",
+          "questions": [
+            {
+              "question": "Common dengue rash may appear…",
+              "options": [
+                "A few days after fever starts",
+                "Before birth",
+                "Only in winter",
+                "Never with dengue"
+              ],
+              "answer": "A few days after fever starts",
+              "explanation": "Some patients develop a rash during the febrile or recovery phase."
+            },
+            {
+              "question": "Hydration during dengue illness is…",
+              "options": [
+                "Important to prevent dehydration",
+                "Not needed",
+                "Harmful",
+                "Only for athletes"
+              ],
+              "answer": "Important to prevent dehydration",
+              "explanation": "Fluids help support circulation and recovery; follow medical advice."
+            },
+            {
+              "question": "Mild bleeding (nose/gum) can occur due to…",
+              "options": [
+                "Platelet changes in dengue",
+                "Broken tooth only",
+                "Always brushing too hard",
+                "Spicy food"
+              ],
+              "answer": "Platelet changes in dengue",
+              "explanation": "Dengue can lower platelets and increase bleeding tendency."
+            },
+            {
+              "question": "Use of mosquito nets and screens…",
+              "options": [
+                "Helps reduce bites",
+                "Has no effect",
+                "Attracts more mosquitoes",
+                "Is harmful indoors"
+              ],
+              "answer": "Helps reduce bites",
+              "explanation": "Physical barriers are effective preventive measures."
+            },
+            {
+              "question": "Community prevention includes…",
+              "options": [
+                "Clearing gutters and common areas",
+                "Ignoring shared spaces",
+                "Storing water uncovered",
+                "Leaving trash outdoors"
+              ],
+              "answer": "Clearing gutters and common areas",
+              "explanation": "Community hygiene reduces breeding sites."
+            }
+          ]
+        },
+        {
+          "id": "dengue-4",
+          "title": "Dengue #4",
+          "questions": [
+            {
+              "question": "If you suspect dengue, you should…",
+              "options": [
+                "Consult a healthcare provider",
+                "Self-medicate with unknown pills",
+                "Avoid all fluids",
+                "Ignore fever for weeks"
+              ],
+              "answer": "Consult a healthcare provider",
+              "explanation": "Medical assessment guides care and monitoring for warning signs."
+            },
+            {
+              "question": "For fever management in dengue, avoid…",
+              "options": [
+                "Aspirin without advice",
+                "Paracetamol/acetaminophen as directed",
+                "Rest and fluids",
+                "Monitoring symptoms"
+              ],
+              "answer": "Aspirin without advice",
+              "explanation": "Some medications increase bleeding risk—follow medical guidance."
+            },
+            {
+              "question": "Aedes mosquitoes typically breed in…",
+              "options": [
+                "Containers with clean water",
+                "Fast-flowing rivers",
+                "Ocean waves",
+                "Dry sand"
+              ],
+              "answer": "Containers with clean water",
+              "explanation": "They prefer man-made containers with stagnant clean water."
+            },
+            {
+              "question": "Travelers to dengue areas should…",
+              "options": [
+                "Use repellents and protective clothing",
+                "Avoid all outdoor activity",
+                "Cover only feet",
+                "Skip repellents at dusk"
+              ],
+              "answer": "Use repellents and protective clothing",
+              "explanation": "Multiple layers of protection reduce risk."
+            },
+            {
+              "question": "If symptoms worsen (vomiting, severe pain, bleeding)…",
+              "options": [
+                "Seek urgent medical attention",
+                "Wait it out at home",
+                "Exercise more",
+                "Take random supplements"
+              ],
+              "answer": "Seek urgent medical attention",
+              "explanation": "These are warning signs for severe dengue."
+            }
+          ]
+        },
+        {
+          "id": "dengue-5",
+          "title": "Dengue #5",
+          "questions": [
+            {
+              "question": "Weekly home checks should include…",
+              "options": [
+                "Emptying and scrubbing water containers",
+                "Filling vases to the brim",
+                "Keeping buckets uncovered",
+                "Storing tires with rainwater"
+              ],
+              "answer": "Emptying and scrubbing water containers",
+              "explanation": "Disrupt eggs/larvae and remove stagnant water."
+            },
+            {
+              "question": "Lighting citronella candles is…",
+              "options": [
+                "Not a reliable standalone protection",
+                "Sufficient protection",
+                "Better than repellent",
+                "A substitute for nets"
+              ],
+              "answer": "Not a reliable standalone protection",
+              "explanation": "Use proven repellents and barriers; candles alone are not enough."
+            },
+            {
+              "question": "Typical lab finding in dengue can include…",
+              "options": [
+                "Low platelets",
+                "High calcium",
+                "High platelets always",
+                "Very high sodium"
+              ],
+              "answer": "Low platelets",
+              "explanation": "Thrombocytopenia is common; clinicians use labs to monitor severity."
+            },
+            {
+              "question": "Post-illness recovery advice includes…",
+              "options": [
+                "Gradual return to activity and hydration",
+                "Immediate intense exercise",
+                "No fluids",
+                "Permanent bed rest"
+              ],
+              "answer": "Gradual return to activity and hydration",
+              "explanation": "Allow time for strength to return; follow medical advice."
+            },
+            {
+              "question": "Neighborhood action that helps most:",
+              "options": [
+                "Regular clean-ups to remove breeding sites",
+                "Leaving trash scattered",
+                "Collecting water in open barrels",
+                "Ignoring gutters"
+              ],
+              "answer": "Regular clean-ups to remove breeding sites",
+              "explanation": "Coordinated community efforts reduce mosquito populations."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "firstaid",
+      "title": "First Aid",
+      "sets": [
+        {
+          "id": "firstaid-1",
+          "title": "First Aid #1",
+          "questions": [
+            {
+              "question": "Adult CPR compression rate is…",
+              "options": [
+                "100–120 per minute",
+                "40–60 per minute",
+                "160–200 per minute",
+                "No compressions needed"
+              ],
+              "answer": "100–120 per minute",
+              "explanation": "Provide high-quality compressions at 100–120/min with full recoil."
+            },
+            {
+              "question": "Depth of adult chest compressions is about…",
+              "options": ["5–6 cm", "1–2 cm", "10–12 cm", "No depth guidance"],
+              "answer": "5–6 cm",
+              "explanation": "Push hard and fast, allowing full chest recoil."
+            },
+            {
+              "question": "If an AED arrives, you should…",
+              "options": [
+                "Turn it on and follow prompts",
+                "Wait to finish the quiz",
+                "Shake the patient",
+                "Remove only one pad"
+              ],
+              "answer": "Turn it on and follow prompts",
+              "explanation": "AEDs give clear voice instructions—apply pads and follow them."
+            },
+            {
+              "question": "Severe bleeding first step:",
+              "options": [
+                "Apply firm direct pressure",
+                "Rinse lightly then wait",
+                "Remove embedded objects",
+                "Do nothing until help arrives"
+              ],
+              "answer": "Apply firm direct pressure",
+              "explanation": "Direct pressure is the primary method to control external bleeding."
+            },
+            {
+              "question": "For a severely bleeding limb, if trained you may…",
+              "options": [
+                "Apply a tourniquet above the wound",
+                "Apply ice directly",
+                "Remove all dressings often",
+                "Tie a string loosely"
+              ],
+              "answer": "Apply a tourniquet above the wound",
+              "explanation": "Use a proper tourniquet 5–7 cm above the wound (not over a joint) and note the time."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-2",
+          "title": "First Aid #2",
+          "questions": [
+            {
+              "question": "Adult choking: if severe and unable to cough…",
+              "options": [
+                "Give 5 back blows then 5 abdominal thrusts",
+                "Offer water",
+                "Pat the head",
+                "Ask them to lie down"
+              ],
+              "answer": "Give 5 back blows then 5 abdominal thrusts",
+              "explanation": "Alternate back blows and abdominal thrusts until relief or collapse."
+            },
+            {
+              "question": "For burns, the correct first aid includes…",
+              "options": [
+                "Cool with running water for 20 minutes",
+                "Apply butter",
+                "Apply toothpaste",
+                "Use ice directly on skin"
+              ],
+              "answer": "Cool with running water for 20 minutes",
+              "explanation": "Cooling reduces tissue damage; avoid oils/creams/ice on fresh burns."
+            },
+            {
+              "question": "Do NOT pop blisters because…",
+              "options": [
+                "They protect the wound from infection",
+                "It relieves pain immediately",
+                "It improves scarring",
+                "It speeds recovery"
+              ],
+              "answer": "They protect the wound from infection",
+              "explanation": "Keep blisters intact and cover with a clean non-stick dressing."
+            },
+            {
+              "question": "Suspected fracture first aid includes…",
+              "options": [
+                "Immobilize and avoid straightening",
+                "Forcefully realign the limb",
+                "Apply heat packs only",
+                "Encourage running"
+              ],
+              "answer": "Immobilize and avoid straightening",
+              "explanation": "Immobilize the joint above and below; seek medical care."
+            },
+            {
+              "question": "For sprains/strains, initial care is…",
+              "options": [
+                "Protect, Rest, Ice, Compress, Elevate",
+                "Run it off",
+                "Heat and massage immediately",
+                "Ignore swelling"
+              ],
+              "answer": "Protect, Rest, Ice, Compress, Elevate",
+              "explanation": "The P.R.I.C.E. approach helps reduce pain and swelling early on."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-3",
+          "title": "First Aid #3",
+          "questions": [
+            {
+              "question": "Heat stroke is…",
+              "options": [
+                "A life-threatening emergency",
+                "A mild nuisance",
+                "A cold-weather issue",
+                "Solved by hot drinks"
+              ],
+              "answer": "A life-threatening emergency",
+              "explanation": "Move to a cool area and cool rapidly; call emergency services."
+            },
+            {
+              "question": "Signs of heat stroke can include…",
+              "options": [
+                "Very high temperature and confusion",
+                "Low heart rate only",
+                "Blue nails only",
+                "Hiccups"
+              ],
+              "answer": "Very high temperature and confusion",
+              "explanation": "Also look for hot, dry skin or collapse."
+            },
+            {
+              "question": "Cooling methods for heat illness include…",
+              "options": [
+                "Cold packs to neck/armpits/groin",
+                "Thick blankets",
+                "Hot showers",
+                "Sitting in the sun"
+              ],
+              "answer": "Cold packs to neck/armpits/groin",
+              "explanation": "Rapid active cooling lowers core temperature."
+            },
+            {
+              "question": "If conscious with heat exhaustion, you can…",
+              "options": [
+                "Give small sips of cool water",
+                "Give alcohol",
+                "Withhold fluids",
+                "Make them run"
+              ],
+              "answer": "Give small sips of cool water",
+              "explanation": "Hydration and rest in a cool place support recovery."
+            },
+            {
+              "question": "During CPR, interruptions should be…",
+              "options": [
+                "As brief as possible",
+                "Frequent for rest",
+                "Every 5 seconds",
+                "Each minute for 20 seconds"
+              ],
+              "answer": "As brief as possible",
+              "explanation": "Minimize pause time to maintain perfusion."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-4",
+          "title": "First Aid #4",
+          "questions": [
+            {
+              "question": "For an embedded object in a wound, you should…",
+              "options": [
+                "Do not remove it; pad around and secure",
+                "Pull it out quickly",
+                "Twist it to loosen",
+                "Ignore and keep moving"
+              ],
+              "answer": "Do not remove it; pad around and secure",
+              "explanation": "Removing can worsen bleeding; stabilize and seek medical help."
+            },
+            {
+              "question": "Shock (circulatory) first aid includes…",
+              "options": [
+                "Lay the person flat, keep warm, reassure",
+                "Give food and drink",
+                "Make them stand",
+                "Apply tight chest wrap"
+              ],
+              "answer": "Lay the person flat, keep warm, reassure",
+              "explanation": "Support circulation and comfort until help arrives."
+            },
+            {
+              "question": "AED pad placement (adult) is typically…",
+              "options": [
+                "Upper right chest and lower left chest",
+                "Both pads on the neck",
+                "Both on the back",
+                "On arms"
+              ],
+              "answer": "Upper right chest and lower left chest",
+              "explanation": "Place as illustrated on the pads; follow device prompts."
+            },
+            {
+              "question": "If the chest is wet/sweaty before AED pad placement…",
+              "options": [
+                "Dry the chest quickly",
+                "Skip drying",
+                "Pour water first",
+                "Use lotion"
+              ],
+              "answer": "Dry the chest quickly",
+              "explanation": "Good contact improves shock effectiveness and pad adhesion."
+            },
+            {
+              "question": "During AED analysis, you must…",
+              "options": [
+                "Stand clear and do not touch the patient",
+                "Continue compressions",
+                "Hold the patient’s hand",
+                "Adjust pads constantly"
+              ],
+              "answer": "Stand clear and do not touch the patient",
+              "explanation": "Movement interferes with rhythm analysis and can be dangerous if a shock is delivered."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-5",
+          "title": "First Aid #5",
+          "questions": [
+            {
+              "question": "For nosebleeds, first aid is…",
+              "options": [
+                "Sit leaning forward and pinch soft part of nose",
+                "Lie flat and tilt head back",
+                "Pack nose with tissue deeply",
+                "Blow nose hard"
+              ],
+              "answer": "Sit leaning forward and pinch soft part of nose",
+              "explanation": "Forward posture avoids swallowing blood; pinch 10–15 minutes."
+            },
+            {
+              "question": "For a suspected spinal injury, you should…",
+              "options": [
+                "Avoid movement and call emergency services",
+                "Twist the neck to straighten",
+                "Make them walk it off",
+                "Apply heat to the spine"
+              ],
+              "answer": "Avoid movement and call emergency services",
+              "explanation": "Immobilize head/neck alignment and await professional care."
+            },
+            {
+              "question": "Chemical splash in the eye first aid is…",
+              "options": [
+                "Irrigate with clean water for at least 15 minutes",
+                "Cover and wait",
+                "Rub the eye",
+                "Add eye drops only"
+              ],
+              "answer": "Irrigate with clean water for at least 15 minutes",
+              "explanation": "Prolonged irrigation dilutes and removes chemicals."
+            },
+            {
+              "question": "After a minor burn is cooled, cover with…",
+              "options": [
+                "Clean non-stick dressing or cling film",
+                "Cotton wool",
+                "Paper towels",
+                "Mud pack"
+              ],
+              "answer": "Clean non-stick dressing or cling film",
+              "explanation": "Protects the wound and reduces pain; avoid adhesive on burned skin."
+            },
+            {
+              "question": "If an adult becomes unresponsive and not breathing normally, you should…",
+              "options": [
+                "Call emergency services and start CPR",
+                "Wait for a few minutes",
+                "Give water first",
+                "Shake them hard repeatedly"
+              ],
+              "answer": "Call emergency services and start CPR",
+              "explanation": "Immediate CPR and early defibrillation save lives."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disease",
+      "title": "Disease",
+      "sets": [
+        {
+          "id": "disease-1",
+          "title": "Disease #1",
+          "questions": [
+            {
+              "question": "Best everyday way to reduce spread of respiratory viruses?",
+              "options": [
+                "Wear sunglasses",
+                "Wash hands with soap for at least 20 seconds",
+                "Take antibiotics regularly",
+                "Go out only at night"
+              ],
+              "answer": "Wash hands with soap for at least 20 seconds",
+              "explanation": "Handwashing with soap removes pathogens effectively; antibiotics do not prevent viral spread."
+            },
+            {
+              "question": "You have a fever and cough. What should you do about work/school?",
+              "options": [
+                "Go anyway but talk less",
+                "Stay home and rest",
+                "Stand by open windows",
+                "Drink coffee and continue"
+              ],
+              "answer": "Stay home and rest",
+              "explanation": "Staying home when ill helps you recover and prevents infecting others."
+            },
+            {
+              "question": "How should a mask be worn to be effective?",
+              "options": [
+                "Below the nose",
+                "Loose around the cheeks",
+                "Covering mouth and nose snugly",
+                "On the chin only"
+              ],
+              "answer": "Covering mouth and nose snugly",
+              "explanation": "A proper fit over mouth and nose reduces droplet spread."
+            },
+            {
+              "question": "After sneezing into a tissue, what is the correct next step?",
+              "options": [
+                "Keep the tissue for later",
+                "Throw it away and wash/sanitize hands",
+                "Shake hands to greet others",
+                "Rinse hands quickly with water only"
+              ],
+              "answer": "Throw it away and wash/sanitize hands",
+              "explanation": "Dispose of tissues immediately and clean hands to prevent transmission."
+            },
+            {
+              "question": "Antibiotics are effective against:",
+              "options": [
+                "Viruses like colds/flu",
+                "All fevers",
+                "Bacterial infections",
+                "Allergies"
+              ],
+              "answer": "Bacterial infections",
+              "explanation": "Antibiotics treat bacterial illnesses, not viral infections or allergies."
+            }
+          ]
+        },
+        {
+          "id": "disease-2",
+          "title": "Disease #2",
+          "questions": [
+            {
+              "question": "Minimum alcohol concentration recommended for hand sanitizer?",
+              "options": ["20%", "40%", "60% or more", "100%"],
+              "answer": "60% or more",
+              "explanation": "Sanitizers with at least 60% alcohol are recommended for effectiveness."
+            },
+            {
+              "question": "Which practice helps prevent foodborne illness?",
+              "options": [
+                "Thaw meat on the counter",
+                "Cook meat to a safe internal temperature",
+                "Leave leftovers out overnight",
+                "Reuse marinade without boiling"
+              ],
+              "answer": "Cook meat to a safe internal temperature",
+              "explanation": "Proper cooking kills harmful pathogens; unsafe thawing and reuse increase risk."
+            },
+            {
+              "question": "Sharing cups or utensils with others can:",
+              "options": [
+                "Boost immunity safely",
+                "Increase disease transmission risk",
+                "Prevent dehydration",
+                "Cure sore throats"
+              ],
+              "answer": "Increase disease transmission risk",
+              "explanation": "Sharing personal items can spread saliva-borne pathogens."
+            },
+            {
+              "question": "How do vaccines help?",
+              "options": [
+                "They kill all germs on contact",
+                "They teach the immune system to fight specific diseases",
+                "They replace handwashing",
+                "They cure every disease immediately"
+              ],
+              "answer": "They teach the immune system to fight specific diseases",
+              "explanation": "Vaccines prepare your immune system with targeted defenses."
+            },
+            {
+              "question": "When should you seek medical advice?",
+              "options": [
+                "Fever over 3 days or difficulty breathing",
+                "Mild, brief sneeze once",
+                "Normal thirst after exercise",
+                "Ear itch for 5 minutes"
+              ],
+              "answer": "Fever over 3 days or difficulty breathing",
+              "explanation": "Persistent fever or breathing issues warrant prompt medical evaluation."
+            }
+          ]
+        },
+        {
+          "id": "disease-3",
+          "title": "Disease #3",
+          "questions": [
+            {
+              "question": "If you test positive for a contagious disease, you should:",
+              "options": [
+                "Go to crowded places for fresh air",
+                "Isolate and follow local guidance",
+                "Share a drink to test others",
+                "Stop handwashing"
+              ],
+              "answer": "Isolate and follow local guidance",
+              "explanation": "Isolation reduces spread; follow public health instructions."
+            },
+            {
+              "question": "High-touch surfaces like doorknobs should be cleaned:",
+              "options": [
+                "Rarely",
+                "Only if visibly dirty",
+                "Regularly with appropriate disinfectant",
+                "With plain water only"
+              ],
+              "answer": "Regularly with appropriate disinfectant",
+              "explanation": "Regular disinfection lowers transmission from contaminated surfaces."
+            },
+            {
+              "question": "When handling raw chicken, you should:",
+              "options": [
+                "Use same cutting board for salad",
+                "Rinse chicken in the sink",
+                "Use separate boards for raw and ready-to-eat foods",
+                "Marinate on the counter"
+              ],
+              "answer": "Use separate boards for raw and ready-to-eat foods",
+              "explanation": "Separation prevents cross-contamination."
+            },
+            {
+              "question": "If you have to cough and no tissue is available:",
+              "options": [
+                "Into your hands",
+                "Into your elbow/upper sleeve",
+                "Toward the floor",
+                "Into the air"
+              ],
+              "answer": "Into your elbow/upper sleeve",
+              "explanation": "Coughing into your elbow reduces spread to hands and others."
+            },
+            {
+              "question": "Probiotics can:",
+              "options": [
+                "Replace prescribed antibiotics",
+                "Always cure infections",
+                "Sometimes support gut health but do not treat acute infections",
+                "Make handwashing unnecessary"
+              ],
+              "answer": "Sometimes support gut health but do not treat acute infections",
+              "explanation": "They may help gut balance but are not treatments for infections."
+            }
+          ]
+        },
+        {
+          "id": "disease-4",
+          "title": "Disease #4",
+          "questions": [
+            {
+              "question": "A commonly used threshold for fever is:",
+              "options": [
+                "36.0°C (96.8°F)",
+                "37.0°C (98.6°F)",
+                "38.0°C (100.4°F)",
+                "39.5°C (103.1°F)"
+              ],
+              "answer": "38.0°C (100.4°F)",
+              "explanation": "≥38°C is a common clinical threshold for fever."
+            },
+            {
+              "question": "To reduce mosquito-borne disease risk you should:",
+              "options": [
+                "Store water in open containers",
+                "Use repellent and remove standing water",
+                "Wear shorts at dusk",
+                "Ignore bites"
+              ],
+              "answer": "Use repellent and remove standing water",
+              "explanation": "Repellents and eliminating breeding sites reduce bites and disease risk."
+            },
+            {
+              "question": "After close contact with someone who has a contagious disease you should:",
+              "options": [
+                "Take leftover antibiotics",
+                "Deliberately get infected to get it over with",
+                "Monitor for symptoms and follow public health advice",
+                "Do nothing at all"
+              ],
+              "answer": "Monitor for symptoms and follow public health advice",
+              "explanation": "Follow local guidance on testing, masking, or isolation as advised."
+            },
+            {
+              "question": "Leftovers should be refrigerated within:",
+              "options": ["30 minutes", "2 hours", "6 hours", "Overnight"],
+              "answer": "2 hours",
+              "explanation": "The two-hour rule helps prevent bacterial growth."
+            },
+            {
+              "question": "Which is a sign of dehydration?",
+              "options": [
+                "Frequent urination",
+                "Dark urine and dizziness",
+                "Excessive salivation",
+                "Cold hands only"
+              ],
+              "answer": "Dark urine and dizziness",
+              "explanation": "These are common indicators that you need fluids."
+            }
+          ]
+        },
+        {
+          "id": "disease-5",
+          "title": "Disease #5",
+          "questions": [
+            {
+              "question": "Safest drinking water after a disaster is usually:",
+              "options": [
+                "Clear river water",
+                "Pool water with chlorine",
+                "Bottled or water boiled for at least 1 minute",
+                "Any tap water"
+              ],
+              "answer": "Bottled or water boiled for at least 1 minute",
+              "explanation": "Boiling kills most pathogens; bottled water is typically safe."
+            },
+            {
+              "question": "Norovirus commonly spreads via:",
+              "options": [
+                "Mosquito bites",
+                "Contaminated food/hands (fecal-oral route)",
+                "Air conditioning",
+                "Loud music"
+              ],
+              "answer": "Contaminated food/hands (fecal-oral route)",
+              "explanation": "Rigorous hand hygiene and safe food handling reduce spread."
+            },
+            {
+              "question": "Best cough etiquette is to:",
+              "options": [
+                "Cough into hands",
+                "Cough into elbow/tissue",
+                "Cough toward the wall",
+                "Hold your breath"
+              ],
+              "answer": "Cough into elbow/tissue",
+              "explanation": "This helps contain droplets and keeps hands cleaner."
+            },
+            {
+              "question": "If prescribed antibiotics, you should:",
+              "options": [
+                "Stop when you feel better",
+                "Share extras with family",
+                "Complete the full course as directed",
+                "Double the dose to finish early"
+              ],
+              "answer": "Complete the full course as directed",
+              "explanation": "Completing treatment helps prevent relapse and resistance."
+            },
+            {
+              "question": "Wearing gloves means you can skip handwashing:",
+              "options": [
+                "True",
+                "False",
+                "Only on weekends",
+                "Only with thin gloves"
+              ],
+              "answer": "False",
+              "explanation": "Gloves can be contaminated; hand hygiene is still essential."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "earthquake",
+      "title": "Earthquake",
+      "sets": [
+        {
+          "id": "earthquake-1",
+          "title": "Earthquake #1",
+          "questions": [
+            {
+              "question": "During shaking indoors, the safest immediate action is to:",
+              "options": [
+                "Run outside quickly",
+                "Use the elevator",
+                "Drop, Cover, and Hold On",
+                "Stand in a doorway"
+              ],
+              "answer": "Drop, Cover, and Hold On",
+              "explanation": "Get low, take cover under sturdy furniture, and hold on until shaking stops."
+            },
+            {
+              "question": "Is it safe to run outside while the ground is shaking?",
+              "options": [
+                "Yes, always",
+                "No, hazards may fall around exits",
+                "Only if you are fast",
+                "Only if you shout 'Earthquake'"
+              ],
+              "answer": "No, hazards may fall around exits",
+              "explanation": "Debris from facades, glass, and signs can fall; shelter in place until shaking stops."
+            },
+            {
+              "question": "If you are in bed during an earthquake, you should:",
+              "options": [
+                "Jump up and run",
+                "Stay in bed and protect your head with a pillow",
+                "Stand at the window",
+                "Move to the balcony"
+              ],
+              "answer": "Stay in bed and protect your head with a pillow",
+              "explanation": "Staying put reduces injury from falling objects; protect your head/neck."
+            },
+            {
+              "question": "If you are near windows while shaking starts:",
+              "options": [
+                "Move away from windows",
+                "Lean on the glass",
+                "Open the window",
+                "Take photos"
+              ],
+              "answer": "Move away from windows",
+              "explanation": "Glass can shatter; move to a safer interior area."
+            },
+            {
+              "question": "Regarding elevators during earthquakes:",
+              "options": [
+                "They are the safest place",
+                "Use them to evacuate quickly",
+                "Avoid using elevators",
+                "Jump inside to dampen shaking"
+              ],
+              "answer": "Avoid using elevators",
+              "explanation": "Power can fail and trap occupants; avoid elevators during and after shaking."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-2",
+          "title": "Earthquake #2",
+          "questions": [
+            {
+              "question": "After the main shaking stops you should expect:",
+              "options": [
+                "Immediate calm with no risk",
+                "Aftershocks and secondary hazards",
+                "Hurricane winds",
+                "Snowfall"
+              ],
+              "answer": "Aftershocks and secondary hazards",
+              "explanation": "Aftershocks can follow minutes to days later; stay alert."
+            },
+            {
+              "question": "If you are outdoors near buildings during shaking:",
+              "options": [
+                "Move to an open area away from buildings and wires",
+                "Stand under a sign",
+                "Shelter beside glass walls",
+                "Hide under a tree by the road"
+              ],
+              "answer": "Move to an open area away from buildings and wires",
+              "explanation": "Reduce risk from falling debris, lines, and facades."
+            },
+            {
+              "question": "If you are driving when an earthquake begins:",
+              "options": [
+                "Speed up to outrun it",
+                "Stop under a bridge",
+                "Pull over safely and set the parking brake",
+                "Stop on railway tracks"
+              ],
+              "answer": "Pull over safely and set the parking brake",
+              "explanation": "Avoid overpasses, bridges, and power lines; remain in the vehicle."
+            },
+            {
+              "question": "You smell gas after an earthquake. What should you do?",
+              "options": [
+                "Turn on all lights to see better",
+                "Light a match to check",
+                "Shut off gas only if you suspect a leak and know how; otherwise evacuate and call utility",
+                "Ignore it"
+              ],
+              "answer": "Shut off gas only if you suspect a leak and know how; otherwise evacuate and call utility",
+              "explanation": "Gas leaks can ignite; act cautiously and get professionals if unsure."
+            },
+            {
+              "question": "Is a doorway the safest place during modern earthquakes?",
+              "options": [
+                "Yes, always",
+                "No, it's a myth for modern buildings",
+                "Only in tall buildings",
+                "Only if painted red"
+              ],
+              "answer": "No, it's a myth for modern buildings",
+              "explanation": "Doorways are not typically stronger; take cover under sturdy furniture instead."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-3",
+          "title": "Earthquake #3",
+          "questions": [
+            {
+              "question": "After a strong quake near the coast you should:",
+              "options": [
+                "Go to the beach to watch waves",
+                "Move to higher ground due to tsunami risk",
+                "Swim in the harbor",
+                "Drive through tunnels"
+              ],
+              "answer": "Move to higher ground due to tsunami risk",
+              "explanation": "Strong or long shaking near coasts can trigger tsunamis."
+            },
+            {
+              "question": "If you are trapped under debris you should:",
+              "options": [
+                "Light a match",
+                "Shout continuously",
+                "Conserve energy, cover mouth, and tap on pipes or walls",
+                "Move rubble quickly"
+              ],
+              "answer": "Conserve energy, cover mouth, and tap on pipes or walls",
+              "explanation": "Tapping and conserving air/energy increase chances of being found."
+            },
+            {
+              "question": "To reduce injuries at home before a quake you should:",
+              "options": [
+                "Place heavy items up high",
+                "Secure bookcases and water heaters",
+                "Hang glass frames above beds",
+                "Leave TVs unanchored"
+              ],
+              "answer": "Secure bookcases and water heaters",
+              "explanation": "Anchoring heavy/ tall items prevents tipping and gas/water damage."
+            },
+            {
+              "question": "Useful items for an earthquake emergency kit include:",
+              "options": [
+                "Candles only",
+                "Water, flashlight, radio, first-aid kit",
+                "Confetti",
+                "Multiple extension cords"
+              ],
+              "answer": "Water, flashlight, radio, first-aid kit",
+              "explanation": "Essential supplies support you if services are disrupted."
+            },
+            {
+              "question": "After ensuring your safety, a good next step is to:",
+              "options": [
+                "Ignore neighbors",
+                "Check on neighbors who may need help",
+                "Drive around for fun",
+                "Turn on all gas appliances"
+              ],
+              "answer": "Check on neighbors who may need help",
+              "explanation": "Community aid can save lives after disasters."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-4",
+          "title": "Earthquake #4",
+          "questions": [
+            {
+              "question": "Why practice Drop, Cover, and Hold On drills at school or work?",
+              "options": [
+                "To memorize building colors",
+                "To reduce reaction time and injuries during real quakes",
+                "To learn elevator shortcuts",
+                "For attendance points"
+              ],
+              "answer": "To reduce reaction time and injuries during real quakes",
+              "explanation": "Drills build muscle memory for safer responses."
+            },
+            {
+              "question": "A sign of a possible gas leak after a quake is:",
+              "options": [
+                "Cold walls",
+                "Rotten-egg smell or hissing sound",
+                "Warm floorboards",
+                "Blinking router lights"
+              ],
+              "answer": "Rotten-egg smell or hissing sound",
+              "explanation": "These are classic indicators of a leak; evacuate and call the utility."
+            },
+            {
+              "question": "If you use a wheelchair during an earthquake you should:",
+              "options": [
+                "Stand up quickly",
+                "Lock wheels and protect head/neck",
+                "Move toward windows",
+                "Roll into an elevator"
+              ],
+              "answer": "Lock wheels and protect head/neck",
+              "explanation": "Stabilize your chair and shield vital areas."
+            },
+            {
+              "question": "Which communication method may work better right after a quake?",
+              "options": [
+                "Multiple long phone calls",
+                "Text messages",
+                "Shouting from rooftops",
+                "Video streaming"
+              ],
+              "answer": "Text messages",
+              "explanation": "Texts use less bandwidth and may get through when networks are congested."
+            },
+            {
+              "question": "If you smell gas indoors after shaking stops you should:",
+              "options": [
+                "Flip light switches to check power",
+                "Use matches for light",
+                "Leave the building and call the utility from outside",
+                "Open the oven for warmth"
+              ],
+              "answer": "Leave the building and call the utility from outside",
+              "explanation": "Avoid ignition sources and get professional help."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-5",
+          "title": "Earthquake #5",
+          "questions": [
+            {
+              "question": "Before any earthquake occurs you should:",
+              "options": [
+                "Do nothing",
+                "Make an emergency plan and meeting point",
+                "Rely on neighbors only",
+                "Hide keys outdoors"
+              ],
+              "answer": "Make an emergency plan and meeting point",
+              "explanation": "Preparedness improves family coordination and safety."
+            },
+            {
+              "question": "A common mitigation step for appliances is to:",
+              "options": [
+                "Leave water heaters free-standing",
+                "Secure water heaters with straps",
+                "Place TVs near edges",
+                "Store heavy objects on high shelves"
+              ],
+              "answer": "Secure water heaters with straps",
+              "explanation": "Strapping prevents tipping and line ruptures."
+            },
+            {
+              "question": "In a high-rise during shaking you should:",
+              "options": [
+                "Use elevators to evacuate",
+                "Move away from windows and take cover under sturdy furniture",
+                "Stand in the doorway",
+                "Run to the roof"
+              ],
+              "answer": "Move away from windows and take cover under sturdy furniture",
+              "explanation": "Glass hazards are significant; shelter until shaking stops."
+            },
+            {
+              "question": "In a store when shaking begins, safer behavior is to:",
+              "options": [
+                "Run to the exit under signs",
+                "Drop next to a sturdy fixture away from tall shelves",
+                "Climb display racks",
+                "Stand under glass lights"
+              ],
+              "answer": "Drop next to a sturdy fixture away from tall shelves",
+              "explanation": "Avoid items that can topple; protect your head and neck."
+            },
+            {
+              "question": "When is it safe to re-enter a damaged building?",
+              "options": [
+                "Immediately after shaking stops",
+                "After authorities declare it safe",
+                "When your phone battery is full",
+                "At night to avoid crowds"
+              ],
+              "answer": "After authorities declare it safe",
+              "explanation": "Structural damage may not be obvious; wait for official clearance."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
