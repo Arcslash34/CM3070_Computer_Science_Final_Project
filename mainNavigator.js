@@ -5,9 +5,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "./homePage";
-import QuizzesHome from "./quizzes"; // NEW
-import QuizSet from "./QuizSet"; // NEW
-import QuizGame from "./QuizGame"; // NEW
+import QuizzesHome from "./quizzes";
+import QuizSet from "./QuizSet";
+import QuizGame from "./QuizGame";
 import HistoryScreen from "./HistoryScreen";
 import ResultSummary from "./resultSummary";
 import { LogoHeader } from "./drawerapp";
@@ -16,6 +16,7 @@ import ResourceHub from "./resourceHub";
 import ResourceArticle from "./resourceArticle";
 import CertificatesScreen from "./CertificatesScreen";
 import BadgesScreen from "./badges";
+import Checklist from "./checklist";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -96,6 +97,10 @@ export default function MainNavigator() {
           headerTitleAlign: "center",
           headerTitle: "Guide",
         }}
+      />
+      <Stack.Screen
+        name="Checklist"
+        component={Checklist}
       />
       <Stack.Screen
         name="Certificates"
