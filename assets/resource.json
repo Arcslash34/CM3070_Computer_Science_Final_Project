@@ -1,0 +1,450 @@
+[
+  {
+    "id": "flooding",
+    "title": "Flooding (Heavy Rain & Flash Floods)",
+    "category": "Flooding",
+    "icon": "rainy",
+    "imageKey": "flood",
+    "quick": [
+      "F.L.A.S.H.: Follow • Look • Avoid • Share • Help",
+      "Avoid floodwater; move to higher ground",
+      "Don’t drive into flooded roads",
+      "Turn off mains before evacuating",
+      "Help others only if safe"
+    ],
+    "sections": [
+      {
+        "title": "Stay informed (optional official alerts)",
+        "bullets": [
+          "Enable heavy rain / water level alerts from official channels if you find them useful.",
+          "Road updates and flood advisories can help you plan a safer route."
+        ]
+      },
+      {
+        "title": "F.L.A.S.H. mnemonic",
+        "bullets": [
+          "Follow official advisories and signs.",
+          "Look for waterlogged and flood-prone areas.",
+          "Avoid walking/driving through floodwater.",
+          "Share relevant safety updates.",
+          "Help others where it is safe to do so."
+        ]
+      },
+      {
+        "title": "Pedestrians",
+        "bullets": [
+          "Avoid water deeper than your ankles; unseen drains are dangerous.",
+          "Use a stick/umbrella to check footing; keep to higher ground.",
+          "Stay away from canals and fast-moving water."
+        ]
+      },
+      {
+        "title": "Motorists",
+        "bullets": [
+          "Do not enter water above kerb height or when road markings aren’t visible.",
+          "If passage is absolutely necessary and safe, go slowly and steadily—one vehicle at a time.",
+          "If the car stalls, do not restart; switch on hazards and move to higher ground."
+        ]
+      },
+      {
+        "title": "Homes & Buildings",
+        "bullets": [
+          "Keep drains clear; deploy barriers early if available.",
+          "Move essential items to upper levels.",
+          "Switch off main power before evacuating; never touch switches if wet."
+        ]
+      },
+      {
+        "title": "After water recedes",
+        "bullets": [
+          "Watch for hidden damage, open covers, and slippery debris.",
+          "Avoid contaminated water; re-enter only when it’s confirmed safe."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Flood safety overview (official)",
+        "url": "https://go.gov.sg/be-flood-ready"
+      }
+    ],
+    "tags": ["Flood", "Flash flood", "Heavy rain", "F.L.A.S.H.", "Safety", "Pedestrian", "Motorist", "Homeowner", "Business"]
+  },
+  {
+    "id": "fire-safety",
+    "title": "Fire Safety & What To Do in a Fire",
+    "category": "Fire",
+    "icon": "flame",
+    "imageKey": "fire",
+    "quick": [
+      "Call 995 immediately",
+      "Don’t use lifts; use stairs",
+      "If trapped: safe room, block smoke",
+      "Know P.A.S.S. for extinguishers"
+    ],
+    "sections": [
+      {
+        "title": "If you discover a fire",
+        "bullets": [
+          "Stay calm; shout for help and call emergency (995).",
+          "Alert others and evacuate quickly.",
+          "Close doors/windows of the fire room if safe; turn off gas if accessible."
+        ]
+      },
+      {
+        "title": "If trapped",
+        "bullets": [
+          "Move to a room with a window facing the road; shut the door (don’t lock).",
+          "Block smoke at the bottom gap using wet towels/cloths.",
+          "Call for help and give your exact location; signal at the window."
+        ]
+      },
+      {
+        "title": "Using extinguishers (P.A.S.S.)",
+        "bullets": [
+          "Pull the pin.",
+          "Aim at the base of the fire.",
+          "Squeeze the handle.",
+          "Sweep side-to-side.",
+          "Only attempt if the fire is small and you have a clear escape route."
+        ]
+      },
+      {
+        "title": "Prevention",
+        "bullets": [
+          "Switch off appliances when not in use; don’t overload sockets.",
+          "Never leave cooking unattended; extinguish cigarette butts fully.",
+          "Keep exits and hose reels unobstructed; install smoke alarms."
+        ]
+      },
+      {
+        "title": "Evacuation",
+        "bullets": [
+          "Use stairs—never lifts.",
+          "Head downwards; if stairwell is smoke-filled, shelter in a safe room.",
+          "Do not re-enter until authorities say it’s safe."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Home fire safety tips (official)",
+        "url": "https://www.scdf.gov.sg/"
+      }
+    ],
+    "tags": ["Fire", "SCDF", "Extinguisher", "High-rise", "Smoke", "Prevention", "Evacuation"]
+  },
+  {
+    "id": "mosquito-dengue",
+    "title": "Mosquito & Dengue: Symptoms and Prevention",
+    "category": "Infectious",
+    "icon": "bug",
+    "imageKey": "mosquito",
+    "quick": [
+      "Know symptoms: fever, aches, rash, nausea",
+      "S-A-W: Spray • Apply repellent • Wear long sleeves",
+      "B-L-O-C-K stagnant water"
+    ],
+    "sections": [
+      {
+        "title": "Common symptoms",
+        "bullets": [
+          "Sudden fever (2–7 days), headache (behind the eyes), muscle/joint pain.",
+          "Rash, nausea/vomiting, mild nose/gum bleeding.",
+          "Seek medical care if symptoms worsen."
+        ]
+      },
+      {
+        "title": "Protect yourself (S-A-W)",
+        "bullets": [
+          "Spray insecticide in dark corners where mosquitoes rest.",
+          "Apply mosquito repellent regularly.",
+          "Wear long sleeves and pants, especially at dawn/dusk."
+        ]
+      },
+      {
+        "title": "Stop breeding (B-L-O-C-K)",
+        "bullets": [
+          "Break up hardened soil; empty flowerpot plates.",
+          "Overturn pails; change water in vases.",
+          "Keep gutters/drains clear—tiny amounts of clean water can breed mosquitoes."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Dengue symptoms & protection (official)",
+        "url": "https://www.gov.sg/explainers/dengue-know-the-symptoms-and-how-to-protect-yourself"
+      }
+    ],
+    "tags": ["Dengue", "Mosquito", "S-A-W", "B-L-O-C-K", "Repellent"]
+  },
+  {
+    "id": "cpr-aed-adult",
+    "title": "CPR + AED (Adult)",
+    "category": "Cardiac",
+    "icon": "heart",
+    "imageKey": "cpr",
+    "quick": [
+      "DRS ABC: Danger • Response • Shout 995 • AED • Breathing",
+      "Start CPR 100–120/min, depth ~5–6 cm",
+      "Use AED ASAP; follow prompts"
+    ],
+    "sections": [
+      {
+        "title": "Initial checks (DRS ABC)",
+        "bullets": [
+          "Ensure safety; check responsiveness.",
+          "Shout for help and call emergency (speaker on).",
+          "Assess breathing—if not normal, start CPR."
+        ]
+      },
+      {
+        "title": "Start CPR",
+        "bullets": [
+          "Hands in the center of the chest.",
+          "Rate 100–120/min, depth ~5–6 cm, allow full recoil.",
+          "Minimise pauses."
+        ]
+      },
+      {
+        "title": "Use an AED",
+        "bullets": [
+          "Power on and follow voice prompts.",
+          "Bare/dry chest; place pads—upper right chest and lower left chest.",
+          "Announce “stay clear” during analysis/shock."
+        ]
+      },
+      {
+        "title": "Continue",
+        "bullets": [
+          "Resume CPR immediately after shock or analysis.",
+          "Continue until normal breathing/response or handover to paramedics."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "CPR+AED technique overview (official)",
+        "url": "https://www.myheart.org.sg/techniques/cpraed-for-adults/"
+      }
+    ],
+    "tags": ["CPR", "AED", "Cardiac"]
+  },
+  {
+    "id": "choking-adult",
+    "title": "Choking (Adult)",
+    "category": "Airway",
+    "icon": "warning",
+    "imageKey": "choking",
+    "quick": [
+      "Universal sign: hand on throat",
+      "If can cough/speak → encourage coughing",
+      "If severe: 5 back blows + 5 abdominal thrusts",
+      "If unresponsive: call 995 and start CPR"
+    ],
+    "sections": [
+      {
+        "title": "Recognise",
+        "bullets": [
+          "Unable to talk, weak/ineffective cough, bluish lips/skin, possible collapse."
+        ]
+      },
+      {
+        "title": "If mild obstruction",
+        "bullets": ["Encourage forceful coughing; monitor closely."]
+      },
+      {
+        "title": "If severe obstruction",
+        "bullets": [
+          "Deliver up to 5 firm back blows between shoulder blades.",
+          "If not relieved, perform up to 5 abdominal thrusts.",
+          "Alternate 5 back blows and 5 thrusts until relieved or unresponsive."
+        ]
+      },
+      {
+        "title": "Special cases",
+        "bullets": [
+          "Pregnant/obese: use chest thrusts (hands higher on the breastbone).",
+          "Self-choking: press your fist inward/upward against a firm surface."
+        ]
+      },
+      {
+        "title": "If unresponsive",
+        "bullets": [
+          "Call emergency immediately; begin CPR.",
+          "Check mouth between cycles for visible objects (remove only if you can see it)."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Choking", "Airway", "Heimlich", "Back blows"]
+  },
+  {
+    "id": "severe-bleeding",
+    "title": "Severe Bleeding",
+    "category": "Trauma",
+    "icon": "bandage",
+    "imageKey": "bleeding",
+    "quick": [
+      "Call emergency",
+      "Apply firm direct pressure ≥10 min",
+      "Add pads/bandage; don’t remove soaked dressings",
+      "Tourniquet if trained; treat for shock"
+    ],
+    "sections": [
+      {
+        "title": "Control the bleeding",
+        "bullets": [
+          "Wear gloves if available; expose the wound.",
+          "Apply firm direct pressure with a clean pad for at least 10 minutes.",
+          "Do not remove soaked dressings—add more on top and bandage firmly."
+        ]
+      },
+      {
+        "title": "If bleeding continues",
+        "bullets": [
+          "Replace with a fresh bulky pad and reapply pressure.",
+          "If life-threatening limb bleeding and trained, apply a tourniquet 5–7 cm above the wound (not over joints). Note time."
+        ]
+      },
+      {
+        "title": "Embedded objects",
+        "bullets": [
+          "Do NOT remove; pad around and bandage to stabilise without pressing on it."
+        ]
+      },
+      {
+        "title": "Internal bleeding / shock",
+        "bullets": [
+          "Call emergency immediately.",
+          "Lay flat, elevate legs if appropriate, keep warm, monitor vital signs."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Bleeding", "Trauma", "Tourniquet", "First Aid"]
+  },
+  {
+    "id": "burns",
+    "title": "Burns (Thermal)",
+    "category": "Burns",
+    "icon": "flame",
+    "imageKey": "burn",
+    "quick": [
+      "Cool with running water 20 min",
+      "Remove jewelry/tight items early",
+      "Cover with clean non-stick dressing",
+      "Do NOT pop blisters or apply creams"
+    ],
+    "sections": [
+      {
+        "title": "Immediate care",
+        "bullets": [
+          "Cool under cool running water for at least 20 minutes (no ice).",
+          "Remove jewelry/tight clothing before swelling; if stuck, cut around—don’t pull off."
+        ]
+      },
+      {
+        "title": "Cover & protect",
+        "bullets": [
+          "Cover with sterile non-adhesive dressing, cling film, or clean cloth.",
+          "Avoid tissue/paper that sticks; avoid creams/grease."
+        ]
+      },
+      {
+        "title": "Seek urgent care if",
+        "bullets": [
+          "Burn is large (> hand size), deep/white/charred.",
+          "Involves face, hands, feet, genitals, joints, airway.",
+          "Chemical/electrical burns, or child/elderly casualty."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Burn first aid (official overview)",
+        "url": "https://www.moh.gov.sg/seeking-healthcare/getting-medical-help/conditions/mild-burns-and-scalds"
+      }
+    ],
+    "tags": ["Burns", "Scalds", "Children", "First Aid"]
+  },
+  {
+    "id": "heat-stroke",
+    "title": "Heat Stroke",
+    "category": "Environmental",
+    "icon": "sunny",
+    "imageKey": "heatstroke",
+    "quick": [
+      "Life-threatening—call emergency",
+      "Move to shade/cool area",
+      "Cool rapidly (water/ice packs)",
+      "Loosen/remove clothing"
+    ],
+    "sections": [
+      {
+        "title": "Recognise",
+        "bullets": [
+          "Very high temperature, hot dry skin, confusion, collapse, unconsciousness."
+        ]
+      },
+      {
+        "title": "Immediate actions",
+        "bullets": [
+          "Call emergency; move to a cool/shaded place.",
+          "Loosen/remove excess clothing.",
+          "If conscious, give small sips of cool water."
+        ]
+      },
+      {
+        "title": "Rapid cooling",
+        "bullets": [
+          "Apply cold packs to neck, armpits, groin.",
+          "Wet skin + fan or immerse in cold water if appropriate."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Heat", "Environment", "Emergency", "First Aid"]
+  },
+  {
+    "id": "fracture-sprain",
+    "title": "Fracture & Sprain",
+    "category": "Trauma",
+    "icon": "fitness",
+    "imageKey": "fracture",
+    "quick": ["Protect & rest", "Ice 15–20 min", "Compression", "Elevate"],
+    "sections": [
+      {
+        "title": "Red flags",
+        "bullets": [
+          "Severe deformity, open wound, heavy trauma → call emergency."
+        ]
+      },
+      {
+        "title": "First aid (P.R.I.C.E.)",
+        "bullets": [
+          "Protect & Rest the injured area.",
+          "Ice 15–20 minutes wrapped in cloth (intervals).",
+          "Compress with elastic bandage; Elevate above heart."
+        ]
+      },
+      {
+        "title": "Immobilisation",
+        "bullets": [
+          "Do not straighten deformed limbs.",
+          "Immobilise the joint above and below if fracture is suspected."
+        ]
+      },
+      {
+        "title": "Seek medical help if",
+        "bullets": [
+          "Severe pain, swelling, numbness, inability to move/bear weight.",
+          "No improvement after 2–3 days."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Fracture", "Sprain", "PRICE", "Trauma"]
+  }
+]

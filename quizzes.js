@@ -61,7 +61,7 @@ export default function QuizzesHome() {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() =>
-          navigation.navigate("QuizSet", {
+          navigation.navigate("QuizGame", {
             topicId: "daily",
             topicTitle: "Daily Quiz",
             isDaily: true,
