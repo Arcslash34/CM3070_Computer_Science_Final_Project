@@ -28,7 +28,14 @@ const CATEGORY_IMAGES = {
 };
 
 // Keep a stable order for display
-const TOPIC_ORDER = ["flood", "fire", "dengue", "firstaid", "disease", "earthquake"];
+const TOPIC_ORDER = [
+  "flood",
+  "fire",
+  "dengue",
+  "firstaid",
+  "disease",
+  "earthquake",
+];
 
 // Build topics from JSON + image map
 const TOPICS = TOPIC_ORDER.map((id) => {
@@ -80,7 +87,7 @@ export default function QuizzesHome() {
       <View style={styles.sectionRow}>
         <Text style={styles.sectionTitle}>Quiz Categories</Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ResultScreen")}
+          onPress={() => navigation.navigate("HistoryScreen")}
           style={styles.resultsPill}
           activeOpacity={0.85}
         >

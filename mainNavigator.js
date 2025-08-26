@@ -8,7 +8,7 @@ import HomeScreen from "./homePage";
 import QuizzesHome from "./quizzes"; // NEW
 import QuizSet from "./QuizSet"; // NEW
 import QuizGame from "./QuizGame"; // NEW
-import resultScreen from "./resultScreen";
+import HistoryScreen from "./HistoryScreen";
 import ResultSummary from "./resultSummary";
 import { LogoHeader } from "./drawerapp";
 import Settings from "./settings";
@@ -76,18 +76,10 @@ export default function MainNavigator() {
       />
 
       {/* Results screens */}
+      <Stack.Screen name="ResultSummary" component={ResultSummary} />
       <Stack.Screen
-        name="ResultSummary"
-        component={ResultSummary}
-        options={{
-          headerShown: true,
-          headerTitle: "Quiz Summary",
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="ResultScreen"
-        component={resultScreen}
+        name="HistoryScreen"
+        component={HistoryScreen}
         options={{
           headerShown: true,
           headerTitle: "Past Results",

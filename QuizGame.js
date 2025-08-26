@@ -329,6 +329,7 @@ export default function QuizGame() {
           score: scorePercent,
           userAnswers: nextAnswers,
           difficulty: null,
+          backTo: { screen: "Quizzes" },
         });
       }
     })();
@@ -358,7 +359,7 @@ export default function QuizGame() {
       <SafeAreaView edges={["top", "left", "right"]} style={g.topSafe}>
         <View style={g.topBar}>
           <TouchableOpacity
-            onPress={confirmExit} // ⬅️ confirm before leaving
+            onPress={confirmExit}
             accessibilityLabel="Go back"
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             style={g.topBtn}
@@ -572,7 +573,7 @@ const g = StyleSheet.create({
 
   topSafe: { backgroundColor: "#FFFFFF" },
   topBar: {
-    height: 44,
+    height: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
