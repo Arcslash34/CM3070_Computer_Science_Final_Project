@@ -1,17 +1,17 @@
-// HistoryScreen.js — Past results styled like QuizSet cards (trash in header)
-import React, { useCallback, useLayoutEffect, useState } from "react";
+// HistoryScreen.js — Score above Date icon, XP (with star) above Time icon (no SafeAreaView)
+import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
   Alert,
   Image,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "./supabase";
 
 const CATEGORY_IMAGES = {
@@ -24,35 +24,73 @@ const CATEGORY_IMAGES = {
   daily: require("./assets/daily.jpg"),
 };
 
+const ICONS = {
+  date: require("./assets/date.png"),
+  time: require("./assets/time.png"),
+  xp: require("./assets/xp.png"),
+};
+
+const ICON = { size: 14, gap: 6 };
+
 function getThumbByTitle(title = "") {
   const t = String(title).toLowerCase();
   if (t.includes("flood")) return CATEGORY_IMAGES.flood;
   if (t.includes("fire")) return CATEGORY_IMAGES.fire;
-  if (t.includes("dengue") || t.includes("mosquito")) return CATEGORY_IMAGES.dengue;
+  if (t.includes("dengue") || t.includes("mosquito"))
+    return CATEGORY_IMAGES.dengue;
   if (t.includes("first") || t.includes("aid")) return CATEGORY_IMAGES.firstaid;
   if (t.includes("disease")) return CATEGORY_IMAGES.disease;
-  if (t.includes("earth") || t.includes("quake")) return CATEGORY_IMAGES.earthquake;
+  if (t.includes("earth") || t.includes("quake"))
+    return CATEGORY_IMAGES.earthquake;
   if (t.includes("daily")) return CATEGORY_IMAGES.daily;
   return CATEGORY_IMAGES.daily;
 }
 
-function fmtDate(iso) {
+const fmtDateOnly = (iso) => {
   try {
-    return new Date(iso).toLocaleString();
+    return new Date(iso).toLocaleDateString();
   } catch {
-    return iso;
+    return "—";
   }
+};
+const fmtTimeOnly = (iso) => {
+  try {
+    return new Date(iso).toLocaleTimeString();
+  } catch {
+    return "—";
+  }
+};
+
+function StatRow({ src, text, tint = "#6B7280" }) {
+  return (
+    <View style={styles.statRow}>
+      <Image
+        source={src}
+        resizeMode="contain"
+        style={{
+          width: ICON.size,
+          height: ICON.size,
+          tintColor: tint,
+          marginRight: ICON.gap,
+        }}
+      />
+      <Text style={[styles.statText, { color: tint }]} numberOfLines={1}>
+        {text}
+      </Text>
+    </View>
+  );
 }
 
 export default function HistoryScreen() {
-  const [results, setResults] = useState([]);
   const navigation = useNavigation();
+  const [results, setResults] = useState([]);
+  const [query, setQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const loadResults = useCallback(async () => {
     const { data: session } = await supabase.auth.getSession();
     const userId = session?.session?.user?.id;
     if (!userId) return;
-
     const { data, error } = await supabase
       .from("quiz_results")
       .select("*")
@@ -60,7 +98,7 @@ export default function HistoryScreen() {
       .order("created_at", { ascending: false });
 
     if (!error) setResults(data || []);
-    else console.error("Failed to fetch quiz results:", error.message);
+    else console.error("Failed to fetch quiz results:", error?.message);
   }, []);
 
   const handleDeleteAll = useCallback(() => {
@@ -80,22 +118,32 @@ export default function HistoryScreen() {
     ]);
   }, [loadResults]);
 
-  // Put the trash icon in the native header; hide if no results
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Past Results",
+      headerTitle: "Quiz History",
       headerTitleAlign: "center",
-      headerRight: results.length
-        ? () => (
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {results.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowSearch((v) => !v)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              style={{ paddingHorizontal: 6 }}
+            >
+              <Ionicons name="search-outline" size={22} color="#111827" />
+            </TouchableOpacity>
+          )}
+          {results.length > 0 && (
             <TouchableOpacity
               onPress={handleDeleteAll}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               style={{ paddingHorizontal: 6 }}
             >
-              <Ionicons name="trash-outline" size={22} color="#271111ff" />
+              <Ionicons name="trash-outline" size={22} color="#111827" />
             </TouchableOpacity>
-          )
-        : undefined,
+          )}
+        </View>
+      ),
     });
   }, [navigation, handleDeleteAll, results.length]);
 
@@ -105,128 +153,213 @@ export default function HistoryScreen() {
     }, [loadResults])
   );
 
+  const filtered = useMemo(() => {
+    if (!query.trim()) return results;
+    const q = query.trim().toLowerCase();
+    return results.filter((r) =>
+      String(r.quiz_title || "")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [results, query]);
+
   const openSummary = (quiz) => {
     navigation.navigate("ResultSummary", {
       reviewData: quiz.review_data || quiz.answers,
       quizTitle: quiz.quiz_title,
       scorePercent: quiz.score != null ? quiz.score : 0,
-      xp: 0,
+      xp: quiz.xp ?? 0,
       userAnswers: quiz.answers,
-      difficulty: quiz.difficulty,
       score: quiz.score,
     });
   };
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
-      <ScrollView contentContainerStyle={s.container}>
-        <Text style={s.pageTitle}>📚 Past Quiz Results</Text>
-        <Text style={s.pageSub}>Tap any result to view your detailed review.</Text>
+  const renderItem = ({ item, index }) => {
+    const thumb = getThumbByTitle(item.quiz_title);
+    const title = `#${index + 1} ${item.quiz_title || "Quiz"}`;
+    const scoreText = item.score != null ? `${item.score}%` : "—";
+    const xpVal = Number.isFinite(item.xp) ? item.xp : 0;
 
-        <View style={{ height: 6 }} />
+    return (
+      <TouchableOpacity
+        onPress={() => openSummary(item)}
+        activeOpacity={0.9}
+        style={styles.card}
+      >
+        <Image source={thumb} style={styles.thumb} />
+        <View style={styles.cardBody}>
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
 
-        {results.length === 0 ? (
-          <View style={s.emptyBox}>
-            <Ionicons name="alert-circle-outline" size={20} color="#9CA3AF" />
-            <Text style={s.emptyText}>No past quizzes yet</Text>
-            <Text style={s.emptyText2}>
-              Complete a quiz and your results will appear here.
-            </Text>
+          {/* 2 columns: left = Score + Date, right = XP + Time */}
+          <View style={styles.twoCol}>
+            {/* Left column: Score over Date (align with calendar icon) */}
+            <View style={styles.col}>
+              <Text style={styles.scoreText} numberOfLines={1}>
+                Score: {scoreText}
+              </Text>
+              <StatRow src={ICONS.date} text={fmtDateOnly(item.created_at)} />
+            </View>
+
+            {/* Right column: XP (with star) over Time (align with clock icon) */}
+            <View style={styles.col}>
+              <View style={styles.xpRow}>
+                <Image
+                  source={ICONS.xp}
+                  resizeMode="contain"
+                  style={{
+                    width: ICON.size,
+                    height: ICON.size,
+                    tintColor: "#111827",
+                    marginRight: ICON.gap,
+                  }}
+                />
+                <Text style={styles.scoreText} numberOfLines={1}>
+                  {xpVal} XP
+                </Text>
+              </View>
+              <StatRow src={ICONS.time} text={fmtTimeOnly(item.created_at)} />
+            </View>
           </View>
-        ) : (
-          <>
-            {results.map((r) => {
-              const thumb = getThumbByTitle(r.quiz_title);
-              const scoreText = r.score != null ? `${r.score}%` : "—";
-              const diffText = r.difficulty ? ` • ${r.difficulty}` : "";
-              return (
-                <TouchableOpacity
-                  key={r.id}
-                  onPress={() => openSummary(r)}
-                  style={s.setCard}
-                  activeOpacity={0.9}
-                >
-                  <Image source={thumb} style={s.thumb} />
-                  <View style={s.setInfo}>
-                    <Text style={s.setTitle} numberOfLines={1}>
-                      {r.quiz_title || "Quiz"}
-                    </Text>
-                    <Text style={s.setSub} numberOfLines={1}>
-                      Score: {scoreText}
-                      {diffText}
-                    </Text>
-                    <Text style={s.setMeta} numberOfLines={1}>
-                      {fmtDate(r.created_at)}
-                    </Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={18} color="#111827" />
-                </TouchableOpacity>
-              );
-            })}
-          </>
+        </View>
+
+        <Ionicons name="chevron-forward" size={18} color="#111827" />
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "#F5F7FB" }}>
+      <View style={styles.container}>
+        {showSearch && (
+          <View style={styles.searchWrap}>
+            <Ionicons name="search-outline" size={18} color="#6B7280" />
+            <TextInput
+              placeholder="Search quizzes…"
+              placeholderTextColor="#9CA3AF"
+              style={styles.searchInput}
+              value={query}
+              onChangeText={setQuery}
+              returnKeyType="search"
+            />
+            {!!query && (
+              <TouchableOpacity onPress={() => setQuery("")}>
+                <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+              </TouchableOpacity>
+            )}
+          </View>
         )}
 
-        <View style={{ height: 14 }} />
-      </ScrollView>
-    </SafeAreaView>
+        {filtered.length === 0 ? (
+          <View style={styles.emptyBox}>
+            <Ionicons name="alert-circle-outline" size={20} color="#9CA3AF" />
+            <Text style={styles.emptyTitle}>No quiz history yet</Text>
+            <Text style={styles.emptyText}>Finish a quiz to see it here.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={renderItem}
+            contentContainerStyle={{ paddingBottom: 16 }}
+          />
+        )}
+      </View>
+    </View>
   );
 }
 
-const s = StyleSheet.create({
+const CARD_RADIUS = 16;
+
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    marginTop: 10
-  },
-  pageTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#111827",
-    textAlign: "center",
-  },
-  pageSub: {
-    color: "#6B7280",
-    fontWeight: "500",
-    textAlign: "center",
-    marginBottom: 8,
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    backgroundColor: "#F5F7FB",
   },
 
-  setCard: {
+  /** search */
+  searchWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    color: "#111827",
+    fontSize: 14,
+    paddingVertical: 0,
+  },
+
+  /** list card */
+  card: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: CARD_RADIUS,
     borderWidth: 1,
     borderColor: "#E5E7EB",
     padding: 12,
     marginBottom: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
   thumb: {
-    width: 64,
-    height: 64,
-    borderRadius: 10,
+    width: 72,
+    height: 72,
+    borderRadius: 12,
     resizeMode: "cover",
   },
-  setInfo: { flex: 1 },
-  setTitle: { color: "#111827", fontSize: 17, fontWeight: "800" },
-  setSub: { color: "#6B7280", marginTop: 2, fontWeight: "600" },
-  setMeta: { color: "#9CA3AF", marginTop: 2, fontWeight: "600", fontSize: 12 },
+  cardBody: { flex: 1 },
+  title: { color: "#111827", fontSize: 16, fontWeight: "800" },
 
+  /** two-column grid under the title */
+  twoCol: {
+    marginTop: 6,
+    flexDirection: "row",
+    columnGap: 14,
+  },
+  col: {
+    flex: 1,
+  },
+
+  /** text rows */
+  scoreText: { color: "#374151", fontWeight: "700" },
+  xpRow: { flexDirection: "row", alignItems: "center" },
+
+  /** stat rows (icon + text) */
+  statRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  statText: { fontWeight: "700", fontSize: 13 },
+
+  /** empty state */
   emptyBox: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 24,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
     backgroundColor: "#FFFFFF",
-    marginTop: 4,
+    borderColor: "#E5E7EB",
+    borderWidth: 1,
+    borderRadius: CARD_RADIUS,
+    paddingVertical: 28,
+    marginTop: 12,
   },
-  emptyText: { marginTop: 6, color: "#111827", fontWeight: "700" },
-  emptyText2: { marginTop: 4, color: "#6B7280", fontWeight: "600", textAlign: "center" },
+  emptyTitle: {
+    color: "#111827",
+    fontWeight: "800",
+    marginTop: 6,
+    fontSize: 16,
+  },
+  emptyText: { color: "#6B7280", fontWeight: "600", marginTop: 2 },
 });

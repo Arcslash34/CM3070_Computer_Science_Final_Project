@@ -96,8 +96,10 @@ export async function loadEnvDatasetsFromFile() {
    Domain helpers
    ========================================================================= */
 export const estimateFloodRisk = (rainfall, lastHour) => {
-  if (rainfall > 10 || lastHour > 30) return 'High';
-  if (rainfall > 5 || lastHour > 15) return 'Moderate';
+  const r = Number.isFinite(rainfall) ? rainfall : 0;
+  const h = Number.isFinite(lastHour) ? lastHour : 0;
+  if (r > 10 || h > 30) return 'High';
+  if (r > 5  || h > 15) return 'Moderate';
   return 'Low';
 };
 
@@ -167,23 +169,38 @@ export const fetchRainfallData = async (userCoords) => {
     const firstTs = readingSets?.[0]?.timestamp ?? null;
     if (!stations.length || !readingSets.length) throw new Error('NEA rainfall payload empty');
 
-    // Build a map of last-hour accumulation per station
-    const lastHourCount = Math.min(12, readingSets.length); // 12 * 5min = 60min
-    const accByStation = new Map();
-    for (let i = 0; i < lastHourCount; i++) {
-      for (const d of (readingSets[i]?.data ?? [])) {
-        const prev = accByStation.get(d.stationId) ?? 0;
-        const val = (typeof d.value === 'number' && Number.isFinite(d.value)) ? d.value : 0;
-        accByStation.set(d.stationId, prev + val);
-      }
+    // Strict last-60-min accumulation by timestamp window
+    const slots = [...readingSets].sort(
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+    );
+    const tLatest = new Date(slots[0]?.timestamp || 0).getTime();
+    const CUTOFF = tLatest - 60 * 60 * 1000;
+
+    // include only sets within the last 60 minutes (from latest timestamp)
+    const windowSlots = [];
+    for (const s of slots) {
+      const ts = new Date(s?.timestamp || 0).getTime();
+      if (!ts) continue;
+      if (ts < CUTOFF) break; // slots are newest→oldest
+      windowSlots.push(s);
     }
 
-    // Single “current” reading set to display “now” value
-    const currentReadings = readingSets[0]?.data ?? [];
+    // accumulate per-station over that window
+    const accByStation = new Map();
+    for (const s of windowSlots) {
+      for (const d of (s.data || [])) {
+        const val = (typeof d.value === 'number' && Number.isFinite(d.value)) ? d.value : 0;
+        accByStation.set(d.stationId, (accByStation.get(d.stationId) || 0) + val);
+      }
+    }
+    const coverageMin = Math.min(60, windowSlots.length * 5); // each slot ~5 min
+
+    // latest 5-min readings for “now”
+    const currentReadings = slots[0]?.data ?? [];
 
     const all = stations.map((stn) => {
       const rainfallNow = currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
-      const lastHour = accByStation.get(stn.id) ?? 0;
+      const lastHour = accByStation.get(stn.id) ?? null;
       const distanceKm = (userCoords && stn?.location)
         ? getDistanceFromLatLonInKm(
             userCoords.latitude, userCoords.longitude,
@@ -194,14 +211,15 @@ export const fetchRainfallData = async (userCoords) => {
       return {
         id: stn.id,
         name: stn.name,
-        location: stn.location,       // { latitude, longitude }
-        rainfall: rainfallNow,        // mm in the latest 5-min window
-        lastHour,                     // mm accumulated over last hour
-        distanceKm,                   // convenience for UI
+        location: stn.location,           // { latitude, longitude }
+        rainfall: rainfallNow,            // latest 5-min (mm)
+        lastHour,                         // strict last 60 min total (mm)
+        lastHourCoverageMin: coverageMin, // minutes of data considered (<= 60)
+        distanceKm,                       // convenience for UI
       };
     });
 
-    return { stations: all, timestamp: firstTs };
+    return { stations: all, timestamp: slots[0]?.timestamp || null };
   } catch (err) {
     console.warn('fetchRainfallData -> fallback to bundled:', err?.message || err);
 

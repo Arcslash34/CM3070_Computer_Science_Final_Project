@@ -23,8 +23,8 @@ const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ?? "";
 
 // const MODEL_ID = 'deepseek/deepseek-chat-v3-0324:free';
 // const MODEL_ID = 'openai/gpt-oss-20b:free';
-// const MODEL_ID = 'mistralai/mistral-7b-instruct:free';
-const MODEL_ID = "meta-llama/llama-3.3-8b-instruct:free"; // try 'openrouter/auto' if throttled
+// const MODEL_ID = "meta-llama/llama-3.3-8b-instruct:free";
+const MODEL_ID = "mistralai/mistral-7b-instruct:free";
 
 if (__DEV__) {
   console.log("[OpenRouter] endpoint:", OPENROUTER_ENDPOINT || "(missing)");
@@ -36,22 +36,6 @@ const SYSTEM_PROMPT_SG = `
 You are LiveShield, a disaster-preparedness assistant for SINGAPORE.
 Always prioritise Singapore-specific guidance, laws, and agencies.
 If advice differs by country, give the SINGAPORE answer first.
-
-Key references to bias your reasoning (do not claim you accessed them live):
-- Emergencies: 995 (SCDF, ambulance & fire), 999 (SPF, police)
-- Non-emergency ambulance: 1777
-- NEA / data.gov.sg for weather, rainfall, PSI/PM2.5
-- PUB: flood advisories & drainage
-- HDB: housing/flood readiness in estates
-- MOM: workplace safety for weather/air quality
-- gov.sg advisories for haze, dengue, monsoon
-- SG MRT/LRT lines, common estate names, postal districts
-
-Style & format:
-1) Start with a Singapore-focused **Answer** in 3–6 short bullets.
-2) If relevant, add **Local contacts & links** (agency names, hotlines).
-
-Never give non-Singapore regulations unless explicitly asked.
 `.trim();
 
 function HeaderBar({ title, onBack }) {

@@ -18,6 +18,8 @@ import CertificatesScreen from "./CertificatesScreen";
 import BadgesScreen from "./badges";
 import Checklist from "./checklist";
 import ChatbotScreen from "./chatbot";
+import News from "./NewsScreen";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -114,6 +116,7 @@ export default function MainNavigator() {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="News" component={News} />
     </Stack.Navigator>
   );
 }

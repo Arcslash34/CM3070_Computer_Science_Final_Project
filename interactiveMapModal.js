@@ -1,5 +1,5 @@
 // interactiveMapModal.js
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import {
   Modal,
   View,
@@ -8,20 +8,25 @@ import {
   StyleSheet,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { WebView } from 'react-native-webview';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function InteractiveMapModal({ visible, onClose, userCoords, datasets }) {
-  const [activeLayer, setActiveLayer] = useState('rain');
+export default function InteractiveMapModal({
+  visible,
+  onClose,
+  userCoords,
+  datasets,
+}) {
+  const [activeLayer, setActiveLayer] = useState("rain");
   const [webviewReady, setWebviewReady] = useState(false);
   const webViewRef = useRef(null);
 
   // Stable key so WebView refreshes when layer or starting center changes
   const webviewKey = useMemo(() => {
-    const lat = userCoords?.latitude?.toFixed(2) || '1.35';
-    const lng = userCoords?.longitude?.toFixed(2) || '103.82';
+    const lat = userCoords?.latitude?.toFixed(2) || "1.35";
+    const lng = userCoords?.longitude?.toFixed(2) || "103.82";
     return `map-${activeLayer}-${lat}-${lng}`;
   }, [activeLayer, userCoords?.latitude, userCoords?.longitude]);
 
@@ -37,6 +42,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
         name: s?.name,
         rainfall: s?.rainfall,
         lastHour: s?.lastHour,
+        coverageMin: s?.lastHourCoverageMin,
       })),
       pm25: (d.pm25 || []).map((x) => ({
         lat: x?.location?.latitude,
@@ -65,7 +71,10 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
       })),
     };
 
-    const dataStr = JSON.stringify(packaged).replace(/<\/script>/g, '<\\/script>');
+    const dataStr = JSON.stringify(packaged).replace(
+      /<\/script>/g,
+      "<\\/script>"
+    );
 
     const htmlStr = `
       <!DOCTYPE html>
@@ -189,16 +198,21 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
             if (layerName === 'rain') {
               (APP_DATA.rain || []).forEach(p => {
                 if (!(p && p.lat && p.lng)) return;
+
                 const risk = estimateFloodRisk(p.rainfall, p.lastHour);
                 const color = riskColor(risk);
-                const val = (p.rainfall != null) ? (Math.round(p.rainfall) + ' mm') : '-';
+
+                const nowVal = (p.rainfall != null) ? (Math.round(p.rainfall) + ' mm') : '-';
+                // Always show "Last 1h: X mm" with no coverage suffix, even when value is 0.
+                const hourVal = (p.lastHour != null) ? (p.lastHour + ' mm') : 'n/a';
+
                 const marker = addChip({
                   lat: p.lat, lng: p.lng,
-                  label: val,
+                  label: nowVal,
                   popupTitle: (p.name || 'Station'),
                   popupLines: [
                     (p.rainfall != null ? ('Rainfall: ' + p.rainfall + ' mm') : 'Rainfall: n/a'),
-                    (p.lastHour != null ? ('Last 1h: ' + p.lastHour + ' mm') : 'Last 1h: n/a'),
+                    ('Last 1h: ' + hourVal),
                     ('Flood Risk: ' + risk)
                   ],
                   klass: 'rain',
@@ -291,12 +305,15 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
       visible={visible}
       animationType="slide"
       onRequestClose={onClose}
-      statusBarTranslucent={Platform.OS === 'android'}
+      statusBarTranslucent={Platform.OS === "android"}
       hardwareAccelerated
       presentationStyle="fullScreen"
     >
       {/* Safe area wrapper */}
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+      <SafeAreaView
+        style={styles.container}
+        edges={["top", "left", "right", "bottom"]}
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🌍 Live Environmental Map</Text>
@@ -308,25 +325,33 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
         {/* Filters with icons below label */}
         <View style={styles.filters}>
           {[
-            { key: 'rain', label: 'RAIN', icon: 'rainy' },
-            { key: 'pm25', label: 'PM2.5', icon: 'leaf' },      // using leaf for air quality
-            { key: 'wind', label: 'WIND', icon: 'navigate' },
-            { key: 'temp', label: 'TEMP', icon: 'thermometer' },
-            { key: 'humidity', label: 'HUMID', icon: 'water' },
+            { key: "rain", label: "RAIN", icon: "rainy" },
+            { key: "pm25", label: "PM2.5", icon: "leaf" }, // using leaf for air quality
+            { key: "wind", label: "WIND", icon: "navigate" },
+            { key: "temp", label: "TEMP", icon: "thermometer" },
+            { key: "humidity", label: "HUMID", icon: "water" },
           ].map(({ key, label, icon }) => {
             const active = activeLayer === key;
             return (
               <TouchableOpacity
                 key={key}
-                style={[styles.filterButton, active && styles.activeFilterButton]}
+                style={[
+                  styles.filterButton,
+                  active && styles.activeFilterButton,
+                ]}
                 onPress={() => setActiveLayer(key)}
                 accessibilityRole="button"
-                accessibilityLabel={`Show ${label.toLowerCase()} layer`}>
-                <Text style={[styles.filterText, active && styles.activeFilterText]}>{label}</Text>
+                accessibilityLabel={`Show ${label.toLowerCase()} layer`}
+              >
+                <Text
+                  style={[styles.filterText, active && styles.activeFilterText]}
+                >
+                  {label}
+                </Text>
                 <Ionicons
                   name={icon}
                   size={18}
-                  color={active ? '#fff' : '#374151'}
+                  color={active ? "#fff" : "#374151"}
                   style={{ marginTop: 4 }}
                 />
               </TouchableOpacity>
@@ -339,7 +364,7 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
           {ready ? (
             <WebView
               ref={webViewRef}
-              originWhitelist={['*']}
+              originWhitelist={["*"]}
               javaScriptEnabled
               domStorageEnabled
               key={webviewKey}
@@ -361,47 +386,52 @@ export default function InteractiveMapModal({ visible, onClose, userCoords, data
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: "#fff" },
 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center',
+    backgroundColor: "#F3F4F6",
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
-  headerTitle: { fontSize: 16, fontWeight: '800', color: '#111827' },
+  headerTitle: { fontSize: 16, fontWeight: "800", color: "#111827" },
 
   filters: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     paddingVertical: 8,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   filterButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     minWidth: 64,
   },
-  activeFilterButton: { backgroundColor: '#4F46E5' },
-  filterText: { fontSize: 12, fontWeight: '800', color: '#374151', letterSpacing: 0.5 },
-  activeFilterText: { color: '#fff' },
-
-  mapBox: { flex: 1, position: 'relative' },
-  loadingOverlay: {
-    position: 'absolute',
-    top: '40%',
-    alignSelf: 'center',
-    alignItems: 'center',
+  activeFilterButton: { backgroundColor: "#4F46E5" },
+  filterText: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#374151",
+    letterSpacing: 0.5,
   },
-  loadingText: { marginTop: 10, fontSize: 14, color: '#374151' },
+  activeFilterText: { color: "#fff" },
+
+  mapBox: { flex: 1, position: "relative" },
+  loadingOverlay: {
+    position: "absolute",
+    top: "40%",
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  loadingText: { marginTop: 10, fontSize: 14, color: "#374151" },
 });

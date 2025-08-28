@@ -1,7 +1,6 @@
 // homePage.js
 import React, {
   useEffect,
-  useMemo,
   useState,
   useCallback,
   useRef,
@@ -22,10 +21,12 @@ import {
   TouchableWithoutFeedback,
   Image,
   Dimensions,
+  FlatList,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Location from "expo-location";
-import * as Notifications from "expo-notifications";
+import * as AppPrefs from "./appPrefs";
 import * as IntentLauncher from "expo-intent-launcher";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -56,18 +57,16 @@ const HERO_ASPECT = HERO_DIM.height / HERO_DIM.width;
 const { width: SCREEN_W } = Dimensions.get("window");
 const HERO_HEIGHT = Math.round(SCREEN_W * HERO_ASPECT);
 
-/* ----------------- Notifications/alerts (unchanged) ----------------- */
+/* ----------------- Notifications/alerts ----------------- */
 const ALERT_COOLDOWN_MS = 10 * 60 * 1000;
 const GEOFENCE_KM = 2;
 const mockDefault = { latitude: 1.3405, longitude: 103.72 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+// Demo keys (shared with Settings)
+const DEMO_KEYS = {
+  mockLocation: "settings:mock-location",
+  mockDisaster: "settings:mock-disaster",
+};
 
 const alertQueueRef = { current: [] };
 const alertActiveRef = { current: false };
@@ -99,43 +98,6 @@ function pumpAlerts() {
   );
   Alert.alert(next.title, next.body, wrapped, { cancelable: false });
 }
-async function ensureNotificationsReady() {
-  try {
-    const existing = await Notifications.getPermissionsAsync();
-    let status = existing.status;
-    if (status !== "granted" && existing.canAskAgain) {
-      const req = await Notifications.requestPermissionsAsync();
-      status = req.status;
-    }
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "Alerts",
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-        lockscreenVisibility:
-          Notifications.AndroidNotificationVisibility.PUBLIC,
-        sound: "default",
-      });
-    }
-    return status === "granted";
-  } catch {
-    return false;
-  }
-}
-async function presentDeviceNotification({ title, body, type }) {
-  if (Platform.OS === "web") return;
-  const ok = await ensureNotificationsReady();
-  if (!ok) return;
-  try {
-    await Notifications.presentNotificationAsync({
-      title,
-      body,
-      sound: "default",
-      data: { type },
-    });
-  } catch {}
-}
 async function triggerAlert({
   title,
   body,
@@ -159,7 +121,10 @@ async function triggerAlert({
       ].filter(Boolean),
     });
   }
-  if (notifyDevice) await presentDeviceNotification({ title, body, type });
+  if (notifyDevice) {
+    await AppPrefs.presentNotification({ title, body, data: { type } });
+  }
+
   lastAlertByTypeRef.current[type] = now;
 }
 function distKm(a, b) {
@@ -173,19 +138,46 @@ function distKm(a, b) {
 
 /* ----------------- Emergency Contacts Modal ----------------- */
 const EMERGENCY_CONTACTS = [
-  { key: "scdf", name: "SCDF (Fire / Ambulance)", number: "995", icon: "flame", color: "#EF4444" },
-  { key: "ambulance", name: "Non-Emergency Ambulance", number: "1777", icon: "medkit", color: "#F59E0B" },
-  { key: "police", name: "Police", number: "999", icon: "shield", color: "#3B82F6" },
+  {
+    key: "scdf",
+    name: "SCDF (Fire / Ambulance)",
+    number: "995",
+    icon: "flame",
+    color: "#EF4444",
+  },
+  {
+    key: "ambulance",
+    name: "Non-Emergency Ambulance",
+    number: "1777",
+    icon: "medkit",
+    color: "#F59E0B",
+  },
+  {
+    key: "police",
+    name: "Police",
+    number: "999",
+    icon: "shield",
+    color: "#3B82F6",
+  },
 ];
 function EmergencyContactsModal({ visible, onClose }) {
   const onCall = (num) => {
     Alert.alert(`Call ${num}?`, "This will open your phone dialer.", [
       { text: "Cancel", style: "cancel" },
-      { text: "Call", style: "destructive", onPress: () => Linking.openURL(`tel:${num}`) },
+      {
+        text: "Call",
+        style: "destructive",
+        onPress: () => Linking.openURL(`tel:${num}`),
+      },
     ]);
   };
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackdrop} />
       </TouchableWithoutFeedback>
@@ -199,7 +191,9 @@ function EmergencyContactsModal({ visible, onClose }) {
         {EMERGENCY_CONTACTS.map((c) => (
           <View key={c.key} style={styles.contactRow}>
             <View style={styles.contactLeft}>
-              <View style={[styles.contactIconWrap, { backgroundColor: c.color }]}>
+              <View
+                style={[styles.contactIconWrap, { backgroundColor: c.color }]}
+              >
                 <Ionicons name={c.icon} size={16} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
@@ -207,7 +201,11 @@ function EmergencyContactsModal({ visible, onClose }) {
                 <Text style={styles.contactNumber}>{c.number}</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => onCall(c.number)} style={styles.callBtn} accessibilityLabel={`Call ${c.name}`}>
+            <TouchableOpacity
+              onPress={() => onCall(c.number)}
+              style={styles.callBtn}
+              accessibilityLabel={`Call ${c.name}`}
+            >
               <Ionicons name="call" size={16} color="#fff" />
               <Text style={styles.callBtnText}>Call</Text>
             </TouchableOpacity>
@@ -215,6 +213,135 @@ function EmergencyContactsModal({ visible, onClose }) {
         ))}
       </View>
     </Modal>
+  );
+}
+
+/* ----------------- News (curated) ----------------- */
+const NEWS_ITEMS = [
+  {
+    id: "cna-flood",
+    title: "Heavy rain triggers flash floods in multiple areas",
+    source: "CNA",
+    url: "https://www.google.com/search?q=site%3Achannelnewsasia.com+flood+Singapore",
+  },
+  {
+    id: "st-flood",
+    title: "Flash floods & road closures: What motorists should know",
+    source: "The Straits Times",
+    url: "https://www.google.com/search?q=site%3Astraitstimes.com+flood+Singapore",
+  },
+  {
+    id: "today-flood",
+    title: "Rainy season outlook & flood advisories",
+    source: "TODAY",
+    url: "https://www.google.com/search?q=site%3Atodayonline.com+flood+Singapore",
+  },
+  {
+    id: "pub-press",
+    title: "PUB updates on drainage & flood-prone hotspots",
+    source: "PUB",
+    url: "https://www.pub.gov.sg/news",
+  },
+  {
+    id: "nea-weather",
+    title: "NEA heavy rain / thunderstorm advisories",
+    source: "NEA",
+    url: "https://www.nea.gov.sg/weather",
+  },
+  {
+    id: "nea-dengue",
+    title: "Dengue clusters & prevention tips",
+    source: "NEA",
+    url: "https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters",
+  },
+];
+
+/* =========================================================================
+   Helpers for the alert card’s date row (design only)
+   ========================================================================= */
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+function formatFancyDate(dt) {
+  if (!dt) return "—";
+  return `${DAYS[dt.getDay()]}, ${dt.getDate()} ${
+    MONTHS[dt.getMonth()]
+  } ${dt.getFullYear()}`;
+}
+function formatAgo(dt) {
+  if (!dt) return "";
+  const ms = Date.now() - dt.getTime();
+  if (ms < 60_000) return "just now";
+  const mins = Math.floor(ms / 60_000);
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
+
+/* =========================================================================
+   Alert card UI (new design only; logic below stays the same)
+   ========================================================================= */
+function RiskAlertCard({ variant, title, whenISO, areasText }) {
+  const dt = whenISO ? new Date(whenISO) : null;
+
+  const palette =
+    variant === "red"
+      ? {
+          wrap: styles.alertRed,
+          icon: "warning",
+          iconColor: "#fff",
+          text: styles.alertTextLight,
+        }
+      : variant === "orange"
+      ? {
+          wrap: styles.alertOrange,
+          icon: "warning-outline",
+          iconColor: "#111827",
+          text: styles.alertTextDark,
+        }
+      : {
+          wrap: styles.alertGreen,
+          icon: "checkmark-circle",
+          iconColor: "#064e3b",
+          text: styles.alertTextDark,
+        };
+
+  return (
+    <View style={[styles.alertCard, palette.wrap]}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Ionicons
+          name={palette.icon}
+          size={18}
+          color={palette.iconColor}
+          style={{ marginRight: 10 }}
+        />
+        <Text style={[styles.alertTitle, palette.text]}>{title}</Text>
+      </View>
+
+      <Text style={[styles.alertMeta, palette.text]} numberOfLines={2}>
+        {formatFancyDate(dt)} <Text style={styles.dot}>•</Text> {formatAgo(dt)}
+        {!!areasText && (
+          <>
+            {" "}
+            <Text style={styles.dot}>•</Text> {areasText}
+          </>
+        )}
+      </Text>
+    </View>
   );
 }
 
@@ -242,7 +369,6 @@ export default function HomeScreen() {
   const watchRef = useRef(null);
   const lastFetchTsRef = useRef(0);
 
-  const [forecastText, setForecastText] = useState(null);
   const [updatedAt, setUpdatedAt] = useState(null);
   const [rainNearest, setRainNearest] = useState(null);
 
@@ -255,6 +381,34 @@ export default function HomeScreen() {
 
   const [areaAdvisoryActive, setAreaAdvisoryActive] = useState(false);
   const [envDatasets, setEnvDatasets] = useState(null);
+
+  // Risk banner & nearest area label
+  const [uiRiskLevel, setUiRiskLevel] = useState(null); // "High" | "Moderate" | "Low" | null
+  const [nearestAreaName, setNearestAreaName] = useState(null);
+
+  // Mock flags (from Settings)
+  const [mockLocationOn, setMockLocationOn] = useState(false);
+  const [mockDisasterOn, setMockDisasterOn] = useState(false);
+
+  /** Load demo toggles and return their booleans */
+  const loadDemoToggles = useCallback(async () => {
+    try {
+      const [ml, md] = await Promise.all([
+        AsyncStorage.getItem(DEMO_KEYS.mockLocation),
+        AsyncStorage.getItem(DEMO_KEYS.mockDisaster),
+      ]);
+      const mlOn = ml === "1";
+      const mdOn = md === "1";
+      setMockLocationOn(mlOn);
+      setMockDisasterOn(mdOn);
+      return { mlOn, mdOn };
+    } catch {
+      setMockLocationOn(false);
+      setMockDisasterOn(false);
+      return { mlOn: false, mdOn: false };
+    }
+  }, []);
+
 
   const triggerAreaAdvisoryForCoords = useCallback(async (c) => {
     const inside = distKm(c, mockDefault) <= GEOFENCE_KM;
@@ -272,19 +426,43 @@ export default function HomeScreen() {
     if (!datasets || !c) return;
     const pickNearest = (arr, getLatLng) => {
       if (!arr || !arr.length) return null;
-      let best = null, bestD = Infinity;
+      let best = null,
+        bestD = Infinity;
       for (const item of arr) {
         const { lat, lng } = getLatLng(item) || {};
         if (typeof lat !== "number" || typeof lng !== "number") continue;
         const d = getDistanceFromLatLonInKm(c.latitude, c.longitude, lat, lng);
-        if (d < bestD) { bestD = d; best = { ...item, _distKm: d }; }
+        if (d < bestD) {
+          bestD = d;
+          best = { ...item, _distKm: d };
+        }
       }
       return best;
     };
-    setPm25Nearest(pickNearest(datasets.pm25, (d) => ({ lat: d?.location?.latitude, lng: d?.location?.longitude })));
-    setTempNearest(pickNearest(datasets.temp, (d) => ({ lat: d?.location?.latitude, lng: d?.location?.longitude })));
-    setHumidityNearest(pickNearest(datasets.humidity, (d) => ({ lat: d?.location?.latitude, lng: d?.location?.longitude })));
-    setWindNearest(pickNearest(datasets.wind, (d) => ({ lat: d?.location?.latitude, lng: d?.location?.longitude })));
+    setPm25Nearest(
+      pickNearest(datasets.pm25, (d) => ({
+        lat: d?.location?.latitude,
+        lng: d?.location?.longitude,
+      }))
+    );
+    setTempNearest(
+      pickNearest(datasets.temp, (d) => ({
+        lat: d?.location?.latitude,
+        lng: d?.location?.longitude,
+      }))
+    );
+    setHumidityNearest(
+      pickNearest(datasets.humidity, (d) => ({
+        lat: d?.location?.latitude,
+        lng: d?.location?.longitude,
+      }))
+    );
+    setWindNearest(
+      pickNearest(datasets.wind, (d) => ({
+        lat: d?.location?.latitude,
+        lng: d?.location?.longitude,
+      }))
+    );
   }, []);
 
   const fetchAll = useCallback(
@@ -296,43 +474,54 @@ export default function HomeScreen() {
       const weatherData = await fetchWeatherForecast();
       if (weatherData) {
         const nearestArea = getNearestForecastArea(c, weatherData.metadata);
-        const areaForecast = nearestArea
-          ? weatherData.forecasts.find(
-              (f) =>
-                f?.area?.trim?.().toLowerCase() ===
-                nearestArea?.trim?.().toLowerCase()
-            )
-          : null;
-        setForecastText(areaForecast?.forecast ?? null);
+        setNearestAreaName(nearestArea || null);
       }
 
       const rainAll = await fetchRainfallData(c);
       if (rainAll) {
         if (Array.isArray(rainAll.stations) && rainAll.stations.length) {
-          let nearest = null, best = Infinity;
+          let nearest = null,
+            best = Infinity;
           for (const st of rainAll.stations) {
             if (
               typeof st?.location?.latitude !== "number" ||
               typeof st?.location?.longitude !== "number"
-            ) continue;
+            )
+              continue;
             const d = getDistanceFromLatLonInKm(
-              c.latitude, c.longitude, st.location.latitude, st.location.longitude
+              c.latitude,
+              c.longitude,
+              st.location.latitude,
+              st.location.longitude
             );
-            if (d < best) { best = d; nearest = st; }
+            if (d < best) {
+              best = d;
+              nearest = st;
+            }
           }
           setRainNearest(nearest || null);
+
+          // UI risk banner level from rainfall data
           if (nearest) {
             const risk = estimateFloodRisk(nearest.rainfall, nearest.lastHour);
+            setUiRiskLevel(risk || null);
+
             if (risk === "High" || risk === "Moderate") {
               await triggerAlert({
                 title: `🚨 Flood Risk: ${risk}`,
-                body: `Heavy rain detected at ${nearest.name ?? "nearby station"}. Stay alert and follow safety procedures.`,
+                body: `Heavy rain detected at ${
+                  nearest.name ?? "nearby station"
+                }. Stay alert and follow safety procedures.`,
                 type: "risk",
                 showPopup: true,
                 onViewMap: () => setMapExpanded(true),
               });
             }
+          } else {
+            setUiRiskLevel(null);
           }
+        } else {
+          setUiRiskLevel(null);
         }
       }
 
@@ -371,7 +560,10 @@ export default function HomeScreen() {
       const base = needSnapshot ? await loadEnvDatasetsFromFile() : null;
 
       const merged = {
-        rain: rainAll && Array.isArray(rainAll.stations) ? rainAll : base?.rain || { stations: [] },
+        rain:
+          rainAll && Array.isArray(rainAll.stations)
+            ? rainAll
+            : base?.rain || { stations: [] },
         pm25: pm25?.length ? pm25 : base?.pm25 || [],
         temp: temp?.length ? temp : base?.temp || [],
         humidity: humidity?.length ? humidity : base?.humidity || [],
@@ -385,25 +577,48 @@ export default function HomeScreen() {
     [coords, triggerAreaAdvisoryForCoords, pickNearestFrom]
   );
 
-  /* ---- Initial load / resume / watch (unchanged) ---- */
+  /** Apply mock flags immediately when they change / on focus */
+  const applyMockFlags = useCallback(async () => {
+    if (mockLocationOn) {
+      usingMockRef.current = true;
+      setCoords(mockDefault);
+      setLocDeniedBanner(false);
+      await fetchAll(mockDefault, { allowGeofence: false });
+    }
+  }, [mockLocationOn, fetchAll]);
+
+  /* ---- Initial load / resume ---- */
   useEffect(() => {
     if (initRanRef.current) return;
     initRanRef.current = true;
 
     (async () => {
+      const { mlOn } = await loadDemoToggles();
+
       try {
         const fileSnap = await loadEnvDatasetsFromFile();
         if (fileSnap) {
           setEnvDatasets(fileSnap);
-          const seedCoords = coords || (usingMockRef.current ? mockDefault : null);
+          const seedCoords =
+            coords || (usingMockRef.current ? mockDefault : null);
           if (seedCoords) pickNearestFrom(fileSnap, seedCoords);
         }
       } catch {
         setEnvDatasets(null);
       }
 
-      const grantedNotif = await ensureNotificationsReady();
+      await AppPrefs.refresh(); // read toggles & configure Android channel (if native)
+      const grantedNotif = await AppPrefs.ensurePermissions();
       setNotifGranted(grantedNotif);
+
+      // If mock location is ON, short-circuit to mock
+      if (mlOn) {
+        usingMockRef.current = true;
+        setCoords(mockDefault);
+        setLocDeniedBanner(false);
+        await fetchAll(mockDefault, { allowGeofence: false });
+        return;
+      }
 
       if (Platform.OS === "web") {
         usingMockRef.current = true;
@@ -459,11 +674,39 @@ export default function HomeScreen() {
         await fetchAll(mockDefault, { allowGeofence: false });
       }
     })();
-  }, [fetchAll, triggerAreaAdvisoryForCoords, coords, pickNearestFrom]);
+  }, [
+    fetchAll,
+    triggerAreaAdvisoryForCoords,
+    coords,
+    pickNearestFrom,
+    loadDemoToggles,
+  ]);
 
+  // Re-apply when toggles change
+  useEffect(() => {
+    applyMockFlags();
+  }, [applyMockFlags]);
+
+  // Also refresh flags on screen focus (+ refresh notif prefs)
+  useEffect(() => {
+    const unsub = navigation.addListener("focus", async () => {
+      await loadDemoToggles();
+      await applyMockFlags();
+      await AppPrefs.refresh();
+    });
+    return unsub;
+  }, [navigation, loadDemoToggles, applyMockFlags]);
+
+  // Reload on app foreground; if real location available, fetch; otherwise respect mock
   useEffect(() => {
     const sub = AppState.addEventListener("change", async (state) => {
       if (state !== "active") return;
+      await loadDemoToggles();
+      await AppPrefs.refresh();
+      if (mockLocationOn) {
+        await applyMockFlags();
+        return;
+      }
       try {
         const perm = await Location.getForegroundPermissionsAsync();
         setLocPermission(perm.status);
@@ -483,19 +726,24 @@ export default function HomeScreen() {
       } catch {}
     });
     return () => sub.remove();
-  }, [fetchAll]);
+  }, [fetchAll, loadDemoToggles, mockLocationOn, applyMockFlags]);
 
+  // Watch location (disabled while mocking)
   useEffect(() => {
     let cancelled = false;
     async function startWatch() {
-      if (locPermission !== "granted" || !servicesEnabled) {
+      if (mockLocationOn || locPermission !== "granted" || !servicesEnabled) {
         watchRef.current?.remove?.();
         watchRef.current = null;
         return;
       }
       watchRef.current?.remove?.();
       watchRef.current = await Location.watchPositionAsync(
-        { accuracy: Location.Accuracy.Balanced, timeInterval: 20000, distanceInterval: 100 },
+        {
+          accuracy: Location.Accuracy.Balanced,
+          timeInterval: 20000,
+          distanceInterval: 100,
+        },
         async (location) => {
           if (cancelled) return;
           usingMockRef.current = false;
@@ -514,7 +762,7 @@ export default function HomeScreen() {
       watchRef.current?.remove?.();
       watchRef.current = null;
     };
-  }, [locPermission, servicesEnabled, fetchAll]);
+  }, [locPermission, servicesEnabled, fetchAll, mockLocationOn]);
 
   const onEnableLocationPress = useCallback(async () => {
     if (Platform.OS === "web") return;
@@ -562,21 +810,80 @@ export default function HomeScreen() {
     setRefreshing(true);
     try {
       const allowGeofence =
-        locPermission === "granted" && servicesEnabled && !usingMockRef.current;
+        !mockLocationOn &&
+        locPermission === "granted" &&
+        servicesEnabled &&
+        !usingMockRef.current;
       await fetchAll(undefined, { allowGeofence });
     } finally {
       setRefreshing(false);
     }
-  }, [fetchAll, locPermission, servicesEnabled]);
+  }, [fetchAll, locPermission, servicesEnabled, mockLocationOn]);
 
-  const formattedUpdated = updatedAt ? new Date(updatedAt).toLocaleTimeString() : "--:--";
+  const formattedUpdated = updatedAt
+    ? new Date(updatedAt).toLocaleTimeString()
+    : "--:--";
+
+  /* --------- Risk banner below the map --------- */
+  const realLocationOn = locPermission === "granted" && servicesEnabled;
+  const riskBanner = (() => {
+    // Forced red when mock disaster is ON (with mock location or no real location)
+    if (mockDisasterOn && (!realLocationOn || mockLocationOn)) {
+      return (
+        <RiskAlertCard
+          variant="red"
+          title="Flash Flood Warning"
+          whenISO={updatedAt || new Date().toISOString()}
+          areasText="Taman Jurong, Lakeside"
+        />
+      );
+    }
+
+    // If we have coords and a computed risk, show status for nearest area/station
+    if (coords && uiRiskLevel) {
+      const locName = rainNearest?.name || nearestAreaName || "your location";
+      if (uiRiskLevel === "High") {
+        return (
+          <RiskAlertCard
+            variant="red"
+            title="Flash Flood Warning"
+            whenISO={updatedAt}
+            areasText={locName}
+          />
+        );
+      }
+      if (uiRiskLevel === "Moderate") {
+        return (
+          <RiskAlertCard
+            variant="orange"
+            title="Moderate Flood Risk"
+            whenISO={updatedAt}
+            areasText={locName}
+          />
+        );
+      }
+      // Low
+      return (
+        <RiskAlertCard
+          variant="green"
+          title={`No alert near ${locName}`}
+          whenISO={updatedAt}
+        />
+      );
+    }
+
+    // No coords and no forced mock disaster — show nothing
+    return null;
+  })();
 
   /* ========================= RENDER ========================= */
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <ScrollView
         contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {/* HERO IMAGE */}
         <View style={styles.heroWrap}>
@@ -586,21 +893,31 @@ export default function HomeScreen() {
         <View style={styles.heroText}>
           <Text style={styles.heroTitle}>Always Be Prepared</Text>
           <Text style={styles.heroDesc}>
-            Know what’s happening nearby, learn what to do, and act fast when it matters.
+            Know what’s happening nearby, learn what to do, and act fast when it
+            matters.
           </Text>
         </View>
 
-        {/* LIVE MAP (title row only) */}
+        {/* LIVE MAP */}
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Live Map</Text>
         </View>
         <View style={styles.mapShell}>
           {coords ? (
-            <TouchableOpacity onPress={() => setMapExpanded(true)} activeOpacity={0.9}>
+            <TouchableOpacity
+              onPress={() => setMapExpanded(true)}
+              activeOpacity={0.9}
+            >
               <LeafletMiniMap lat={coords.latitude} lng={coords.longitude} />
             </TouchableOpacity>
           ) : (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <Text style={{ color: "#6B7280" }}>Locating…</Text>
             </View>
           )}
@@ -608,63 +925,114 @@ export default function HomeScreen() {
         {/* Updated time BELOW the map, right-aligned */}
         <Text style={styles.updatedBelow}>Updated at: {formattedUpdated}</Text>
 
-        {/* Location banner — below the map */}
+        {/* Risk / Warning card (new design) */}
+        {riskBanner}
+
+        {/* Location banner — permissions/services */}
         {locDeniedBanner && (
-          <View style={[styles.banner, { borderLeftColor: "#3B82F6", marginTop: 8 }]}>
+          <View
+            style={[
+              styles.banner,
+              { borderLeftColor: "#3B82F6", marginTop: 8 },
+            ]}
+          >
             <View style={{ flex: 1 }}>
               <Text style={styles.bannerTitle}>
-                {!servicesEnabled ? "Location Services Off" : "Location Permission Denied"}
+                {!servicesEnabled
+                  ? "Location Services Off"
+                  : "Location Permission Denied"}
               </Text>
               <Text style={styles.bannerBody}>
-                Using demo data near Taman Jurong. Enable location for precise readings.
+                Using demo data near Taman Jurong. Enable location for precise
+                readings.
               </Text>
-              <TouchableOpacity onPress={onEnableLocationPress} style={styles.enableBtn}>
+              <TouchableOpacity
+                onPress={onEnableLocationPress}
+                style={styles.enableBtn}
+              >
                 <Text style={styles.enableBtnText}>Enable Location</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => setLocDeniedBanner(false)} accessibilityLabel="Dismiss alert">
+            <TouchableOpacity
+              onPress={() => setLocDeniedBanner(false)}
+              accessibilityLabel="Dismiss alert"
+            >
               <Ionicons name="close" size={18} color="#111827" />
             </TouchableOpacity>
           </View>
         )}
 
-        {/* LOCAL CONDITIONS */}
-        <Text style={[styles.sectionTitle, { marginTop: 16, marginBottom: 8 }]}>Local Conditions</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsRow}>
+        {/* News */}
+        <View style={[styles.sectionRow, { marginTop: 12 }]}>
+          <Text style={styles.sectionTitle}>News Articles</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("News")}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.viewAll}>View all</Text>
+          </TouchableOpacity>
+        </View>
+        <HomeNewsStrip onOpen={(url) => Linking.openURL(url)} />
+
+        {/* Local conditions */}
+        <Text style={[styles.sectionTitle, { marginTop: 16, marginBottom: 8 }]}>
+          Local Conditions
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.statsRow}
+        >
           <HStatCard
             icon="rainy"
             label="Rainfall"
-            value={rainNearest?.rainfall != null ? `${rainNearest.rainfall} mm` : "—"}
+            value={
+              rainNearest?.rainfall != null ? `${rainNearest.rainfall} mm` : "—"
+            }
             sub={rainNearest?.name || "Nearest Station"}
           />
           <HStatCard
             icon="leaf"
             label="PM2.5"
-            value={pm25Nearest?.value != null ? `${pm25Nearest.value} µg/m³` : "—"}
+            value={
+              pm25Nearest?.value != null ? `${pm25Nearest.value} µg/m³` : "—"
+            }
             sub={pm25Nearest?.name || "Nearest Region"}
           />
           <HStatCard
             icon="thermometer"
             label="Temp"
-            value={tempNearest?.value != null ? `${tempNearest.value} °C` : "—"}
+            value={
+              tempNearest?.value != null ? `${tempNearest?.value} °C` : "—"
+            }
             sub={tempNearest?.name || "Nearest Station"}
           />
           <HStatCard
             icon="water"
             label="Humidity"
-            value={humidityNearest?.value != null ? `${humidityNearest.value}%` : "—"}
+            value={
+              humidityNearest?.value != null ? `${humidityNearest.value}%` : "—"
+            }
             sub={humidityNearest?.name || "Nearest Station"}
           />
           <HStatCard
             icon="navigate"
             label="Wind"
             value={windNearest?.speed != null ? `${windNearest.speed} kn` : "—"}
-            sub={windNearest?.direction != null ? `Dir ${windNearest.direction}°` : windNearest?.name || "Nearest"}
+            sub={
+              windNearest?.direction != null
+                ? `Dir ${windNearest.direction}°`
+                : windNearest?.name || "Nearest"
+            }
           />
         </ScrollView>
 
-        {/* EMERGENCY PREPAREDNESS — image-top cards like Quizzes */}
-        <Text style={[styles.sectionTitle, { marginTop: 16, marginBottom: 10 }]}>Emergency Preparedness</Text>
+        {/* Features */}
+        <Text
+          style={[styles.sectionTitle, { marginTop: 16, marginBottom: 10 }]}
+        >
+          Emergency Preparedness
+        </Text>
         <View style={styles.featuresGrid}>
           <FeatureCard
             title="Resource Hub"
@@ -677,21 +1045,21 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Checklist")}
           />
           <FeatureCard
-            title="Emergency Contact"
-            img={require("./assets/emergency.jpg")}
-            onPress={() => setEmergencyOpen(true)}
-          />
-          <FeatureCard
             title="Quiz Game"
             img={require("./assets/quiz.jpg")}
             onPress={() => navigation.navigate("Quizzes")}
+          />
+          <FeatureCard
+            title="Emergency Contact"
+            img={require("./assets/emergency.jpg")}
+            onPress={() => setEmergencyOpen(true)}
           />
         </View>
 
         <View style={{ height: 10 }} />
       </ScrollView>
 
-      {/* Chatbot FAB — now navigates to a full screen */}
+      {/* Chatbot FAB */}
       <TouchableOpacity
         style={styles.chatBubble}
         activeOpacity={0.9}
@@ -701,9 +1069,12 @@ export default function HomeScreen() {
         <Ionicons name="chatbubbles" size={20} color="#fff" />
       </TouchableOpacity>
 
-      <EmergencyContactsModal visible={emergencyOpen} onClose={() => setEmergencyOpen(false)} />
+      <EmergencyContactsModal
+        visible={emergencyOpen}
+        onClose={() => setEmergencyOpen(false)}
+      />
 
-      {/* Keep interactive map as a modal */}
+      {/* Interactive map modal */}
       <InteractiveMapModal
         visible={mapExpanded}
         onClose={() => setMapExpanded(false)}
@@ -735,7 +1106,13 @@ function LeafletMiniMap({ lat, lng }) {
   </body></html>`;
   return (
     <View style={styles.mapShellInner}>
-      <WebView originWhitelist={["*"]} javaScriptEnabled domStorageEnabled source={{ html }} style={{ flex: 1 }} />
+      <WebView
+        originWhitelist={["*"]}
+        javaScriptEnabled
+        domStorageEnabled
+        source={{ html }}
+        style={{ flex: 1 }}
+      />
     </View>
   );
 }
@@ -744,7 +1121,12 @@ function LeafletMiniMap({ lat, lng }) {
 function HStatCard({ icon, label, value, sub }) {
   return (
     <View style={styles.hStatCard}>
-      <Ionicons name={icon} size={36} color="#4F46E5" style={{ alignSelf: "center" }} />
+      <Ionicons
+        name={icon}
+        size={36}
+        color="#4F46E5"
+        style={{ alignSelf: "center" }}
+      />
       <Text style={styles.hStatLabelCentered}>{label}</Text>
       <Text style={styles.hStatValueCentered}>{value}</Text>
       {!!sub && (
@@ -759,12 +1141,132 @@ function HStatCard({ icon, label, value, sub }) {
 /* --- Feature card (image top, title bottom like Quizzes) --- */
 function FeatureCard({ title, img, onPress }) {
   return (
-    <TouchableOpacity style={styles.featureCard} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity
+      style={styles.featureCard}
+      onPress={onPress}
+      activeOpacity={0.9}
+    >
       <Image source={img} style={styles.featureImage} />
-      <Text style={styles.featureTitle} numberOfLines={1}>{title}</Text>
+      <Text style={styles.featureTitle} numberOfLines={1}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 }
+
+/* --- News carousel (auto-scrolls every 5s) --- */
+function HomeNewsStrip({ onOpen }) {
+  const listRef = React.useRef(null);
+  const [idx, setIdx] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // width = screen width minus horizontal padding (16*2)
+  const CARD_W = SCREEN_W - 32;
+  const SPACING = 10;
+
+  const getItemLayout = (_data, index) => ({
+    length: CARD_W + SPACING,
+    offset: (CARD_W + SPACING) * index,
+    index,
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const t = setInterval(() => {
+      setIdx((prev) => {
+        const next = (prev + 1) % NEWS_ITEMS.length;
+        try {
+          listRef.current?.scrollToIndex?.({ index: next, animated: true });
+        } catch {}
+        return next;
+      });
+    }, 5000);
+    return () => clearInterval(t);
+  }, [mounted]);
+
+  const onMomentumEnd = (e) => {
+    const x = e.nativeEvent.contentOffset.x;
+    const newIdx = Math.round(x / (CARD_W + SPACING));
+    if (!Number.isNaN(newIdx)) {
+      setIdx(Math.max(0, Math.min(NEWS_ITEMS.length - 1, newIdx)));
+    }
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onOpen(item.url)}
+      style={[newsStyles.card, { width: CARD_W, marginRight: SPACING }]}
+    >
+      <View style={newsStyles.rowTop}>
+        <Ionicons name="newspaper-outline" size={18} color="#111827" />
+        <Text style={newsStyles.source}>{item.source}</Text>
+      </View>
+      <Text style={newsStyles.title} numberOfLines={2}>
+        {item.title}
+      </Text>
+      <View style={newsStyles.rowBottom}>
+        <Text style={newsStyles.linkText}>Open article</Text>
+        <Ionicons name="open-outline" size={16} color="#6366F1" />
+      </View>
+    </TouchableOpacity>
+  );
+
+  return (
+    <FlatList
+      ref={listRef}
+      data={NEWS_ITEMS}
+      keyExtractor={(it) => it.id}
+      renderItem={renderItem}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      getItemLayout={getItemLayout}
+      snapToInterval={CARD_W + SPACING}
+      snapToAlignment="start"
+      decelerationRate="fast"
+      disableIntervalMomentum
+      nestedScrollEnabled
+      onMomentumScrollEnd={onMomentumEnd}
+      contentContainerStyle={{ paddingLeft: 0, paddingRight: 16 }}
+      initialScrollIndex={0}
+    />
+  );
+}
+
+const newsStyles = StyleSheet.create({
+  card: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOpacity: Platform.OS === "ios" ? 0.06 : 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  rowTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
+  },
+  source: { color: "#6B7280", fontWeight: "700", fontSize: 12 },
+  title: { color: "#111827", fontSize: 15, fontWeight: "800", lineHeight: 20 },
+  rowBottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 10,
+  },
+  linkText: { color: "#6366F1", fontWeight: "700" },
+});
 
 /* =========================================================================
    STYLES
@@ -773,7 +1275,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FFFFFF" },
   container: { padding: 16 },
 
-  /* Banner */
+  /* Banner (permissions/services) */
   banner: {
     flexDirection: "row",
     alignItems: "center",
@@ -797,6 +1299,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   enableBtnText: { color: "#fff", fontWeight: "700" },
+
+  /* NEW – Alert card design (screenshot-like) */
+  alertCard: {
+    borderRadius: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  alertRed: { backgroundColor: "#ef4444" },
+  alertOrange: { backgroundColor: "#f59e0b" },
+  alertGreen: { backgroundColor: "#d1fae5" },
+  alertTitle: { fontSize: 16, fontWeight: "800" },
+  alertMeta: { marginTop: 4, fontSize: 13, fontWeight: "600" },
+  alertTextLight: { color: "#fff" },
+  alertTextDark: { color: "#111827" },
+  dot: { opacity: 0.85 },
 
   /* HERO (full-bleed) */
   heroWrap: {
@@ -822,6 +1341,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   sectionTitle: { color: "#111827", fontWeight: "800", fontSize: 18 },
+  viewAll: { color: "#6366F1", fontWeight: "800" },
 
   /* Map */
   mapShell: {
@@ -832,7 +1352,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
   },
   mapShellInner: { height: 220, width: "100%" },
-  updatedBelow: { color: "#6B7280", fontSize: 12, marginTop: 6, alignSelf: "flex-end" },
+  updatedBelow: {
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 6,
+    alignSelf: "flex-end",
+  },
 
   /* Horizontal stats row */
   statsRow: { gap: 10, paddingRight: 4 },
@@ -846,11 +1371,27 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     alignItems: "center",
   },
-  hStatLabelCentered: { color: "#374151", fontSize: 12, fontWeight: "700", marginTop: 8 },
-  hStatValueCentered: { color: "#111827", fontSize: 20, fontWeight: "800", marginTop: 4 },
-  hStatSubCentered: { color: "#6B7280", fontSize: 12, marginTop: 4, alignSelf: "center", maxWidth: "100%" },
+  hStatLabelCentered: {
+    color: "#374151",
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 8,
+  },
+  hStatValueCentered: {
+    color: "#111827",
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 4,
+  },
+  hStatSubCentered: {
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 4,
+    alignSelf: "center",
+    maxWidth: "100%",
+  },
 
-  /* Feature cards (Quizzes-style) */
+  /* Feature cards */
   featuresGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -876,7 +1417,10 @@ const styles = StyleSheet.create({
   },
 
   /* Modal shared */
-  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.25)" },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
   modalSheet: {
     position: "absolute",
     left: 16,
@@ -893,12 +1437,33 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 12,
   },
-  modalHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
   modalTitle: { color: "#111827", fontWeight: "700", fontSize: 16 },
 
-  contactRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 10 },
-  contactLeft: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
-  contactIconWrap: { width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  contactRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+  },
+  contactLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+  },
+  contactIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   contactName: { color: "#111827", fontWeight: "600" },
   contactNumber: { color: "#6B7280", marginTop: 2 },
   callBtn: {

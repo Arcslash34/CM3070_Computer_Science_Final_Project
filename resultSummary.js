@@ -8,11 +8,11 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  BackHandler, // ⬅️ add
+  BackHandler,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation, useFocusEffect } from "@react-navigation/native"; // ⬅️ useFocusEffect
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TROPHY_IMG = require("./assets/congrat.png");
@@ -32,10 +32,9 @@ export default function ResultSummary({ route }) {
     backTo,
   } = route.params || {};
 
+  // ✅ Smart back: prefer explicit backTo; else goBack() if possible; else Quizzes tab
   const goBackSmart = useCallback(() => {
-    // If caller provided a target, honor it
     if (backTo?.screen) {
-      // Special case: Quizzes tab lives inside MainTabs
       if (backTo.screen === "Quizzes") {
         navigation.navigate("MainTabs", { screen: "Quizzes" });
       } else {
@@ -44,7 +43,12 @@ export default function ResultSummary({ route }) {
       return;
     }
 
-    // Default: send user to the Quizzes tab inside MainTabs
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    // final fallback
     navigation.navigate("MainTabs", { screen: "Quizzes" });
   }, [navigation, backTo]);
 
@@ -142,9 +146,8 @@ export default function ResultSummary({ route }) {
         <Image source={TROPHY_IMG} style={styles.trophy} />
         <Text style={styles.headline}>{headline}</Text>
 
-        {/* KPI row (icon left, value/label right; both centered) */}
+        {/* KPI row */}
         <View style={styles.kpiRow}>
-          {/* Score */}
           <View style={styles.kpiCard}>
             <MaterialIcons
               name="switch-access-shortcut-add"
@@ -158,7 +161,6 @@ export default function ResultSummary({ route }) {
             </View>
           </View>
 
-          {/* XP */}
           <View style={styles.kpiCard}>
             <MaterialIcons
               name="stars"

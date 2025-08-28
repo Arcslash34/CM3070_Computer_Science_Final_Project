@@ -84,8 +84,10 @@ export default function QuizGame() {
   const flashAnim = useRef(new Animated.Value(1)).current;
   const timerRef = useRef(null);
 
-  // feedback (space between options & submit)
+  // XP feedback (per question) + cumulative XP
   const [earnedXP, setEarnedXP] = useState(0);
+  const [totalXp, setTotalXp] = useState(0);
+  const [xpPerQuestion, setXpPerQuestion] = useState([]); // index -> xp earned
   const [feedback, setFeedback] = useState("");
 
   // build questions from quiz.json (and shuffle options)
@@ -129,6 +131,8 @@ export default function QuizGame() {
     setRemainingTime(TOTAL_TIME);
     setEarnedXP(0);
     setFeedback("");
+    setTotalXp(0);            // reset cumulative XP
+    setXpPerQuestion([]);     // reset per-question XP
   }, [questionCount]);
 
   // timer + progress bar
@@ -237,19 +241,30 @@ export default function QuizGame() {
   const onSubmit = useCallback(() => {
     if (!current || submitted) return;
 
-    // compute feedback / XP
+    let xpForThisQuestion = 0;
+
+    // compute feedback / XP (matches on-screen XP)
     if (selected == null) {
-      setEarnedXP(0);
+      xpForThisQuestion = 0;
       setFeedback("Time’s up!");
     } else if (selected === current.answer) {
       let xp = Math.floor((remainingTime / TOTAL_TIME) * 100);
       if (usedHint) xp = Math.floor(xp / 2);
-      setEarnedXP(xp);
+      xpForThisQuestion = xp;
       setFeedback(`+${xp} XP`);
     } else {
-      setEarnedXP(0);
+      xpForThisQuestion = 0;
       setFeedback("Nice try — keep going!");
     }
+
+    // persist the per-question XP + cumulative XP
+    setEarnedXP(xpForThisQuestion);
+    setXpPerQuestion((prev) => {
+      const copy = [...prev];
+      copy[index] = xpForThisQuestion;
+      return copy;
+    });
+    setTotalXp((prev) => prev + xpForThisQuestion);
 
     // stop countdown now that the question is submitted
     if (timerRef.current) {
@@ -260,7 +275,7 @@ export default function QuizGame() {
 
     setSubmitted(true);
     setShowExplanation(false); // ⬅️ don't auto-open modal
-  }, [current, submitted, selected, remainingTime, usedHint, progressAnim]);
+  }, [current, submitted, selected, remainingTime, usedHint, progressAnim, index]);
 
   // next / finish
   const goNext = () => {
@@ -294,11 +309,13 @@ export default function QuizGame() {
         status,
         correctAnswer: q.answer,
         selectedAnswer: sel ?? null,
+        xpEarned: xpPerQuestion[i] ?? 0, // include per-question XP for later display
       };
     });
 
     const scorePercent = Math.round((correctCnt / questionCount) * 100);
     const quizTitle = isDaily ? "Daily Quiz" : topicTitle;
+    const finalTotalXp = totalXp; // already accumulated from onSubmit()
 
     (async () => {
       try {
@@ -307,28 +324,48 @@ export default function QuizGame() {
           await supabase.auth.getUser();
         const userId = userData?.user?.id;
         if (!userError && userId) {
-          await supabase.from("quiz_results").insert({
+          const { error: insertError } = await supabase.from("quiz_results").insert({
             user_id: userId,
             quiz_title: quizTitle,
-            difficulty: null,
             score: scorePercent,
-            badge: null,
+            xp: finalTotalXp,
             answers: nextAnswers,
             review_data: reviewData,
           });
+          if (insertError) throw insertError;
+
+         // After saving the result, evaluate and award badges
+         try {
+           const { checkAndAwardBadges, getBadgeMeta } = await import("./badgesLogic");
+           const res = await checkAndAwardBadges(supabase, {
+             lastQuiz: {
+               title: quizTitle,
+               scorePercent,
+               createdAt: new Date().toISOString(),
+             },
+           });
+           // OPTIONAL: quick toast/alert for the first newly unlocked badge
+           if (res.newlyAwarded?.length) {
+             const first = getBadgeMeta(res.newlyAwarded[0]);
+             // Example UX: uncomment if you want an alert
+             // Alert.alert("Badge Unlocked!", first.title || res.newlyAwarded[0]);
+           }
+         } catch (badgeErr) {
+           console.warn("Badge awarding failed:", badgeErr?.message || badgeErr);
+         }
         }
       } catch (e) {
         console.warn("Supabase save error:", e?.message || e);
+        Alert.alert("Save failed", String(e?.message || e));
       } finally {
         setUploading(false);
         navigation.navigate("ResultSummary", {
           reviewData,
           quizTitle,
           scorePercent,
-          xp: 0,
+          xp: finalTotalXp,
           score: scorePercent,
           userAnswers: nextAnswers,
-          difficulty: null,
           backTo: { screen: "Quizzes" },
         });
       }
@@ -696,9 +733,7 @@ const g = StyleSheet.create({
     gap: 10,
     alignItems: "center",
   },
-  primaryGrow: {
-    flex: 1,
-  },
+  primaryGrow: { flex: 1 },
   secondaryBtn: {
     height: 48,
     borderRadius: 12,

@@ -14,6 +14,7 @@ import SirenScreen from './SirenScreen';
 import EmergencyTapOverlay from './EmergencyTapOverlay';
 import { navigationRef } from './navigationRef';
 import { preloadSiren } from './sirenAudio';
+import { init as initPrefs } from './appPrefs';
 const Stack = createNativeStackNavigator();
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -23,7 +24,10 @@ export default function App() {
       navigationRef.navigate('Siren', { primed: true });
     }
   }, []);
-  useEffect(() => { preloadSiren(); }, []);
+  useEffect(() => {
+    preloadSiren();
+    initPrefs(); // load toggles + configure notif handler/channel
+  }, []);
   return (
     <LanguageProvider>
       <SafeAreaProvider initialWindowMetrics={initialWindowMetrics}>

@@ -35,11 +35,19 @@ import DefaultProfileImage from "./assets/profile.png";
 import { LanguageContext } from "./language";
 import { MaterialIcons } from "@expo/vector-icons";
 import Logo1 from "./assets/logo1.png";
+import {
+  setNotificationsEnabled,
+  setSoundEnabled,
+  setVibrationEnabled,
+} from "./appPrefs";
 
 const TOGGLE_KEYS = {
   notifications: "settings:notifications",
   sound: "settings:sound",
   vibration: "settings:vibration",
+  // NEW demo toggles
+  mockLocation: "settings:mock-location",
+  mockDisaster: "settings:mock-disaster",
 };
 const CONTACTS_KEY = "settings:close-contacts";
 const MAX_CONTACTS = 5;
@@ -53,7 +61,7 @@ const countryCodeToFlagEmoji = (code = "") =>
 export default function Settings() {
   const navigation = useNavigation();
   const { lang, setLang } = useContext(LanguageContext);
-  const insets = useSafeAreaInsets(); // bottom inset only
+  const insets = useSafeAreaInsets();
   useLayoutEffect(() => {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
@@ -66,6 +74,9 @@ export default function Settings() {
   const [notifications, setNotifications] = useState(false);
   const [sound, setSound] = useState(true);
   const [vibration, setVibration] = useState(true);
+  // NEW: demo toggles
+  const [mockLocation, setMockLocation] = useState(false);
+  const [mockDisaster, setMockDisaster] = useState(false);
 
   // UI state
   const [showLang, setShowLang] = useState(false);
@@ -77,7 +88,6 @@ export default function Settings() {
   const [editName, setEditName] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [editBio, setEditBio] = useState("");
 
   // Contacts
   const [contacts, setContacts] = useState([]);
@@ -111,7 +121,6 @@ export default function Settings() {
           name: "",
           username: "",
           avatar_url: "",
-          bio: "",
           region: "",
         };
         setProfile(prof);
@@ -134,14 +143,18 @@ export default function Settings() {
   useEffect(() => {
     (async () => {
       try {
-        const [n, s, v] = await Promise.all([
+        const [n, s, v, ml, md] = await Promise.all([
           AsyncStorage.getItem(TOGGLE_KEYS.notifications),
           AsyncStorage.getItem(TOGGLE_KEYS.sound),
           AsyncStorage.getItem(TOGGLE_KEYS.vibration),
+          AsyncStorage.getItem(TOGGLE_KEYS.mockLocation),
+          AsyncStorage.getItem(TOGGLE_KEYS.mockDisaster),
         ]);
         if (n !== null) setNotifications(n === "1");
         if (s !== null) setSound(s === "1");
         if (v !== null) setVibration(v === "1");
+        if (ml !== null) setMockLocation(ml === "1");
+        if (md !== null) setMockDisaster(md === "1");
       } catch (err) {
         console.warn("Failed to load toggles", err);
       }
@@ -265,13 +278,11 @@ export default function Settings() {
   const openEditProfile = () => {
     setEditName(profile?.name || "");
     setEditUsername(profile?.username || "");
-    setEditBio(profile?.bio || "");
     setShowEditProfile(true);
   };
 
   const saveProfile = useCallback(async () => {
     if (!session?.user) return;
-    // optional: uniqueness check for username
     if (editUsername && editUsername !== profile?.username) {
       const { data: existing } = await supabase
         .from("profiles")
@@ -289,8 +300,6 @@ export default function Settings() {
       email: session.user.email,
       name: editName,
       username: editUsername,
-      bio: editBio,
-      // keep region as-is (edited via Detect button)
       region,
     };
     const { error } = await supabase
@@ -305,7 +314,6 @@ export default function Settings() {
     editUsername,
     avatarUrl,
     profile?.username,
-    editBio,
     region,
   ]);
 
@@ -340,7 +348,6 @@ export default function Settings() {
       )}`;
       setRegion(value);
 
-      // persist to DB immediately
       if (session?.user?.id) {
         const { error } = await supabase
           .from("profiles")
@@ -356,6 +363,7 @@ export default function Settings() {
     }
   }, [loadingRegion, session?.user?.id]);
 
+  // Contacts helpers omitted (unchanged)...
   const resetContactForm = () => {
     setEditingId(null);
     setCName("");
@@ -416,25 +424,17 @@ export default function Settings() {
   /* ---------- RENDER ---------- */
   return (
     <LinearGradient colors={["#f8fafc", "#eef2ff"]} style={{ flex: 1 }}>
-      <View
-        style={{
-          paddingTop: insets.top + 10,
-          paddingHorizontal: 16,
-        }}
-      >
+      <View style={{ paddingTop: insets.top + 10, paddingHorizontal: 16 }}>
         <View style={styles.brandRow}>
           <Image source={Logo1} style={styles.brandLogo} />
           <Text style={styles.brandTitle}>Settings</Text>
         </View>
       </View>
       <ScrollView
-        contentContainerStyle={[
-          styles.container,
-          { paddingBottom: 0 },
-        ]}
-        contentInsetAdjustmentBehavior="never" // prevent iOS auto-inset at top
+        contentContainerStyle={[styles.container, { paddingBottom: 0 }]}
+        contentInsetAdjustmentBehavior="never"
       >
-        {/* Profile header (tap to edit) */}
+        {/* Profile header */}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={openEditProfile}
@@ -451,11 +451,6 @@ export default function Settings() {
             </View>
             <Ionicons name="chevron-forward" size={18} color="#111827" />
           </View>
-          {/* Bio sits below avatar + name */}
-          <Text style={styles.bio}>
-            {profile?.bio ||
-              "I am determined to become an expert in disaster management."}
-          </Text>
         </TouchableOpacity>
 
         {/* Game Settings */}
@@ -468,7 +463,7 @@ export default function Settings() {
               value={notifications}
               onValueChange={(v) => {
                 setNotifications(v);
-                persistToggle(TOGGLE_KEYS.notifications, v);
+                setNotificationsEnabled(v);
               }}
             />
           }
@@ -481,7 +476,7 @@ export default function Settings() {
               value={sound}
               onValueChange={(v) => {
                 setSound(v);
-                persistToggle(TOGGLE_KEYS.sound, v);
+                setSoundEnabled(v);
               }}
             />
           }
@@ -494,7 +489,7 @@ export default function Settings() {
               value={vibration}
               onValueChange={(v) => {
                 setVibration(v);
-                persistToggle(TOGGLE_KEYS.vibration, v);
+                setVibrationEnabled(v);
               }}
             />
           }
@@ -508,7 +503,7 @@ export default function Settings() {
           onPress={() => setShowLang(true)}
           chevron
         />
-        {/* Region row (center piece) */}
+        {/* Region (detect) */}
         <TouchableOpacity
           style={[styles.regionCard, loadingRegion && { opacity: 0.6 }]}
           onPress={loadingRegion ? undefined : detectRegion}
@@ -516,20 +511,11 @@ export default function Settings() {
         >
           <View style={styles.regionInner}>
             <View style={styles.regionLeft}>
-              <Ionicons
-                name="earth"
-                size={18}
-                color="#111827"
-                style={{ marginRight: 10 }}
-              />
+              <Ionicons name="earth" size={18} color="#111827" style={{ marginRight: 10 }} />
               <Text style={styles.rowText}>
-                Region:{" "}
-                <Text style={styles.regionValue}>
-                  {region || "Tap to detect"}
-                </Text>
+                Region: <Text style={styles.regionValue}>{region || "Tap to detect"}</Text>
               </Text>
             </View>
-
             {loadingRegion ? (
               <ActivityIndicator size="small" />
             ) : (
@@ -557,6 +543,35 @@ export default function Settings() {
           chevron
         />
 
+        {/* NEW: Demo toggles */}
+        <SectionTitle>Demo / Mock</SectionTitle>
+        <CardRow
+          icon="location"
+          label="Use Mock Location (Taman Jurong)"
+          right={
+            <Switch
+              value={mockLocation}
+              onValueChange={(v) => {
+                setMockLocation(v);
+                persistToggle(TOGGLE_KEYS.mockLocation, v);
+              }}
+            />
+          }
+        />
+        <CardRow
+          icon="warning"
+          label="Mock Disaster (Taman Jurong)"
+          right={
+            <Switch
+              value={mockDisaster}
+              onValueChange={(v) => {
+                setMockDisaster(v);
+                persistToggle(TOGGLE_KEYS.mockDisaster, v);
+              }}
+            />
+          }
+        />
+
         {/* Contacts List */}
         <SectionTitle>Contacts List</SectionTitle>
         <CardRow
@@ -579,12 +594,7 @@ export default function Settings() {
       </ScrollView>
 
       {/* Language modal */}
-      <Modal
-        visible={showLang}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowLang(false)}
-      >
+      <Modal visible={showLang} transparent animationType="fade" onRequestClose={() => setShowLang(false)}>
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Choose Language</Text>
@@ -602,32 +612,18 @@ export default function Settings() {
                 setShowLang(false);
               }}
             />
-            <ModalButton
-              text="Close"
-              variant="secondary"
-              onPress={() => setShowLang(false)}
-            />
+            <ModalButton text="Close" variant="secondary" onPress={() => setShowLang(false)} />
           </View>
         </View>
       </Modal>
 
       {/* Change password modal */}
-      <Modal
-        visible={showPassword}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowPassword(false)}
-      >
+      <Modal visible={showPassword} transparent animationType="fade" onRequestClose={() => setShowPassword(false)}>
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Change Password</Text>
             <View style={styles.inputWrap}>
-              <Ionicons
-                name="lock-closed"
-                size={18}
-                color="#6b7280"
-                style={{ marginRight: 6 }}
-              />
+              <Ionicons name="lock-closed" size={18} color="#6b7280" style={{ marginRight: 6 }} />
               <TextInput
                 placeholder="New password"
                 secureTextEntry
@@ -637,50 +633,29 @@ export default function Settings() {
               />
             </View>
             <ModalButton text="Update" onPress={onChangePassword} />
-            <ModalButton
-              text="Cancel"
-              variant="secondary"
-              onPress={() => setShowPassword(false)}
-            />
+            <ModalButton text="Cancel" variant="secondary" onPress={() => setShowPassword(false)} />
           </View>
         </View>
       </Modal>
 
       {/* Edit profile modal */}
-      <Modal
-        visible={showEditProfile}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowEditProfile(false)}
-      >
+      <Modal visible={showEditProfile} transparent animationType="fade" onRequestClose={() => setShowEditProfile(false)}>
         <View style={styles.backdrop}>
-          {/* Main rounded card */}
           <View style={styles.editCard}>
             <Text style={styles.editTitle}>Edit Profile</Text>
-
-            <View
-              style={{ alignItems: "center", marginTop: 4, marginBottom: 16 }}
-            >
+            <View style={{ alignItems: "center", marginTop: 4, marginBottom: 16 }}>
               <Image
                 source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
                 style={styles.editAvatarLarge}
               />
-              <TouchableOpacity
-                onPress={pickAndUploadAvatar}
-                style={styles.smallBtn}
-              >
+              <TouchableOpacity onPress={pickAndUploadAvatar} style={styles.smallBtn}>
                 <Text style={styles.smallBtnText}>Change Photo</Text>
               </TouchableOpacity>
             </View>
 
             {/* Name */}
             <View style={styles.pillInput}>
-              <Ionicons
-                name="person"
-                size={18}
-                color="#6b7280"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="person" size={18} color="#6b7280" style={styles.inputIcon} />
               <TextInput
                 placeholder="Name"
                 value={editName}
@@ -692,12 +667,7 @@ export default function Settings() {
 
             {/* Username */}
             <View style={styles.pillInput}>
-              <Ionicons
-                name="at"
-                size={18}
-                color="#6b7280"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="at" size={18} color="#6b7280" style={styles.inputIcon} />
               <TextInput
                 placeholder="Username"
                 autoCapitalize="none"
@@ -708,40 +678,13 @@ export default function Settings() {
               />
             </View>
 
-            {/* Bio */}
-            <View style={[styles.pillInput, styles.pillInputMultiline]}>
-              <Ionicons
-                name="book"
-                size={18}
-                color="#6b7280"
-                style={[styles.inputIcon, { marginTop: 10 }]}
-              />
-              <TextInput
-                placeholder="Bio"
-                value={editBio}
-                onChangeText={setEditBio}
-                multiline
-                numberOfLines={3}
-                style={[
-                  styles.pillField,
-                  { height: 84, textAlignVertical: "top" },
-                ]}
-                placeholderTextColor="#9ca3af"
-              />
-            </View>
-
-            {/* Save button */}
             <TouchableOpacity onPress={saveProfile} style={styles.primaryBtn}>
               <Text style={styles.primaryBtnText}>Save</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Separate cancel sheet */}
           <View style={styles.cancelCard}>
-            <TouchableOpacity
-              onPress={() => setShowEditProfile(false)}
-              style={styles.cancelBtn}
-            >
+            <TouchableOpacity onPress={() => setShowEditProfile(false)} style={styles.cancelBtn}>
               <Text style={styles.cancelBtnText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -749,12 +692,7 @@ export default function Settings() {
       </Modal>
 
       {/* Contacts modal */}
-      <Modal
-        visible={showContacts}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowContacts(false)}
-      >
+      <Modal visible={showContacts} transparent animationType="fade" onRequestClose={() => setShowContacts(false)}>
         <View style={styles.backdrop}>
           <View style={[styles.modalCard, { maxHeight: "80%" }]}>
             <Text style={styles.modalTitle}>Emergency Contacts</Text>
@@ -767,19 +705,13 @@ export default function Settings() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontWeight: "700" }}>
-                      {c.name}{" "}
-                      {!!c.relation && (
-                        <Text style={{ color: "#6b7280" }}>({c.relation})</Text>
-                      )}
+                      {c.name} {!!c.relation && <Text style={{ color: "#6b7280" }}>({c.relation})</Text>}
                     </Text>
                     <Text style={{ color: "#374151" }}>{c.phone}</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: "row", gap: 8 }}>
-                  <TouchableOpacity
-                    style={styles.iconBtn}
-                    onPress={() => call(c.phone)}
-                  >
+                  <TouchableOpacity style={styles.iconBtn} onPress={() => call(c.phone)}>
                     <Ionicons name="call" size={16} color="#fff" />
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -801,11 +733,7 @@ export default function Settings() {
             <TouchableOpacity
               style={[
                 styles.modalBtn,
-                {
-                  marginTop: 14,
-                  backgroundColor:
-                    contacts.length >= MAX_CONTACTS ? "#9ca3af" : "#22c55e",
-                },
+                { marginTop: 14, backgroundColor: contacts.length >= MAX_CONTACTS ? "#9ca3af" : "#22c55e" },
               ]}
               onPress={openAddContact}
               disabled={contacts.length >= MAX_CONTACTS}
@@ -815,11 +743,7 @@ export default function Settings() {
               </Text>
             </TouchableOpacity>
 
-            <ModalButton
-              text="Close"
-              variant="secondary"
-              onPress={() => setShowContacts(false)}
-            />
+            <ModalButton text="Close" variant="secondary" onPress={() => setShowContacts(false)} />
           </View>
         </View>
       </Modal>
@@ -833,30 +757,13 @@ export default function Settings() {
       >
         <View style={styles.backdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>
-              {editingId ? "Edit Contact" : "Add Contact"}
-            </Text>
+            <Text style={styles.modalTitle}>{editingId ? "Edit Contact" : "Add Contact"}</Text>
             <View style={styles.inputWrap}>
-              <Ionicons
-                name="person"
-                size={18}
-                color="#6b7280"
-                style={{ marginRight: 6 }}
-              />
-              <TextInput
-                placeholder="Full name"
-                value={cName}
-                onChangeText={setCName}
-                style={{ flex: 1 }}
-              />
+              <Ionicons name="person" size={18} color="#6b7280" style={{ marginRight: 6 }} />
+              <TextInput placeholder="Full name" value={cName} onChangeText={setCName} style={{ flex: 1 }} />
             </View>
             <View style={[styles.inputWrap, { marginTop: 10 }]}>
-              <Ionicons
-                name="heart"
-                size={18}
-                color="#6b7280"
-                style={{ marginRight: 6 }}
-              />
+              <Ionicons name="heart" size={18} color="#6b7280" style={{ marginRight: 6 }} />
               <TextInput
                 placeholder="Relation (e.g. Spouse)"
                 value={cRelation}
@@ -865,12 +772,7 @@ export default function Settings() {
               />
             </View>
             <View style={[styles.inputWrap, { marginTop: 10 }]}>
-              <Ionicons
-                name="call"
-                size={18}
-                color="#6b7280"
-                style={{ marginRight: 6 }}
-              />
+              <Ionicons name="call" size={18} color="#6b7280" style={{ marginRight: 6 }} />
               <TextInput
                 placeholder="Phone number"
                 keyboardType="phone-pad"
@@ -879,15 +781,8 @@ export default function Settings() {
                 style={{ flex: 1 }}
               />
             </View>
-            <ModalButton
-              text={editingId ? "Save" : "Add"}
-              onPress={saveContact}
-            />
-            <ModalButton
-              text="Cancel"
-              variant="secondary"
-              onPress={() => setShowContactForm(false)}
-            />
+            <ModalButton text={editingId ? "Save" : "Add"} onPress={saveContact} />
+            <ModalButton text="Cancel" variant="secondary" onPress={() => setShowContactForm(false)} />
           </View>
         </View>
       </Modal>
@@ -903,29 +798,18 @@ function CardRow({ icon, label, right, onPress, chevron }) {
   const content = (
     <View style={styles.rowInner}>
       <View style={styles.rowLeft}>
-        <Ionicons
-          name={icon}
-          size={18}
-          color="#111827"
-          style={{ marginRight: 10 }}
-        />
+        <Ionicons name={icon} size={18} color="#111827" style={{ marginRight: 10 }} />
         <Text style={styles.rowText}>{label}</Text>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
         {right}
-        {chevron && (
-          <Ionicons name="chevron-forward" size={18} color="#111827" />
-        )}
+        {chevron && <Ionicons name="chevron-forward" size={18} color="#111827" />}
       </View>
     </View>
   );
   if (onPress) {
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.85}
-        style={styles.row}
-      >
+      <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={styles.row}>
         {content}
       </TouchableOpacity>
     );
@@ -936,19 +820,9 @@ function ModalButton({ text, onPress, variant = "primary" }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[
-        styles.modalBtn,
-        variant === "secondary" && { backgroundColor: "#e5e7eb" },
-      ]}
+      style={[styles.modalBtn, variant === "secondary" && { backgroundColor: "#e5e7eb" }]}
     >
-      <Text
-        style={[
-          styles.modalBtnText,
-          variant === "secondary" && { color: "#111827" },
-        ]}
-      >
-        {text}
-      </Text>
+      <Text style={[styles.modalBtnText, variant === "secondary" && { color: "#111827" }]}>{text}</Text>
     </TouchableOpacity>
   );
 }
@@ -959,7 +833,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    marginTop: 4
+    marginTop: 4,
   },
   brandLogo: {
     width: 30,
@@ -986,14 +860,13 @@ const styles = StyleSheet.create({
   avatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: "#eee" },
   name: { fontWeight: "800", fontSize: 16, color: "#111827" },
   email: { color: "#6b7280", marginTop: 2 },
-  bio: { color: "#374151", marginTop: 8 },
 
   sectionTitle: {
     marginTop: 8,
     marginBottom: 6,
     fontWeight: "800",
     color: "#111827",
-    fontSize: 16
+    fontSize: 16,
   },
 
   row: {
@@ -1011,15 +884,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  rowText: {
-    color: "#111827",
-    fontWeight: "600",
-    fontSize: 15,
-  },
+  rowLeft: { flexDirection: "row", alignItems: "center" },
+  rowText: { color: "#111827", fontWeight: "600", fontSize: 15 },
+
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
@@ -1036,12 +903,7 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
     padding: 16,
   },
-  modalTitle: {
-    fontWeight: "800",
-    fontSize: 16,
-    marginBottom: 10,
-    color: "#111827",
-  },
+  modalTitle: { fontWeight: "800", fontSize: 16, marginBottom: 10, color: "#111827" },
   modalBtn: {
     backgroundColor: "#6366F1",
     paddingVertical: 12,
@@ -1087,7 +949,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  // ===== Edit Profile card (light-mode sheet look) =====
+  // Edit Profile card
   editCard: {
     width: "92%",
     maxWidth: 520,
@@ -1121,7 +983,7 @@ const styles = StyleSheet.create({
   },
   smallBtnText: { color: "#374151", fontWeight: "700" },
 
-  // Inputs — soft “pill” fields with icons
+  // Inputs
   pillInput: {
     flexDirection: "row",
     alignItems: "center",
@@ -1133,15 +995,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginTop: 12,
   },
-  pillInputMultiline: {
-    height: 100,
-    paddingTop: 6,
-    alignItems: "flex-start",
-  },
   inputIcon: { marginRight: 8 },
   pillField: { flex: 1, fontSize: 16, color: "#111827" },
 
-  // Primary Save button
+  // Primary Save
   primaryBtn: {
     marginTop: 16,
     backgroundColor: "#6366F1",
@@ -1157,7 +1014,7 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
-  // Separate Cancel sheet (rounded card below)
+  // Cancel sheet
   cancelCard: {
     width: "92%",
     maxWidth: 520,
@@ -1191,13 +1048,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  regionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexShrink: 1,
-  },
-  regionValue: {
-    color: "#111827",
-    fontWeight: "700",
-  },
+  regionLeft: { flexDirection: "row", alignItems: "center", flexShrink: 1 },
+  regionValue: { color: "#111827", fontWeight: "700" },
 });

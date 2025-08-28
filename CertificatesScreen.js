@@ -1,5 +1,5 @@
 // CertificatesScreen.js
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,53 +9,33 @@ import {
   Alert,
   Switch,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import {
-  useSafeAreaInsets,
-  SafeAreaView,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets, SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "./supabase";
 
-// ===== Available certificates =====
+// ===== Available certificates (visual only; unlocking is gated by First Aid progress) =====
 const CERTS = [
-  {
-    id: "cpr",
-    title: "CPR Certificate",
-    quizKey: "quiz:CPR:score",
-    theme: "#6366F1",
-  },
-  {
-    id: "aed",
-    title: "AED Certificate",
-    quizKey: "quiz:AED:score",
-    theme: "#10b981",
-  },
-  {
-    id: "bleed",
-    title: "Severe Bleeding Cert",
-    quizKey: "quiz:BLEED:score",
-    theme: "#f59e0b",
-  },
+  { id: "cpr",  title: "CPR Certificate",            theme: "#6366F1" },
+  { id: "aed",  title: "AED Certificate",            theme: "#10b981" },
+  { id: "bleed", title: "Severe Bleeding Certificate", theme: "#f59e0b" },
 ];
+
+// How many First Aid sets must be perfect
+const FIRST_AID_REQUIRED = 5;
 
 /* ---------- Simple Header ---------- */
 function HeaderBar({ title, onBack }) {
   return (
     <View style={styles.header}>
-      <TouchableOpacity
-        onPress={onBack}
-        style={styles.headerBtn}
-        accessibilityLabel="Back"
-      >
+      <TouchableOpacity onPress={onBack} style={styles.headerBtn} accessibilityLabel="Back">
         <Ionicons name="chevron-back" size={22} color="#111827" />
       </TouchableOpacity>
-      <Text style={styles.headerTitle} numberOfLines={1}>
-        {title}
-      </Text>
+      <Text style={styles.headerTitle} numberOfLines={1}>{title}</Text>
       <View style={styles.headerBtn} />
     </View>
   );
@@ -65,13 +45,17 @@ export default function CertificatesScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
 
   const [profileName, setProfileName] = useState(route?.params?.name || "");
-  const [username, setUsername] = useState(route?.params?.username || "");
+  const [username, setUsername]   = useState(route?.params?.username || "");
   const [useUsername, setUseUsername] = useState(false);
 
-  const [scores, setScores] = useState({});
+  // Demo mode bypass
   const [demoMode, setDemoMode] = useState(false);
 
-  // Load profile
+  // First Aid progress (0..5) + loading state
+  const [faPerfectCount, setFaPerfectCount] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(true);
+
+  // Load display name (same logic as before)
   useEffect(() => {
     (async () => {
       try {
@@ -107,20 +91,7 @@ export default function CertificatesScreen({ navigation, route }) {
     })();
   }, [profileName, username]);
 
-  // Load quiz scores
-  useEffect(() => {
-    (async () => {
-      const result = {};
-      for (const c of CERTS) {
-        const raw = await AsyncStorage.getItem(c.quizKey);
-        const num = raw ? Number(raw) : 0;
-        result[c.quizKey] = Number.isFinite(num) ? num : 0;
-      }
-      setScores(result);
-    })();
-  }, []);
-
-  // Restore demo mode
+  // Restore demo mode from storage
   useEffect(() => {
     (async () => {
       try {
@@ -140,6 +111,55 @@ export default function CertificatesScreen({ navigation, route }) {
     }
   };
 
+  // Fetch First Aid progress from Supabase (count of #1..#5 with score === 100)
+  const loadFirstAidProgress = useCallback(async () => {
+    setLoadingProgress(true);
+    try {
+      const { data: sessionRes } = await supabase.auth.getSession();
+      const userId = sessionRes?.session?.user?.id;
+      if (!userId) {
+        setFaPerfectCount(0);
+        return;
+      }
+
+      // Pull all First Aid quiz rows for this user with perfect score
+      const { data, error } = await supabase
+        .from("quiz_results")
+        .select("quiz_title, score")
+        .eq("user_id", userId)
+        .eq("score", 100);
+
+      if (error) throw error;
+
+      // Identify distinct First Aid set indices (#1..#5) with perfect 100
+      const got = new Set();
+      (data || []).forEach((r) => {
+        const title = String(r.quiz_title || "").toLowerCase();
+        // Titles are like "First Aid #1", "First Aid #2", etc.
+        if (title.includes("first") && title.includes("aid")) {
+          const m = title.match(/#\s*(\d+)/); // capture the number after '#'
+          if (m) {
+            const n = parseInt(m[1], 10);
+            if (Number.isFinite(n) && n >= 1 && n <= FIRST_AID_REQUIRED) {
+              got.add(n);
+            }
+          }
+        }
+      });
+
+      setFaPerfectCount(Math.min(got.size, FIRST_AID_REQUIRED));
+    } catch (e) {
+      console.warn("First Aid progress load failed:", e?.message || e);
+      setFaPerfectCount(0);
+    } finally {
+      setLoadingProgress(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFirstAidProgress();
+  }, [loadFirstAidProgress]);
+
   // Which name to display
   const displayName = useMemo(() => {
     return useUsername
@@ -147,14 +167,14 @@ export default function CertificatesScreen({ navigation, route }) {
       : profileName || username || "Anonymous";
   }, [useUsername, profileName, username]);
 
-  // Eligibility
-  const canDownload = (quizKey) => demoMode || (scores[quizKey] || 0) >= 100;
+  // Eligibility: demo mode bypasses, otherwise need 5/5
+  const isEligible = demoMode || faPerfectCount >= FIRST_AID_REQUIRED;
 
   const onDownload = async (cert) => {
-    if (!canDownload(cert.quizKey)) {
+    if (!isEligible) {
       return Alert.alert(
         "Unavailable",
-        "You need a 100% score on the respective quiz to download this certificate."
+        "You must score 100% on all five First Aid quizzes (#1–#5) to download this certificate."
       );
     }
     try {
@@ -171,6 +191,8 @@ export default function CertificatesScreen({ navigation, route }) {
     }
   };
 
+  const progressPct = Math.round((faPerfectCount / FIRST_AID_REQUIRED) * 100);
+
   /* ------------ UI ------------ */
   return (
     <SafeAreaView style={styles.safeRoot} edges={["top", "left", "right"]}>
@@ -179,12 +201,7 @@ export default function CertificatesScreen({ navigation, route }) {
       <View style={[styles.screen, { paddingBottom: insets.bottom + 12 }]}>
         {/* Demo mode */}
         <View style={styles.nameBar}>
-          <Ionicons
-            name="construct"
-            size={18}
-            color="#111827"
-            style={{ marginRight: 8 }}
-          />
+          <Ionicons name="construct" size={18} color="#111827" style={{ marginRight: 8 }} />
           <Text style={styles.nameText}>Demo mode</Text>
           <View style={{ flex: 1 }} />
           <Switch value={demoMode} onValueChange={toggleDemoMode} />
@@ -192,12 +209,7 @@ export default function CertificatesScreen({ navigation, route }) {
 
         {/* Username toggle */}
         <View style={styles.nameBar}>
-          <Ionicons
-            name="person"
-            size={18}
-            color="#111827"
-            style={{ marginRight: 8 }}
-          />
+          <Ionicons name="person" size={18} color="#111827" style={{ marginRight: 8 }} />
           <Text style={styles.nameText}>Show username on certificate</Text>
           <View style={{ flex: 1 }} />
           <Switch value={useUsername} onValueChange={setUseUsername} />
@@ -206,36 +218,61 @@ export default function CertificatesScreen({ navigation, route }) {
           Printing as: <Text style={{ fontWeight: "800" }}>{displayName}</Text>
         </Text>
 
+        {/* Requirement / Progress box */}
+        <View style={styles.requireBox}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons name="medkit" size={18} color="#111827" style={{ marginRight: 8 }} />
+            <Text style={styles.requireTitle}>First Aid Mastery</Text>
+          </View>
+
+          {loadingProgress ? (
+            <View style={styles.progressRow}>
+              <ActivityIndicator size="small" />
+              <Text style={[styles.requireText, { marginLeft: 8 }]}>Loading progress…</Text>
+            </View>
+          ) : (
+            <>
+              <Text style={styles.requireText}>
+                Perfect scores on First Aid 1–5: {" "}
+                <Text style={{ fontWeight: "800" }}>
+                  {faPerfectCount}/{FIRST_AID_REQUIRED}
+                </Text>
+              </Text>
+
+              <View style={styles.progTrack}>
+                <View style={[styles.progFill, { width: `${progressPct}%` }]} />
+              </View>
+
+              {!demoMode && faPerfectCount < FIRST_AID_REQUIRED && (
+                <Text style={styles.requireHint}>
+                  Complete all five with 100% to unlock certificate downloads.
+                </Text>
+              )}
+              {demoMode && (
+                <Text style={styles.requireHint}>
+                  Demo mode enabled — downloads are unlocked for testing.
+                </Text>
+              )}
+            </>
+          )}
+        </View>
+
         {/* Disclaimer */}
         <View style={styles.disclaimer}>
-          <Ionicons
-            name="alert-circle"
-            size={16}
-            color="#6b7280"
-            style={{ marginRight: 6 }}
-          />
+          <Ionicons name="alert-circle" size={16} color="#6b7280" style={{ marginRight: 6 }} />
           <Text style={styles.disclaimerText}>
-            This is{" "}
-            <Text style={{ fontWeight: "700" }}>
-              not an official certificate
-            </Text>
-            . It is generated for project/demo purposes only.
+            This is <Text style={{ fontWeight: "700" }}>not an official certificate</Text>. It is
+            generated for project/demo purposes only.
           </Text>
         </View>
 
-        {/* Certificates */}
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
-        >
+        {/* Certificates list */}
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}>
           {CERTS.map((c) => {
-            const score = scores[c.quizKey] || 0;
-            const locked = !demoMode && score < 100;
+            const locked = !isEligible;
 
             return (
-              <View
-                key={c.id}
-                style={[styles.card, { borderColor: "#e5e7eb" }]}
-              >
+              <View key={c.id} style={[styles.card, { borderColor: "#e5e7eb" }]}>
                 <View style={styles.cardLeft}>
                   <View style={[styles.iconWrap, { backgroundColor: c.theme }]}>
                     <Ionicons name="document-text" size={18} color="#fff" />
@@ -243,21 +280,15 @@ export default function CertificatesScreen({ navigation, route }) {
                   <View style={{ flexShrink: 1 }}>
                     <Text style={styles.cardTitle}>{c.title}</Text>
                     <Text style={styles.cardSub}>
-                      Quiz score: {score}%{" "}
                       {demoMode
-                        ? "• Demo unlocked"
-                        : score >= 100
-                        ? "✓ Eligible"
-                        : "(100% required)"}
+                        ? "Demo unlocked"
+                        : `Completed: ${faPerfectCount}/${FIRST_AID_REQUIRED}`}
                     </Text>
                   </View>
                 </View>
 
                 <TouchableOpacity
-                  style={[
-                    styles.downloadBtn,
-                    locked && { backgroundColor: "#cbd5e1" },
-                  ]}
+                  style={[styles.downloadBtn, locked && { backgroundColor: "#cbd5e1" }]}
                   onPress={() => onDownload(c)}
                   disabled={locked}
                   activeOpacity={locked ? 1 : 0.85}
@@ -278,10 +309,7 @@ export default function CertificatesScreen({ navigation, route }) {
 /* ---------- PDF Renderer ---------- */
 function renderCertificateHTML({ name, course, accent = "#6366F1", id }) {
   const now = new Date().toLocaleDateString();
-  const certId = `${id}-${Math.random()
-    .toString(36)
-    .slice(2, 8)
-    .toUpperCase()}`;
+  const certId = `${id}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
   return `
 <!DOCTYPE html>
@@ -291,72 +319,39 @@ function renderCertificateHTML({ name, course, accent = "#6366F1", id }) {
   <title>${course}</title>
   <style>
     @page { size: A4 landscape; margin: 28px; }
-
     html, body { height: 100%; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
+      color: #0f172a; display: flex; align-items: center; justify-content: center; background: #fff;
     }
-
-    .wrap {
-      width: 88%;
-      border: 2px solid ${accent};
-      border-radius: 14px;
-      padding: 32px 36px;
-      position: relative;
-      box-sizing: border-box;
-    }
-
-    .watermark {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 72px; color: rgba(15,23,42,0.06); transform: rotate(-18deg);
-      letter-spacing: 4px; font-weight: 800; pointer-events: none;
-    }
-
-    .title    { text-align: center; font-size: 28px; font-weight: 800; margin: 0; }
+    .wrap { width: 88%; border: 2px solid ${accent}; border-radius: 14px; padding: 32px 36px; position: relative; box-sizing: border-box; }
+    .watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 72px; color: rgba(15,23,42,0.06); transform: rotate(-18deg); letter-spacing: 4px; font-weight: 800; pointer-events: none; }
+    .title { text-align: center; font-size: 28px; font-weight: 800; margin: 0; }
     .subtitle { text-align: center; font-size: 13px; color: #334155; margin-top: 6px; }
-    .name     { margin-top: 42px; font-size: 26px; font-weight: 800; text-align: center; }
-    .course   { text-align: center; margin-top: 22px; font-size: 16px; color: #334155; }
-    .badge { display: inline-block; padding: 6px 12px; border-radius: 999px;
-             background: ${accent}; color: #fff; font-weight: 700; font-size: 12px; }
+    .name { margin-top: 42px; font-size: 26px; font-weight: 800; text-align: center; }
+    .course { text-align: center; margin-top: 22px; font-size: 16px; color: #334155; }
+    .badge { display: inline-block; padding: 6px 12px; border-radius: 999px; background: ${accent}; color: #fff; font-weight: 700; font-size: 12px; }
     .divider { height: 2px; background: ${accent}; width: 84%; margin: 28px auto; border-radius: 2px; }
-    .infoRow {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 40px;
-      font-size: 13px;
-      color: #334155;
-      font-weight: 600;
-    }
+    .infoRow { display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px; color: #334155; font-weight: 600; }
     .note { margin-top: 18px; font-size: 11px; color: #6b7280; line-height: 1.4; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="watermark">DEMO ONLY</div>
-
     <h1 class="title">Certificate of Completion</h1>
     <div class="subtitle">Generated by LifeShield • Project Demo</div>
-
     <div class="name">${name}</div>
     <div class="course">has successfully completed the <span class="badge">${course}</span></div>
-
     <div class="divider"></div>
-
     <div class="infoRow">
       <div>Date of Issue: ${now}</div>
       <div>Certificate ID: ${certId}</div>
     </div>
-
     <div class="note">
       Disclaimer: This PDF is <strong>not an official certificate</strong>. It is produced solely for demonstration / project purposes.
-      Any resemblance to a real credential is coincidental.
     </div>
   </div>
 </body>
@@ -378,21 +373,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E5E7EB",
     backgroundColor: "#fff",
   },
-  headerBtn: {
-    width: 36,
-    height: 36,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: "center",
-    fontWeight: "600",
-    color: "#111827",
-    fontSize: 22,
-  },
+  headerBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  headerTitle: { flex: 1, textAlign: "center", fontWeight: "600", color: "#111827", fontSize: 22 },
 
   screen: { flex: 1, backgroundColor: "#f8fafc" },
+
   nameBar: {
     backgroundColor: "#fff",
     marginHorizontal: 16,
@@ -407,6 +392,36 @@ const styles = StyleSheet.create({
   },
   nameText: { fontWeight: "700", color: "#111827" },
   nameHint: { marginHorizontal: 16, marginTop: 6, color: "#374151" },
+
+  /* Requirement / progress */
+  requireBox: {
+    marginHorizontal: 16,
+    marginTop: 10,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  requireTitle: { fontWeight: "800", color: "#111827" },
+  requireText: { color: "#374151", fontWeight: "600" },
+  requireHint: { color: "#6b7280", marginTop: 2 },
+  progressRow: { flexDirection: "row", alignItems: "center" },
+  progTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#e5e7eb",
+    overflow: "hidden",
+  },
+  progFill: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#10b981",
+  },
+
+  /* Disclaimer */
   disclaimer: {
     flexDirection: "row",
     alignItems: "center",
@@ -420,6 +435,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   disclaimerText: { color: "#4b5563", flex: 1 },
+
+  /* Cards */
   card: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -439,6 +456,8 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 15, fontWeight: "800", color: "#111827" },
   cardSub: { color: "#6b7280", marginTop: 2 },
+
+  /* Download button */
   downloadBtn: {
     backgroundColor: "#111827",
     paddingHorizontal: 12,
