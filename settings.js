@@ -71,7 +71,7 @@ export default function Settings() {
   const [profile, setProfile] = useState(null);
 
   // Toggles
-  const [notifications, setNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(true);
   const [sound, setSound] = useState(true);
   const [vibration, setVibration] = useState(true);
   // NEW: demo toggles
@@ -236,44 +236,122 @@ export default function Settings() {
         "Please log in to update your profile."
       );
     }
-    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (result.canceled || !result.assets?.length) return;
+    try {
+      // Request permissions
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) return;
 
-    const { uri } = result.assets[0];
-    const ext = (uri.split(".").pop() || "jpg").toLowerCase();
-    const fileName = `${uuidv4()}.${ext}`;
-    const filePath = `${session.user.id}/${fileName}`;
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+      
+      if (result.canceled || !result.assets?.length) return;
 
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(
-        filePath,
-        { uri, name: fileName, type: `image/${ext}` },
-        { contentType: `image/${ext}` }
+      const { uri } = result.assets[0];
+      const fileExt = uri.split('.').pop().toLowerCase();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `${session.user.id}/${fileName}`;
+      const bucket = 'avatars';
+
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append('file', {
+        uri,
+        name: fileName,
+        type: `image/${fileExt}`,
+      });
+
+      // Get current session token
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const accessToken = currentSession?.access_token;
+
+      if (!accessToken) {
+        throw new Error("No access token available");
+      }
+
+      // Upload using fetch API (like the working example)
+      const uploadRes = await fetch(
+        `https://litprnfjvytjttlqyhlj.supabase.co/storage/v1/object/${bucket}/${filePath}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: formData,
+        }
       );
 
-    if (uploadError) return Alert.alert("Upload failed", uploadError.message);
+      if (!uploadRes.ok) {
+        const errorText = await uploadRes.text();
+        throw new Error(`Upload failed: ${errorText}`);
+      }
 
-    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-    const publicUrl = data.publicUrl;
+      // Get public URL
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from(bucket)
+        .getPublicUrl(filePath);
 
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ avatar_url: publicUrl })
-      .eq("id", session.user.id);
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", session.user.id);
 
-    if (updateError) return Alert.alert("Error", updateError.message);
-    setAvatarUrl(publicUrl);
-    setProfile((p) => (p ? { ...p, avatar_url: publicUrl } : p));
+      if (updateError) throw updateError;
+
+      // Update local state
+      setAvatarUrl(publicUrl);
+      setProfile((p) => (p ? { ...p, avatar_url: publicUrl } : p));
+      
+      Alert.alert("Success", "Profile picture updated successfully");
+
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload Failed", error.message || "Failed to upload image");
+    }
   }, [session?.user]);
+
+  const openCamera = useCallback(async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        return Alert.alert('Permission Denied', 'Camera access is required to take a photo.');
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets?.length) {
+        await handleImageUpload(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Camera error:', error);
+      Alert.alert('Error', 'Failed to open camera');
+    }
+  }, [session?.user]);
+
+  // Modify the pickAndUploadAvatar to show options like the working example
+  const pickImage = useCallback(async () => {
+    Alert.alert(
+      'Select Image Source',
+      'Choose an option',
+      [
+        { text: 'Camera', onPress: openCamera },
+        { text: 'Gallery', onPress: pickAndUploadAvatar },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+      { cancelable: true }
+    );
+  }, [openCamera, pickAndUploadAvatar]);
 
   const openEditProfile = () => {
     setEditName(profile?.name || "");
@@ -648,7 +726,7 @@ export default function Settings() {
                 source={avatarUrl ? { uri: avatarUrl } : DefaultProfileImage}
                 style={styles.editAvatarLarge}
               />
-              <TouchableOpacity onPress={pickAndUploadAvatar} style={styles.smallBtn}>
+              <TouchableOpacity onPress={pickImage} style={styles.smallBtn}>
                 <Text style={styles.smallBtnText}>Change Photo</Text>
               </TouchableOpacity>
             </View>

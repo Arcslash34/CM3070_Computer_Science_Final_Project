@@ -18,7 +18,7 @@ import CertificatesScreen from "./CertificatesScreen";
 import BadgesScreen from "./badges";
 import Checklist from "./checklist";
 import ChatbotScreen from "./chatbot";
-import News from "./NewsScreen";
+import Articles from "./HomeArticleScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -116,7 +116,7 @@ export default function MainNavigator() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="News" component={News} />
+      <Stack.Screen name="Articles" component={Articles} />
     </Stack.Navigator>
   );
 }

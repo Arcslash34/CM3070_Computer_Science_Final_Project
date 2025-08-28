@@ -27,6 +27,16 @@ import {
   computeBadgeProgress,
 } from "./badgesLogic";
 
+/** spacing between cards horizontally & vertically */
+const GRID_GAP = 12;
+
+/** choose a sensible column count from the available grid width */
+function pickCols(w) {
+  if (w >= 820) return 5; // big tablets
+  if (w >= 640) return 4; // small tablets / big phones landscape
+  return 3; // default phones
+}
+
 export default function BadgesScreen() {
   const navigation = useNavigation();
   useLayoutEffect(() => {
@@ -56,7 +66,7 @@ export default function BadgesScreen() {
     async function loadAll() {
       try {
         // 1) ensure badges are up-to-date based on historical data
-        await checkAndAwardBadges(supabase); // lastQuiz not required for count-based achievements
+        await checkAndAwardBadges(supabase); // count-based achievements
       } catch (e) {
         console.warn("award-on-open failed:", e?.message || e);
       }
@@ -170,23 +180,32 @@ export default function BadgesScreen() {
     }
   };
 
+  // ------- Dynamic grid sizing (fixes extra space on the right) -------
+  const [gridW, setGridW] = useState(0);
+  const cols = useMemo(() => (gridW ? pickCols(gridW) : 3), [gridW]);
+  const cardW = useMemo(() => {
+    if (!gridW || !cols) return 96; // fallback
+    const totalGaps = GRID_GAP * (cols - 1);
+    return Math.floor((gridW - totalGaps) / cols);
+  }, [gridW, cols]);
+
   return (
-    <SafeAreaView style={s.safe} edges={["top", "left", "right", "bottom"]}>
+    <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
       <StatusBar barStyle="light-content" backgroundColor={"#000"} />
-      <ScrollView contentContainerStyle={s.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         {/* Hero header */}
         <LinearGradient
           colors={["#60A5FA", "#2563EB"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={s.hero}
+          style={styles.hero}
         >
-          <View style={s.brandRow}>
-            <Image source={require("./assets/logo3.png")} style={s.brandLogo} />
-            <Text style={s.brandTitle}>My Badges</Text>
+          <View style={styles.brandRow}>
+            <Image source={require("./assets/logo3.png")} style={styles.brandLogo} />
+            <Text style={styles.brandTitle}>My Badges</Text>
           </View>
 
-          <View style={s.heroStatsRow}>
+          <View style={styles.heroStatsRow}>
             <StatPill
               icon="ribbon-outline"
               value={
@@ -211,7 +230,7 @@ export default function BadgesScreen() {
             />
           </View>
 
-          <View style={s.tabs}>
+          <View style={styles.tabs}>
             <TabButton text="All" active={tab === "all"} onPress={() => setTab("all")} />
             <TabButton text="Unlocked" active={tab === "unlocked"} onPress={() => setTab("unlocked")} />
             <TabButton text="Locked" active={tab === "locked"} onPress={() => setTab("locked")} />
@@ -219,11 +238,16 @@ export default function BadgesScreen() {
         </LinearGradient>
 
         {/* Sections */}
-        <View style={s.contentPad}>
+        <View style={styles.contentPad}>
           {sections.map((sec) => (
             <View key={sec.title} style={{ marginBottom: 8 }}>
-              <Text style={s.sectionTitle}>{sec.title}</Text>
-              <View style={s.grid}>
+              <Text style={styles.sectionTitle}>{sec.title}</Text>
+
+              {/* Measure the grid width once it's laid out */}
+              <View
+                style={styles.grid}
+                onLayout={(e) => setGridW(e.nativeEvent.layout.width)}
+              >
                 {sec.items.map((b) => (
                   <BadgeCard
                     key={b.id}
@@ -232,6 +256,7 @@ export default function BadgesScreen() {
                     earned={b.earned}
                     progress={progressMap[b.id]}
                     onPress={() => handleBadgePress(b)}
+                    cardW={cardW}
                   />
                 ))}
               </View>
@@ -240,9 +265,9 @@ export default function BadgesScreen() {
 
           {/* Empty state for a given tab */}
           {!loadingOwned && list.length === 0 && (
-            <View style={s.empty}>
+            <View style={styles.empty}>
               <Ionicons name="star-outline" size={20} color="#9CA3AF" />
-              <Text style={s.emptyText}>
+              <Text style={styles.emptyText}>
                 {tab === "unlocked" ? "No badges unlocked yet." : "All badges are unlocked 🎉"}
               </Text>
             </View>
@@ -259,33 +284,33 @@ export default function BadgesScreen() {
         animationType="fade"
         onRequestClose={() => setShowBadgeModal(false)}
       >
-        <View style={s.modalOverlay}>
-          <View style={s.modalCard}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
             {selectedBadge?.icon ? (
-              <Image source={selectedBadge.icon} style={s.modalBadgeImage} resizeMode="contain" />
+              <Image source={selectedBadge.icon} style={styles.modalBadgeImage} resizeMode="contain" />
             ) : (
-              <View style={s.modalBadgeFallback}>
+              <View style={styles.modalBadgeFallback}>
                 <Ionicons name="ribbon" size={28} color="#F59E0B" />
               </View>
             )}
-            <Text style={s.modalTitle}>{selectedBadge?.title || "Badge"}</Text>
+            <Text style={styles.modalTitle}>{selectedBadge?.title || "Badge"}</Text>
             {selectedBadge?.group ? (
-              <Text style={s.modalSub}>{selectedBadge.group}</Text>
+              <Text style={styles.modalSub}>{selectedBadge.group}</Text>
             ) : null}
-            <View style={s.modalDivider} />
+            <View style={styles.modalDivider} />
 
-            <Text style={s.modalBody}>
+            <Text style={styles.modalBody}>
               You unlocked this badge—nice work! Share it with your friends and keep the streak going. 🚀
             </Text>
 
-            <View style={s.modalActions}>
-              <TouchableOpacity onPress={shareBadge} style={[s.modalBtn, s.modalBtnPrimary]} activeOpacity={0.9}>
+            <View style={styles.modalActions}>
+              <TouchableOpacity onPress={shareBadge} style={[styles.modalBtn, styles.modalBtnPrimary]} activeOpacity={0.9}>
                 <Ionicons name="share-social" size={16} color="#fff" />
-                <Text style={s.modalBtnTextPrimary}>Share</Text>
+                <Text style={styles.modalBtnTextPrimary}>Share</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setShowBadgeModal(false)} style={[s.modalBtn, s.modalBtnGhost]} activeOpacity={0.9}>
-                <Text style={s.modalBtnTextGhost}>Close</Text>
+              <TouchableOpacity onPress={() => setShowBadgeModal(false)} style={[styles.modalBtn, styles.modalBtnGhost]} activeOpacity={0.9}>
+                <Text style={styles.modalBtnTextGhost}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -301,21 +326,21 @@ function StatPill({ icon, value, label }) {
   // Guard against bad icon names so Ionicons never crashes.
   const safeIcon = typeof icon === "string" && icon.length ? icon : "star-outline";
   return (
-    <View style={s.statPill}>
-      <View style={s.statIconWrap}>
+    <View style={styles.statPill}>
+      <View style={styles.statIconWrap}>
         <Ionicons name={safeIcon} size={34} color="#E0F2FE" />
       </View>
 
-      <View style={s.statTextCol}>
+      <View style={styles.statTextCol}>
         {typeof value === "string" || typeof value === "number" ? (
           <>
-            <Text style={s.statValue} numberOfLines={1}>{value}</Text>
-            <Text style={s.statLabel} numberOfLines={1}>{label}</Text>
+            <Text style={styles.statValue} numberOfLines={1}>{value}</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>{label}</Text>
           </>
         ) : (
           <>
             <View style={{ minHeight: 24, justifyContent: "center" }}>{value}</View>
-            <Text style={s.statLabel} numberOfLines={1}>{label}</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>{label}</Text>
           </>
         )}
       </View>
@@ -325,13 +350,13 @@ function StatPill({ icon, value, label }) {
 
 function TabButton({ text, active, onPress }) {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={[s.tabBtn, active && s.tabBtnActive]}>
-      <Text style={[s.tabText, active && s.tabTextActive]}>{text}</Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={[styles.tabBtn, active && styles.tabBtnActive]}>
+      <Text style={[styles.tabText, active && styles.tabTextActive]}>{text}</Text>
     </TouchableOpacity>
   );
 }
 
-function BadgeCard({ title, icon, earned, progress, onPress }) {
+function BadgeCard({ title, icon, earned, progress, onPress, cardW }) {
   const hasIcon = !!icon;
   const val = Math.max(0, Number(progress?.value || 0));
   const goal = Math.max(1, Number(progress?.goal || 1));
@@ -342,39 +367,47 @@ function BadgeCard({ title, icon, earned, progress, onPress }) {
   const activeOpacity = earned ? 0.92 : 1;
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} style={[s.card, !earned && s.cardLocked]} onPress={pressHandler}>
-      <View style={s.medalWrap}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      style={[
+        styles.card,
+        !earned && styles.cardLocked,
+        { width: cardW, maxWidth: cardW }, // ← key: exact width per column
+      ]}
+      onPress={pressHandler}
+    >
+      <View style={styles.medalWrap}>
         {hasIcon ? (
           <Image
             source={icon}
-            style={[s.badgeImage, !earned && { opacity: 0.35 }]}
+            style={[styles.badgeImage, !earned && { opacity: 0.35 }]}
             resizeMode="contain"
           />
         ) : (
           <>
-            <View style={[s.medalCircle, !earned && { opacity: 0.35 }]}>
-              <View style={s.medalInner}>
+            <View style={[styles.medalCircle, !earned && { opacity: 0.35 }]}>
+              <View style={styles.medalInner}>
                 <Ionicons name="star" size={18} color="#F59E0B" />
               </View>
             </View>
-            <View style={[s.ribbon, { left: 8 }]} />
-            <View style={[s.ribbon, { right: 8 }]} />
+            <View style={[styles.ribbon, { left: 8 }]} />
+            <View style={[styles.ribbon, { right: 8 }]} />
           </>
         )}
       </View>
 
-      <Text style={s.cardTitle} numberOfLines={1}>{title}</Text>
+      <Text style={styles.cardTitle} numberOfLines={1}>{title}</Text>
 
       {earned ? (
-        <View style={s.pill}>
-          <Text style={s.pillText}>Completed</Text>
+        <View style={styles.pill}>
+          <Text style={styles.pillText}>Completed</Text>
         </View>
       ) : (
         <View style={{ width: "100%", marginTop: 6 }}>
-          <View style={s.progressTrack}>
-            <View style={[s.progressFill, { width: `${pct}%` }]} />
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${pct}%` }]} />
           </View>
-          <Text style={s.progressLabel}>{val}/{goal}</Text>
+          <Text style={styles.progressLabel}>{val}/{goal}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -383,9 +416,7 @@ function BadgeCard({ title, icon, earned, progress, onPress }) {
 
 /* ---------------- styles ---------------- */
 
-const CARD_W = 96;
-
-const s = StyleSheet.create({
+const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#FFFFFF" },
   container: { backgroundColor: "#FFFFFF", flexGrow: 1 },
 
@@ -438,10 +469,16 @@ const s = StyleSheet.create({
     textAlign: "center",
   },
 
-  grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  // Evenly spaced grid; dynamic card widths ensure perfect fit each row
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    rowGap: GRID_GAP,
+    columnGap: GRID_GAP,
+  },
 
   card: {
-    width: CARD_W,
+    // width injected dynamically
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 12,

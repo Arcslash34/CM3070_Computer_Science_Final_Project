@@ -216,43 +216,37 @@ function EmergencyContactsModal({ visible, onClose }) {
   );
 }
 
-/* ----------------- News (curated) ----------------- */
-const NEWS_ITEMS = [
-  {
-    id: "cna-flood",
-    title: "Heavy rain triggers flash floods in multiple areas",
-    source: "CNA",
-    url: "https://www.google.com/search?q=site%3Achannelnewsasia.com+flood+Singapore",
-  },
+/* ----------------- Quick Articles ----------------- */
+const ARTICLE_ITEMS = [
   {
     id: "st-flood",
-    title: "Flash floods & road closures: What motorists should know",
+    title: "Flash flood in Jurong Town Hall Road; warning issued for Dunearn Road",
     source: "The Straits Times",
-    url: "https://www.google.com/search?q=site%3Astraitstimes.com+flood+Singapore",
+    url: "https://www.straitstimes.com/singapore/risk-of-flash-floods-along-dunearn-road-avoid-road-for-the-next-hour-pub",
   },
   {
-    id: "today-flood",
-    title: "Rainy season outlook & flood advisories",
-    source: "TODAY",
-    url: "https://www.google.com/search?q=site%3Atodayonline.com+flood+Singapore",
-  },
-  {
-    id: "pub-press",
-    title: "PUB updates on drainage & flood-prone hotspots",
-    source: "PUB",
-    url: "https://www.pub.gov.sg/news",
-  },
-  {
-    id: "nea-weather",
-    title: "NEA heavy rain / thunderstorm advisories",
+    id: "nea-haze",
+    title: "Haze: 1-hr PM2.5 & 24-hr PSI (Live Map)",
     source: "NEA",
-    url: "https://www.nea.gov.sg/weather",
+    url: "https://www.haze.gov.sg/",
   },
   {
-    id: "nea-dengue",
-    title: "Dengue clusters & prevention tips",
+    id: "nea-dengue-zika",
+    title: "Dengue & Zika: Clusters, prevention, cases",
     source: "NEA",
-    url: "https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters",
+    url: "https://www.nea.gov.sg/dengue-zika",
+  },
+  {
+    id: "scdf-fire-residential",
+    title: "Fire Safety Guidelines for Residential Estate",
+    source: "SCDF",
+    url: "https://www.scdf.gov.sg/home/community-and-volunteers/fire-emergency-guides/fire-safety-guidelines-for--residential-estate",
+  },
+  {
+    id: "independent-johor-quakes",
+    title: "Weekend quakes jolt Johor",
+    source: "The Independent Singapore",
+    url: "https://theindependent.sg/weekend-quakes-jolt-johor-experts-warn-peninsular-malaysia-and-singapore-not-immune-to-future-tremors/",
   },
 ];
 
@@ -964,9 +958,9 @@ export default function HomeScreen() {
 
         {/* News */}
         <View style={[styles.sectionRow, { marginTop: 12 }]}>
-          <Text style={styles.sectionTitle}>News Articles</Text>
+          <Text style={styles.sectionTitle}>Articles</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("News")}
+            onPress={() => navigation.navigate("Articles")}
             activeOpacity={0.8}
           >
             <Text style={styles.viewAll}>View all</Text>
@@ -1179,7 +1173,7 @@ function HomeNewsStrip({ onOpen }) {
     if (!mounted) return;
     const t = setInterval(() => {
       setIdx((prev) => {
-        const next = (prev + 1) % NEWS_ITEMS.length;
+        const next = (prev + 1) % ARTICLE_ITEMS.length;
         try {
           listRef.current?.scrollToIndex?.({ index: next, animated: true });
         } catch {}
@@ -1193,7 +1187,7 @@ function HomeNewsStrip({ onOpen }) {
     const x = e.nativeEvent.contentOffset.x;
     const newIdx = Math.round(x / (CARD_W + SPACING));
     if (!Number.isNaN(newIdx)) {
-      setIdx(Math.max(0, Math.min(NEWS_ITEMS.length - 1, newIdx)));
+      setIdx(Math.max(0, Math.min(ARTICLE_ITEMS.length - 1, newIdx)));
     }
   };
 
@@ -1220,7 +1214,7 @@ function HomeNewsStrip({ onOpen }) {
   return (
     <FlatList
       ref={listRef}
-      data={NEWS_ITEMS}
+      data={ARTICLE_ITEMS}
       keyExtractor={(it) => it.id}
       renderItem={renderItem}
       horizontal
