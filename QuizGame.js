@@ -31,6 +31,8 @@ import {
 } from "react-native-safe-area-context";
 import { supabase } from "./supabase";
 import QUIZ_DB from "./assets/quiz.json";
+import { Audio } from "expo-av";
+import * as AppPrefs from "./appPrefs";
 
 const TOTAL_TIME = 30;
 
@@ -90,6 +92,11 @@ export default function QuizGame() {
   const [xpPerQuestion, setXpPerQuestion] = useState([]); // index -> xp earned
   const [feedback, setFeedback] = useState("");
 
+  // --- AUDIO refs ---
+  const bgmRef = useRef(null);
+  const sfxCorrectRef = useRef(null);
+  const sfxWrongRef = useRef(null);
+
   // build questions from quiz.json (and shuffle options)
   useEffect(() => {
     const cats = QUIZ_DB?.categories ?? [];
@@ -131,9 +138,61 @@ export default function QuizGame() {
     setRemainingTime(TOTAL_TIME);
     setEarnedXP(0);
     setFeedback("");
-    setTotalXp(0);            // reset cumulative XP
-    setXpPerQuestion([]);     // reset per-question XP
+    setTotalXp(0); // reset cumulative XP
+    setXpPerQuestion([]); // reset per-question XP
   }, [questionCount]);
+
+  // --- AUDIO: preload bgm + sfx on mount, cleanup on unmount ---
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        // Background music (loop)
+        const bgm = new Audio.Sound();
+        await bgm.loadAsync(require("./assets/music/quiz-bgm.mp3"));
+        await bgm.setIsLoopingAsync(true);
+        await bgm.setVolumeAsync(0.35);
+        if (mounted) {
+          bgmRef.current = bgm;
+          // Respect settings
+          if (AppPrefs.soundEnabled()) {
+            await bgm.playAsync();
+          } else {
+            // ensure not audible if previously playing
+            try {
+              await bgm.pauseAsync();
+            } catch {}
+          }
+        }
+
+        // Correct SFX
+        const ok = new Audio.Sound();
+        await ok.loadAsync(require("./assets/music/correct.mp3"));
+        sfxCorrectRef.current = ok;
+
+        // Wrong SFX
+        const nope = new Audio.Sound();
+        await nope.loadAsync(require("./assets/music/incorrect.mp3"));
+        sfxWrongRef.current = nope;
+      } catch (e) {
+        console.warn("Quiz audio init error:", e);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+      (async () => {
+        try {
+          await sfxWrongRef.current?.unloadAsync();
+          await sfxCorrectRef.current?.unloadAsync();
+          await bgmRef.current?.unloadAsync();
+        } catch {}
+        sfxWrongRef.current = null;
+        sfxCorrectRef.current = null;
+        bgmRef.current = null;
+      })();
+    };
+  }, []);
 
   // timer + progress bar
   useEffect(() => {
@@ -169,7 +228,7 @@ export default function QuizGame() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, current, submitted, onSubmit, progressAnim]);
 
-  // flash timer under 10s
+  // flash timer under 10s (visual only)
   const isFlashing = remainingTime <= 10 && !submitted;
   useEffect(() => {
     if (!isFlashing) {
@@ -225,6 +284,7 @@ export default function QuizGame() {
     );
   }, [navigation]);
 
+  // pause/resume BGM when screen blurs/focuses + back handler
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -232,13 +292,32 @@ export default function QuizGame() {
         return true; // prevent default back
       };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () =>
+
+      // resume bgm on focus
+      (async () => {
+        try {
+          if (AppPrefs.soundEnabled()) {
+            await bgmRef.current?.playAsync();
+          } else {
+            await bgmRef.current?.pauseAsync();
+          }
+        } catch {}
+      })();
+
+      return () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        // pause bgm on blur
+        (async () => {
+          try {
+            await bgmRef.current?.pauseAsync();
+          } catch {}
+        })();
+      };
     }, [confirmExit])
   );
 
   // submit one question
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
     if (!current || submitted) return;
 
     let xpForThisQuestion = 0;
@@ -273,9 +352,39 @@ export default function QuizGame() {
     }
     progressAnim.stopAnimation();
 
+    // play result SFX
+    try {
+      // HAPTICS (respects vibration toggle inside appPrefs)
+      if (selected == null) {
+        AppPrefs.warning();
+      } else if (selected === current.answer) {
+        AppPrefs.success();
+      } else {
+        AppPrefs.error();
+      }
+
+      // SFX (respects sound toggle)
+      if (AppPrefs.soundEnabled()) {
+        if (selected === current.answer) {
+          await sfxCorrectRef.current?.replayAsync();
+        } else if (selected != null) {
+          await sfxWrongRef.current?.replayAsync();
+        }
+        // (no sound when time’s up)
+      }
+    } catch {}
+
     setSubmitted(true);
-    setShowExplanation(false); // ⬅️ don't auto-open modal
-  }, [current, submitted, selected, remainingTime, usedHint, progressAnim, index]);
+    setShowExplanation(false); // don't auto-open modal
+  }, [
+    current,
+    submitted,
+    selected,
+    remainingTime,
+    usedHint,
+    progressAnim,
+    index,
+  ]);
 
   // next / finish
   const goNext = () => {
@@ -324,40 +433,49 @@ export default function QuizGame() {
           await supabase.auth.getUser();
         const userId = userData?.user?.id;
         if (!userError && userId) {
-          const { error: insertError } = await supabase.from("quiz_results").insert({
-            user_id: userId,
-            quiz_title: quizTitle,
-            score: scorePercent,
-            xp: finalTotalXp,
-            answers: nextAnswers,
-            review_data: reviewData,
-          });
+          const { error: insertError } = await supabase
+            .from("quiz_results")
+            .insert({
+              user_id: userId,
+              quiz_title: quizTitle,
+              score: scorePercent,
+              xp: finalTotalXp,
+              answers: nextAnswers,
+              review_data: reviewData,
+            });
           if (insertError) throw insertError;
 
-         // After saving the result, evaluate and award badges
-         try {
-           const { checkAndAwardBadges, getBadgeMeta } = await import("./badgesLogic");
-           const res = await checkAndAwardBadges(supabase, {
-             lastQuiz: {
-               title: quizTitle,
-               scorePercent,
-               createdAt: new Date().toISOString(),
-             },
-           });
-           // OPTIONAL: quick toast/alert for the first newly unlocked badge
-           if (res.newlyAwarded?.length) {
-             const first = getBadgeMeta(res.newlyAwarded[0]);
-             // Example UX: uncomment if you want an alert
-             // Alert.alert("Badge Unlocked!", first.title || res.newlyAwarded[0]);
-           }
-         } catch (badgeErr) {
-           console.warn("Badge awarding failed:", badgeErr?.message || badgeErr);
-         }
+          // After saving the result, evaluate and award badges
+          try {
+            const { checkAndAwardBadges, getBadgeMeta } = await import(
+              "./badgesLogic"
+            );
+            const res = await checkAndAwardBadges(supabase, {
+              lastQuiz: {
+                title: quizTitle,
+                scorePercent,
+                createdAt: new Date().toISOString(),
+              },
+            });
+            if (res.newlyAwarded?.length) {
+              const first = getBadgeMeta(res.newlyAwarded[0]);
+              // Optionally toast/alert here
+            }
+          } catch (badgeErr) {
+            console.warn(
+              "Badge awarding failed:",
+              badgeErr?.message || badgeErr
+            );
+          }
         }
       } catch (e) {
         console.warn("Supabase save error:", e?.message || e);
         Alert.alert("Save failed", String(e?.message || e));
       } finally {
+        // stop bgm before leaving the screen
+        try {
+          await bgmRef.current?.stopAsync();
+        } catch {}
         setUploading(false);
         navigation.navigate("ResultSummary", {
           reviewData,

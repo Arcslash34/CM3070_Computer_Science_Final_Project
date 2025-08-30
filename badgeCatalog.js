@@ -7,9 +7,9 @@ export const BADGE_CATALOG = [
   { id: "quiz-scholar",      title: "Quiz Scholar",  group: "Learning Achievements", icon: require("./assets/badges/badge3.png") },
 
   // Disaster Specialist
-  { id: "earthquake-expert", title: "Earthquake Expert", group: "Disaster Specialist", icon: require("./assets/badges/badge5.png") },
-  { id: "fire-expert",       title: "Fire Expert",       group: "Disaster Specialist", icon: require("./assets/badges/badge6.png") },
-  { id: "flood-expert",      title: "Flood Expert",      group: "Disaster Specialist", icon: require("./assets/badges/badge7.png") },
+  { id: "earthquake-expert", title: "Earthquake Expert", group: "Disaster Specialist", icon: require("./assets/badges/badge4.png") },
+  { id: "fire-expert",       title: "Fire Expert",       group: "Disaster Specialist", icon: require("./assets/badges/badge5.png") },
+  { id: "flood-expert",      title: "Flood Expert",      group: "Disaster Specialist", icon: require("./assets/badges/badge6.png") },
   { id: "firstaid-expert",   title: "First-Aid Expert",  group: "Disaster Specialist", icon: require("./assets/badges/badge8.png") },
 
   // Streaks

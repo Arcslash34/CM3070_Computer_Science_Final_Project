@@ -224,7 +224,7 @@ export async function checkAndAwardBadges(supabase, { lastQuiz = null } = {}) {
       .from("user_disaster_badges")
       .insert(toAward.map((badge_id) => ({ user_id: userId, badge_id })));
     // ignore "duplicate key" races
-    if (error && !String(error.message || "").includes("duplicate key")) {
+    if (error && !String(error.message || "").includes("duplicate key")) {  
       throw error;
     }
   }

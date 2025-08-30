@@ -85,9 +85,16 @@ export default function InteractiveMapModal({
         <style>
           html, body, #map { height:100%; margin:0; }
           .legend {
-            position:absolute; bottom:10px; left:10px; background:#fff;
-            padding:6px 8px; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.2);
-            font:12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; min-width:140px;
+            position: absolute;
+            bottom: 80px;
+            left: 0px; /* flush with the left edge */
+            background: #fff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            min-width: 140px;
+            z-index: 1000;
           }
           .legend div { margin:2px 0; white-space:nowrap; }
           .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
@@ -100,7 +107,6 @@ export default function InteractiveMapModal({
             font: 800 11px/1.05 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
             color:#fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35);
           }
-          .chip.rain { }
           .chip.pm25 { background:#FF9800; }
           .chip.wind { background:#9C27B0; }
           .chip.temp { background:#F44336; }
@@ -159,7 +165,7 @@ export default function InteractiveMapModal({
               popupAnchor: [0,-20],
             });
             const m = L.marker([lat, lng], { icon }).addTo(map);
-            const content = '<b>'+(popupTitle || 'Location')+'</b><br/>'+ (popupLines || []).join('<br/>');
+            const content = '<b>'+(popupTitle || 'Location')+'</b><br/>'+(popupLines || []).join('<br/>');
             m.bindPopup(content);
             return m;
           }
@@ -198,14 +204,10 @@ export default function InteractiveMapModal({
             if (layerName === 'rain') {
               (APP_DATA.rain || []).forEach(p => {
                 if (!(p && p.lat && p.lng)) return;
-
                 const risk = estimateFloodRisk(p.rainfall, p.lastHour);
                 const color = riskColor(risk);
-
                 const nowVal = (p.rainfall != null) ? (Math.round(p.rainfall) + ' mm') : '-';
-                // Always show "Last 1h: X mm" with no coverage suffix, even when value is 0.
                 const hourVal = (p.lastHour != null) ? (p.lastHour + ' mm') : 'n/a';
-
                 const marker = addChip({
                   lat: p.lat, lng: p.lng,
                   label: nowVal,
@@ -309,7 +311,6 @@ export default function InteractiveMapModal({
       hardwareAccelerated
       presentationStyle="fullScreen"
     >
-      {/* Safe area wrapper */}
       <SafeAreaView
         style={styles.container}
         edges={["top", "left", "right", "bottom"]}
@@ -320,43 +321,6 @@ export default function InteractiveMapModal({
           <TouchableOpacity onPress={onClose} accessibilityLabel="Close map">
             <Ionicons name="close" size={22} color="#111827" />
           </TouchableOpacity>
-        </View>
-
-        {/* Filters with icons below label */}
-        <View style={styles.filters}>
-          {[
-            { key: "rain", label: "RAIN", icon: "rainy" },
-            { key: "pm25", label: "PM2.5", icon: "leaf" }, // using leaf for air quality
-            { key: "wind", label: "WIND", icon: "navigate" },
-            { key: "temp", label: "TEMP", icon: "thermometer" },
-            { key: "humidity", label: "HUMID", icon: "water" },
-          ].map(({ key, label, icon }) => {
-            const active = activeLayer === key;
-            return (
-              <TouchableOpacity
-                key={key}
-                style={[
-                  styles.filterButton,
-                  active && styles.activeFilterButton,
-                ]}
-                onPress={() => setActiveLayer(key)}
-                accessibilityRole="button"
-                accessibilityLabel={`Show ${label.toLowerCase()} layer`}
-              >
-                <Text
-                  style={[styles.filterText, active && styles.activeFilterText]}
-                >
-                  {label}
-                </Text>
-                <Ionicons
-                  name={icon}
-                  size={18}
-                  color={active ? "#fff" : "#374151"}
-                  style={{ marginTop: 4 }}
-                />
-              </TouchableOpacity>
-            );
-          })}
         </View>
 
         {/* Map */}
@@ -379,6 +343,48 @@ export default function InteractiveMapModal({
               <Text style={styles.loadingText}>Preparing map data...</Text>
             </View>
           )}
+
+          {/* Bottom floating filters (icon above text) */}
+          <View style={styles.bottomFilters} pointerEvents="box-none">
+            <View style={styles.filtersBar}>
+              {[
+                { key: "rain", label: "RAIN", icon: "rainy" },
+                { key: "pm25", label: "PM2.5", icon: "leaf" },
+                { key: "wind", label: "WIND", icon: "navigate" },
+                { key: "temp", label: "TEMP", icon: "thermometer" },
+                { key: "humidity", label: "HUMID", icon: "water" },
+              ].map(({ key, label, icon }) => {
+                const active = activeLayer === key;
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    style={[
+                      styles.filterButton,
+                      active && styles.activeFilterButton,
+                    ]}
+                    onPress={() => setActiveLayer(key)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Show ${label.toLowerCase()} layer`}
+                  >
+                    <Ionicons
+                      name={icon}
+                      size={18}
+                      color={active ? "#fff" : "#374151"}
+                      style={{ marginBottom: 4 }}
+                    />
+                    <Text
+                      style={[
+                        styles.filterText,
+                        active && styles.activeFilterText,
+                      ]}
+                    >
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
       </SafeAreaView>
     </Modal>
@@ -400,33 +406,52 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 16, fontWeight: "800", color: "#111827" },
 
-  filters: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 8,
-    backgroundColor: "#F9FAFB",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+  mapBox: { flex: 1, position: "relative" },
+
+  // Floating bottom filter bar
+  bottomFilters: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingBottom: 8,
   },
+
+  filtersBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "#FFFFFFEE",
+    borderRadius: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    alignSelf: "stretch",
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
+  },
+
   filterButton: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: "#E5E7EB",
-    minWidth: 64,
+    minWidth: 58,
   },
   activeFilterButton: { backgroundColor: "#4F46E5" },
   filterText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "800",
     color: "#374151",
     letterSpacing: 0.5,
   },
   activeFilterText: { color: "#fff" },
 
-  mapBox: { flex: 1, position: "relative" },
   loadingOverlay: {
     position: "absolute",
     top: "40%",

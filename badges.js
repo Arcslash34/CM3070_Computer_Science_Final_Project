@@ -284,13 +284,21 @@ export default function BadgesScreen() {
         animationType="fade"
         onRequestClose={() => setShowBadgeModal(false)}
       >
-        <View style={styles.modalOverlay}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPressOut={() => setShowBadgeModal(false)} // 👈 close on outside tap
+        >
           <View style={styles.modalCard}>
             {selectedBadge?.icon ? (
-              <Image source={selectedBadge.icon} style={styles.modalBadgeImage} resizeMode="contain" />
+              <Image
+                source={selectedBadge.icon}
+                style={styles.modalBadgeImage}
+                resizeMode="contain"
+              />
             ) : (
               <View style={styles.modalBadgeFallback}>
-                <Ionicons name="ribbon" size={28} color="#F59E0B" />
+                <Ionicons name="ribbon" size={36} color="#F59E0B" />
               </View>
             )}
             <Text style={styles.modalTitle}>{selectedBadge?.title || "Badge"}</Text>
@@ -300,21 +308,30 @@ export default function BadgesScreen() {
             <View style={styles.modalDivider} />
 
             <Text style={styles.modalBody}>
-              You unlocked this badge—nice work! Share it with your friends and keep the streak going. 🚀
+              You unlocked this badge—nice work! Share it with your friends and keep
+              the streak going. 🚀
             </Text>
 
             <View style={styles.modalActions}>
-              <TouchableOpacity onPress={shareBadge} style={[styles.modalBtn, styles.modalBtnPrimary]} activeOpacity={0.9}>
+              <TouchableOpacity
+                onPress={shareBadge}
+                style={[styles.modalBtn, styles.modalBtnPrimary]}
+                activeOpacity={0.9}
+              >
                 <Ionicons name="share-social" size={16} color="#fff" />
                 <Text style={styles.modalBtnTextPrimary}>Share</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setShowBadgeModal(false)} style={[styles.modalBtn, styles.modalBtnGhost]} activeOpacity={0.9}>
+              <TouchableOpacity
+                onPress={() => setShowBadgeModal(false)}
+                style={[styles.modalBtn, styles.modalBtnGhost]}
+                activeOpacity={0.9}
+              >
                 <Text style={styles.modalBtnTextGhost}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -582,22 +599,26 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     alignItems: "center",
   },
-  modalBadgeImage: { width: 64, height: 64 },
+  modalBadgeImage: { width: 160, height: 95 },
   modalBadgeFallback: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: 96,
+    height: 96,
+    borderRadius: 20,
     backgroundColor: "#FEF3C7",
     borderWidth: 1,
     borderColor: "#F59E0B",
     alignItems: "center",
     justifyContent: "center",
   },
+  modalBody: {
+    fontSize: 14,
+    color: "#374151",
+    textAlign: "center",
+    paddingHorizontal: 16,
+  },
   modalTitle: { fontSize: 20, fontWeight: "800", color: "#111827", marginTop: 8, textAlign: "center" },
   modalSub: { fontSize: 13, color: "#6B7280", marginTop: 2, textAlign: "center" },
   modalDivider: { height: 1, backgroundColor: "#E5E7EB", alignSelf: "stretch", marginVertical: 12 },
-  modalBody: { fontSize: 14, color: "#374151", textAlign: "center" },
-
   modalActions: { flexDirection: "row", gap: 10, marginTop: 14, alignSelf: "stretch" },
   modalBtn: {
     flex: 1,

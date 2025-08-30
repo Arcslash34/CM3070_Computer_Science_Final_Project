@@ -102,7 +102,7 @@ async function triggerAlert({
   title,
   body,
   type = "general",
-  showPopup = true,
+  showPopup = false, // <-- default: NO POPUP
   notifyDevice = true,
   bypassCooldown = false,
   onViewMap,
@@ -220,7 +220,8 @@ function EmergencyContactsModal({ visible, onClose }) {
 const ARTICLE_ITEMS = [
   {
     id: "st-flood",
-    title: "Flash flood in Jurong Town Hall Road; warning issued for Dunearn Road",
+    title:
+      "Flash flood in Jurong Town Hall Road; warning issued for Dunearn Road",
     source: "The Straits Times",
     url: "https://www.straitstimes.com/singapore/risk-of-flash-floods-along-dunearn-road-avoid-road-for-the-next-hour-pub",
   },
@@ -277,7 +278,7 @@ function formatFancyDate(dt) {
 function formatAgo(dt) {
   if (!dt) return "";
   const ms = Date.now() - dt.getTime();
-  if (ms < 60_000) return "just now";
+  if (ms < 60_000) return "Just Now";
   const mins = Math.floor(ms / 60_000);
   if (mins < 60) return `${mins} min ago`;
   const hrs = Math.floor(mins / 60);
@@ -314,27 +315,88 @@ function RiskAlertCard({ variant, title, whenISO, areasText }) {
           text: styles.alertTextDark,
         };
 
+  const isFlashFlood = title.includes("Flash Flood Warning");
+
   return (
     <View style={[styles.alertCard, palette.wrap]}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      {/* Title row */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Ionicons
           name={palette.icon}
           size={18}
           color={palette.iconColor}
-          style={{ marginRight: 10 }}
+          style={{ marginRight: 6 }}
         />
-        <Text style={[styles.alertTitle, palette.text]}>{title}</Text>
+        <Text
+          style={[
+            styles.alertTitle,
+            palette.text,
+            isFlashFlood && styles.alertTitleBig,
+          ]}
+        >
+          {title}
+        </Text>
+        {isFlashFlood && (
+          <Ionicons
+            name={palette.icon}
+            size={18}
+            color={palette.iconColor}
+            style={{ marginLeft: 6 }}
+          />
+        )}
       </View>
 
-      <Text style={[styles.alertMeta, palette.text]} numberOfLines={2}>
-        {formatFancyDate(dt)} <Text style={styles.dot}>•</Text> {formatAgo(dt)}
-        {!!areasText && (
-          <>
-            {" "}
-            <Text style={styles.dot}>•</Text> {areasText}
-          </>
-        )}
-      </Text>
+      {/* Date row */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 4,
+        }}
+      >
+        <Ionicons
+          name="calendar-outline"
+          size={14}
+          color={palette.iconColor}
+          style={{ marginRight: 4 }}
+        />
+        <Text style={[styles.alertMeta, palette.text, styles.alertSpaced]}>
+          {formatFancyDate(dt)} • {formatAgo(dt)}
+        </Text>
+      </View>
+
+      {/* Location row */}
+      {!!areasText && (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 2,
+          }}
+        >
+          <Ionicons
+            name="location-outline"
+            size={14}
+            color={palette.iconColor}
+            style={{ marginRight: 4 }}
+          />
+          <Text
+            style={[styles.alertMeta, palette.text, styles.alertSpaced]}
+            numberOfLines={2}
+            textAlign="center"
+          >
+            {areasText}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -403,18 +465,25 @@ export default function HomeScreen() {
     }
   }, []);
 
-
-  const triggerAreaAdvisoryForCoords = useCallback(async (c) => {
+  async function triggerAreaAdvisoryForCoords(c) {
     const inside = distKm(c, mockDefault) <= GEOFENCE_KM;
+    const prev = geofenceInsideRef.current;
     setAreaAdvisoryActive(!!inside);
+    geofenceInsideRef.current = inside;
     if (!inside) return;
+
+    // Only notify for geofence when MOCK DISASTER is ON
+    if (!mockDisasterOn) return;
+
+    const firstEntry = prev === null || prev === false;
     await triggerAlert({
       title: "⚠️ Area Advisory: Taman Jurong",
       body: "You are near a flood-prone area. Stay vigilant and check the map for reports.",
       type: "geofence",
-      showPopup: false,
+      notifyDevice: true,
+      bypassCooldown: firstEntry,
     });
-  }, []);
+  }
 
   const pickNearestFrom = useCallback((datasets, c) => {
     if (!datasets || !c) return;
@@ -501,14 +570,17 @@ export default function HomeScreen() {
             setUiRiskLevel(risk || null);
 
             if (risk === "High" || risk === "Moderate") {
+              const isMockEnv = usingMockRef.current || mockLocationOn;
+              const shouldNotify = mockDisasterOn || !isMockEnv; // push in real env, or when mock disaster is ON
               await triggerAlert({
                 title: `🚨 Flood Risk: ${risk}`,
                 body: `Heavy rain detected at ${
                   nearest.name ?? "nearby station"
                 }. Stay alert and follow safety procedures.`,
                 type: "risk",
-                showPopup: true,
+                showPopup: false,
                 onViewMap: () => setMapExpanded(true),
+                notifyDevice: shouldNotify,
               });
             }
           } else {
@@ -519,18 +591,23 @@ export default function HomeScreen() {
         }
       }
 
+      // --- Geofence advisory (only when mock disaster is ON) ---
       if (allowGeofence) {
         const inside = distKm(c, mockDefault) <= GEOFENCE_KM;
         setAreaAdvisoryActive(!!inside);
         const prev = geofenceInsideRef.current;
         geofenceInsideRef.current = inside;
         if ((prev === null && inside) || (prev === false && inside)) {
-          await triggerAlert({
-            title: "⚠️ Area Advisory: Taman Jurong",
-            body: "You are near a flood-prone area. Stay vigilant and check the map for reports.",
-            type: "geofence",
-            showPopup: false,
-          });
+          if (mockDisasterOn) {
+            const firstEntry = true; // by definition of the condition above
+            await triggerAlert({
+              title: "⚠️ Area Advisory: Taman Jurong",
+              body: "You are near a flood-prone area. Stay vigilant and check the map for reports.",
+              type: "geofence",
+              notifyDevice: true,
+              bypassCooldown: firstEntry,
+            });
+          }
         }
       } else {
         setAreaAdvisoryActive(distKm(c, mockDefault) <= GEOFENCE_KM);
@@ -568,7 +645,13 @@ export default function HomeScreen() {
       pickNearestFrom(merged, c);
       setUpdatedAt(new Date().toISOString());
     },
-    [coords, triggerAreaAdvisoryForCoords, pickNearestFrom]
+    [
+      coords,
+      triggerAreaAdvisoryForCoords,
+      pickNearestFrom,
+      mockDisasterOn,
+      mockLocationOn,
+    ]
   );
 
   /** Apply mock flags immediately when they change / on focus */
@@ -680,6 +763,21 @@ export default function HomeScreen() {
   useEffect(() => {
     applyMockFlags();
   }, [applyMockFlags]);
+
+  useEffect(() => {
+    // If mock disaster just turned ON and we are already inside the geofence,
+    // send the notification immediately (no popup, just device push).
+    if (mockDisasterOn && areaAdvisoryActive) {
+      triggerAlert({
+        title: "⚠️ Area Advisory: Taman Jurong",
+        body: "You are near a flood-prone area. Stay vigilant and check the map for reports.",
+        type: "geofence",
+        notifyDevice: true,
+        bypassCooldown: true,
+        showPopup: false,
+      });
+    }
+  }, [mockDisasterOn, areaAdvisoryActive]);
 
   // Also refresh flags on screen focus (+ refresh notif prefs)
   useEffect(() => {
@@ -822,7 +920,7 @@ export default function HomeScreen() {
   const realLocationOn = locPermission === "granted" && servicesEnabled;
   const riskBanner = (() => {
     // Forced red when mock disaster is ON (with mock location or no real location)
-    if (mockDisasterOn && (!realLocationOn || mockLocationOn)) {
+    if (mockDisasterOn && (mockLocationOn || areaAdvisoryActive)) {
       return (
         <RiskAlertCard
           variant="red"
@@ -858,11 +956,7 @@ export default function HomeScreen() {
       }
       // Low
       return (
-        <RiskAlertCard
-          variant="green"
-          title={`No alert near ${locName}`}
-          whenISO={updatedAt}
-        />
+        <RiskAlertCard variant="green" title={`No Alert`} whenISO={updatedAt} />
       );
     }
 
@@ -916,8 +1010,6 @@ export default function HomeScreen() {
             </View>
           )}
         </View>
-        {/* Updated time BELOW the map, right-aligned */}
-        <Text style={styles.updatedBelow}>Updated at: {formattedUpdated}</Text>
 
         {/* Risk / Warning card (new design) */}
         {riskBanner}
@@ -1305,8 +1397,10 @@ const styles = StyleSheet.create({
   alertRed: { backgroundColor: "#ef4444" },
   alertOrange: { backgroundColor: "#f59e0b" },
   alertGreen: { backgroundColor: "#d1fae5" },
-  alertTitle: { fontSize: 16, fontWeight: "800" },
+  alertTitle: { fontSize: 16, fontWeight: "800", letterSpacing: 0.5 },
+  alertTitleBig: { fontSize: 18, letterSpacing: 0.4 }, // 👈 Bigger + spaced for Flash Flood
   alertMeta: { marginTop: 4, fontSize: 13, fontWeight: "600" },
+  alertSpaced: { letterSpacing: 0.4 },
   alertTextLight: { color: "#fff" },
   alertTextDark: { color: "#111827" },
   dot: { opacity: 0.85 },
