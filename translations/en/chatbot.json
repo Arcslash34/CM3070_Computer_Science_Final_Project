@@ -1,0 +1,15 @@
+{
+  "title": "Chatbot",
+  "back": "Back",
+  "showSuggestions": "⬆️ Show Suggestions",
+  "hideSuggestions": "⬇️ Hide Suggestions",
+  "sendMessage": "Send message",
+  "presetQuestions": [
+    "What should I include in a home emergency kit?",
+    "How do I prepare for a flood in Singapore?",
+    "What should I do during an earthquake?",
+    "Where can I check real-time air quality?"
+  ],
+  "typing": "Bot is typing...",
+  "askQuestion": "Type your question here..."
+}

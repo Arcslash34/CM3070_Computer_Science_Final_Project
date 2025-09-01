@@ -1,0 +1,15 @@
+{
+  "headlineOutstanding": "太棒了！",
+  "headlineGreat": "干得好！",
+  "headlineNice": "不错的努力——继续加油！",
+  "headlineKeepTrying": "别放弃——再试一次！",
+  "qNumber": "第{{n}}题",
+  "incorrect": "回答错误",
+  "unanswered": "时间到，未选择答案",
+  "correctAnswer": "正确答案：",
+  "yourAnswer": "你的答案：",
+  "yourScore": "你的得分",
+  "xpEarned": "获得的经验值",
+  "answerReview": "答案回顾",
+  "nothingToShow": "暂无内容。（未知难度或缺少测验列表。）"
+}

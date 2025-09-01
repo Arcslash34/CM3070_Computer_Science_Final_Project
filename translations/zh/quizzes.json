@@ -1,0 +1,19 @@
+{
+  "title": "测验",
+  "description": "用轻松有趣的测验建立防灾直觉。先来每日挑战，或从下方选择一个主题！",
+  "daily": {
+    "title": "每日测验",
+    "subtitle": "每天学一点，玩一点",
+    "cta": "开始测验"
+  },
+  "categoriesTitle": "测验分类",
+  "pastResults": "历史成绩",
+  "categories": {
+    "flood": { "title": "洪水" },
+    "fire": { "title": "火灾" },
+    "dengue": { "title": "登革热" },
+    "firstaid": { "title": "急救" },
+    "disease": { "title": "传染病" },
+    "earthquake": { "title": "地震" }
+  }
+}

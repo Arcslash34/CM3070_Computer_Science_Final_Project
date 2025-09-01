@@ -1,12 +1,27 @@
-// HomeArticleScreen.jsx
-import React, { useLayoutEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Linking, Platform, ImageBackground } from "react-native";
+// HomeArticleScreen.js
+import React, { useLayoutEffect, useMemo, useContext, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Linking,
+  Platform,
+  ImageBackground,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-// tip: prefer local assets for reliability; you can mix require() and remote {uri}
-const ARTICLE_ITEMS = [
+// i18n
+import { LanguageContext } from "./translations/language";
+import i18n, { t, setLocale } from "./translations/translation";
+
+// Local default items (English sources, stable URLs)
+// You can override any of these by adding translations/<lang>/homeArticles.json
+// with an "items" array of objects that have matching "id" fields.
+const DEFAULT_ITEMS = [
   {
     id: "st-flood",
     title: "Flash flood in Jurong Town Hall Road; warning issued for Dunearn Road",
@@ -58,8 +73,38 @@ const ARTICLE_ITEMS = [
   },
 ];
 
+// Merge helper: if translations provide overrides, merge by id
+function useLocalizedArticles() {
+  const { lang } = useContext(LanguageContext);
+
+  // keep i18n locale in sync
+  useEffect(() => {
+    setLocale(lang);
+  }, [lang]);
+
+  return useMemo(() => {
+    const overrides = i18n?.translations?.[i18n.locale]?.homeArticles?.items;
+    if (!Array.isArray(overrides) || overrides.length === 0) return DEFAULT_ITEMS;
+
+    const map = new Map(DEFAULT_ITEMS.map((it) => [it.id, it]));
+    for (const o of overrides) {
+      if (!o?.id) continue;
+      const base = map.get(o.id) || {};
+      // Allow title/source/url override; for image you can use a local require by id if desired.
+      map.set(o.id, {
+        ...base,
+        ...o,
+        // If translations ship string paths for images, you can map them here if needed.
+      });
+    }
+    return Array.from(map.values());
+  }, [i18n.locale]);
+}
+
 export default function HomeArticleScreen() {
   const navigation = useNavigation();
+  const items = useLocalizedArticles();
+
   useLayoutEffect(() => navigation.setOptions?.({ headerShown: false }), [navigation]);
 
   const open = (url) => Linking.openURL(url);
@@ -69,7 +114,10 @@ export default function HomeArticleScreen() {
       activeOpacity={0.9}
       onPress={() => open(item.url)}
       style={s.card}
-      accessibilityLabel={`Open article: ${item.title} from ${item.source}`}
+      accessibilityLabel={t("homeArticles.a11yOpen", {
+        title: item.title,
+        source: item.source,
+      })}
     >
       <ImageBackground
         source={item.image}
@@ -83,11 +131,13 @@ export default function HomeArticleScreen() {
           <Ionicons name="newspaper-outline" size={14} color="#111827" />
           <Text style={s.badgeText}>{item.source}</Text>
         </View>
-        <Text style={s.title} numberOfLines={3}>{item.title}</Text>
+        <Text style={s.title} numberOfLines={3}>
+          {item.title}
+        </Text>
       </ImageBackground>
 
       <View style={s.rowBottom}>
-        <Text style={s.linkText}>Open article</Text>
+        <Text style={s.linkText}>{t("homeArticles.open")}</Text>
         <Ionicons name="open-outline" size={16} color="#6366F1" />
       </View>
     </TouchableOpacity>
@@ -96,15 +146,19 @@ export default function HomeArticleScreen() {
   return (
     <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>
       <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.headerBtn} accessibilityLabel="Back">
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={s.headerBtn}
+          accessibilityLabel={t("common.back")}
+        >
           <Ionicons name="chevron-back" size={22} color="#111827" />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Articles</Text>
+        <Text style={s.headerTitle}>{t("homeArticles.title")}</Text>
         <View style={s.headerBtn} />
       </View>
 
       <FlatList
-        data={ARTICLE_ITEMS}
+        data={items}
         keyExtractor={(it) => it.id}
         renderItem={renderItem}
         contentContainerStyle={s.container}

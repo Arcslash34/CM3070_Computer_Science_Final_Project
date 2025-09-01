@@ -1,5 +1,5 @@
 // CertificatesScreen.js
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useContext } from "react";
 import {
   View,
   Text,
@@ -17,12 +17,14 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useSafeAreaInsets, SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "./supabase";
+import { LanguageContext } from "./translations/language";
+import { t } from "./translations/translation";
 
 // ===== Available certificates (visual only; unlocking is gated by First Aid progress) =====
 const CERTS = [
-  { id: "cpr",  title: "CPR Certificate",            theme: "#6366F1" },
-  { id: "aed",  title: "AED Certificate",            theme: "#10b981" },
-  { id: "bleed", title: "Severe Bleeding Certificate", theme: "#f59e0b" },
+  { id: "cpr",   titleKey: "certificates.items.cpr",   fallback: "CPR Certificate",            theme: "#6366F1" },
+  { id: "aed",   titleKey: "certificates.items.aed",   fallback: "AED Certificate",            theme: "#10b981" },
+  { id: "bleed", titleKey: "certificates.items.bleed", fallback: "Severe Bleeding Certificate", theme: "#f59e0b" },
 ];
 
 // How many First Aid sets must be perfect
@@ -32,7 +34,11 @@ const FIRST_AID_REQUIRED = 5;
 function HeaderBar({ title, onBack }) {
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={onBack} style={styles.headerBtn} accessibilityLabel="Back">
+      <TouchableOpacity
+        onPress={onBack}
+        style={styles.headerBtn}
+        accessibilityLabel={(t("common.back") !== "common.back" && t("common.back")) || "Back"}
+      >
         <Ionicons name="chevron-back" size={22} color="#111827" />
       </TouchableOpacity>
       <Text style={styles.headerTitle} numberOfLines={1}>{title}</Text>
@@ -43,6 +49,7 @@ function HeaderBar({ title, onBack }) {
 
 export default function CertificatesScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
+  const { lang } = useContext(LanguageContext);
 
   const [profileName, setProfileName] = useState(route?.params?.name || "");
   const [username, setUsername]   = useState(route?.params?.username || "");
@@ -163,8 +170,8 @@ export default function CertificatesScreen({ navigation, route }) {
   // Which name to display
   const displayName = useMemo(() => {
     return useUsername
-      ? username || profileName || "Anonymous"
-      : profileName || username || "Anonymous";
+      ? username || profileName || ((t("certificates.anonymous") !== "certificates.anonymous" && t("certificates.anonymous")) || "Anonymous")
+      : profileName || username || ((t("certificates.anonymous") !== "certificates.anonymous" && t("certificates.anonymous")) || "Anonymous");
   }, [useUsername, profileName, username]);
 
   // Eligibility: demo mode bypasses, otherwise need 5/5
@@ -173,21 +180,34 @@ export default function CertificatesScreen({ navigation, route }) {
   const onDownload = async (cert) => {
     if (!isEligible) {
       return Alert.alert(
-        "Unavailable",
-        "You must score 100% on all five First Aid quizzes (#1–#5) to download this certificate."
+        (t("certificates.unavailableTitle") !== "certificates.unavailableTitle" && t("certificates.unavailableTitle")) || "Unavailable",
+        (t("certificates.unavailableBody") !== "certificates.unavailableBody" && t("certificates.unavailableBody")) ||
+          "You must score 100% on all five First Aid quizzes (#1–#5) to download this certificate."
       );
     }
     try {
+      const courseTitle =
+        (t(cert.titleKey) !== cert.titleKey && t(cert.titleKey)) || cert.fallback;
+
       const html = renderCertificateHTML({
         name: displayName,
-        course: cert.title,
+        course: courseTitle,
         accent: cert.theme,
         id: cert.id.toUpperCase(),
       });
       const { uri } = await Print.printToFileAsync({ html });
-      await Sharing.shareAsync(uri, { dialogTitle: `Share ${cert.title}` });
+      await Sharing.shareAsync(uri, {
+        dialogTitle:
+          (t("certificates.shareTitle") !== "certificates.shareTitle" && t("certificates.shareTitle", { title: courseTitle })) ||
+          `Share ${courseTitle}`,
+      });
     } catch (e) {
-      Alert.alert("Error", e?.message || "Failed to generate certificate.");
+      Alert.alert(
+        (t("common.error") !== "common.error" && t("common.error")) || "Error",
+        e?.message ||
+          (t("certificates.generateFail") !== "certificates.generateFail" && t("certificates.generateFail")) ||
+          "Failed to generate certificate."
+      );
     }
   };
 
@@ -196,13 +216,18 @@ export default function CertificatesScreen({ navigation, route }) {
   /* ------------ UI ------------ */
   return (
     <SafeAreaView style={styles.safeRoot} edges={["top", "left", "right"]}>
-      <HeaderBar title="Certificates" onBack={() => navigation.goBack()} />
+      <HeaderBar
+        title={(t("certificates.title") !== "certificates.title" && t("certificates.title")) || "Certificates"}
+        onBack={() => navigation.goBack()}
+      />
 
       <View style={[styles.screen, { paddingBottom: insets.bottom + 12 }]}>
         {/* Demo mode */}
         <View style={styles.nameBar}>
           <Ionicons name="construct" size={18} color="#111827" style={{ marginRight: 8 }} />
-          <Text style={styles.nameText}>Demo mode</Text>
+          <Text style={styles.nameText}>
+            {(t("certificates.demoMode") !== "certificates.demoMode" && t("certificates.demoMode")) || "Demo mode"}
+          </Text>
           <View style={{ flex: 1 }} />
           <Switch value={demoMode} onValueChange={toggleDemoMode} />
         </View>
@@ -210,30 +235,40 @@ export default function CertificatesScreen({ navigation, route }) {
         {/* Username toggle */}
         <View style={styles.nameBar}>
           <Ionicons name="person" size={18} color="#111827" style={{ marginRight: 8 }} />
-          <Text style={styles.nameText}>Show username on certificate</Text>
+          <Text style={styles.nameText}>
+            {(t("certificates.showUsername") !== "certificates.showUsername" && t("certificates.showUsername")) ||
+              "Show username on certificate"}
+          </Text>
           <View style={{ flex: 1 }} />
           <Switch value={useUsername} onValueChange={setUseUsername} />
         </View>
         <Text style={styles.nameHint}>
-          Printing as: <Text style={{ fontWeight: "800" }}>{displayName}</Text>
+          {(t("certificates.printingAs") !== "certificates.printingAs" && t("certificates.printingAs")) || "Printing as:"}{" "}
+          <Text style={{ fontWeight: "800" }}>{displayName}</Text>
         </Text>
 
         {/* Requirement / Progress box */}
         <View style={styles.requireBox}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Ionicons name="medkit" size={18} color="#111827" style={{ marginRight: 8 }} />
-            <Text style={styles.requireTitle}>First Aid Mastery</Text>
+            <Text style={styles.requireTitle}>
+              {(t("certificates.masteryTitle") !== "certificates.masteryTitle" && t("certificates.masteryTitle")) ||
+                "First Aid Mastery"}
+            </Text>
           </View>
 
           {loadingProgress ? (
             <View style={styles.progressRow}>
               <ActivityIndicator size="small" />
-              <Text style={[styles.requireText, { marginLeft: 8 }]}>Loading progress…</Text>
+              <Text style={[styles.requireText, { marginLeft: 8 }]}>
+                {(t("certificates.loading") !== "certificates.loading" && t("certificates.loading")) || "Loading progress…"}
+              </Text>
             </View>
           ) : (
             <>
               <Text style={styles.requireText}>
-                Perfect scores on First Aid 1–5: {" "}
+                {(t("certificates.perfectCount") !== "certificates.perfectCount" && t("certificates.perfectCount")) ||
+                  "Perfect scores on First Aid 1–5:"}{" "}
                 <Text style={{ fontWeight: "800" }}>
                   {faPerfectCount}/{FIRST_AID_REQUIRED}
                 </Text>
@@ -245,12 +280,14 @@ export default function CertificatesScreen({ navigation, route }) {
 
               {!demoMode && faPerfectCount < FIRST_AID_REQUIRED && (
                 <Text style={styles.requireHint}>
-                  Complete all five with 100% to unlock certificate downloads.
+                  {(t("certificates.unlockHint") !== "certificates.unlockHint" && t("certificates.unlockHint")) ||
+                    "Complete all five with 100% to unlock certificate downloads."}
                 </Text>
               )}
               {demoMode && (
                 <Text style={styles.requireHint}>
-                  Demo mode enabled — downloads are unlocked for testing.
+                  {(t("certificates.demoEnabled") !== "certificates.demoEnabled" && t("certificates.demoEnabled")) ||
+                    "Demo mode enabled — downloads are unlocked for testing."}
                 </Text>
               )}
             </>
@@ -261,8 +298,8 @@ export default function CertificatesScreen({ navigation, route }) {
         <View style={styles.disclaimer}>
           <Ionicons name="alert-circle" size={16} color="#6b7280" style={{ marginRight: 6 }} />
           <Text style={styles.disclaimerText}>
-            This is <Text style={{ fontWeight: "700" }}>not an official certificate</Text>. It is
-            generated for project/demo purposes only.
+            {(t("certificates.disclaimer") !== "certificates.disclaimer" && t("certificates.disclaimer")) ||
+              "This is not an official certificate. It is generated for project/demo purposes only."}
           </Text>
         </View>
 
@@ -270,6 +307,8 @@ export default function CertificatesScreen({ navigation, route }) {
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}>
           {CERTS.map((c) => {
             const locked = !isEligible;
+            const title =
+              (t(c.titleKey) !== c.titleKey && t(c.titleKey)) || c.fallback;
 
             return (
               <View key={c.id} style={[styles.card, { borderColor: "#e5e7eb" }]}>
@@ -278,11 +317,12 @@ export default function CertificatesScreen({ navigation, route }) {
                     <Ionicons name="document-text" size={18} color="#fff" />
                   </View>
                   <View style={{ flexShrink: 1 }}>
-                    <Text style={styles.cardTitle}>{c.title}</Text>
+                    <Text style={styles.cardTitle}>{title}</Text>
                     <Text style={styles.cardSub}>
                       {demoMode
-                        ? "Demo unlocked"
-                        : `Completed: ${faPerfectCount}/${FIRST_AID_REQUIRED}`}
+                        ? (t("certificates.demoUnlocked") !== "certificates.demoUnlocked" && t("certificates.demoUnlocked")) || "Demo unlocked"
+                        : ((t("certificates.completed") !== "certificates.completed" && t("certificates.completed", { count: faPerfectCount, total: FIRST_AID_REQUIRED })) ||
+                          `Completed: ${faPerfectCount}/${FIRST_AID_REQUIRED}`)}
                     </Text>
                   </View>
                 </View>
@@ -294,7 +334,9 @@ export default function CertificatesScreen({ navigation, route }) {
                   activeOpacity={locked ? 1 : 0.85}
                 >
                   <Ionicons name="download" size={16} color="#fff" />
-                  <Text style={styles.downloadText}>PDF</Text>
+                  <Text style={styles.downloadText}>
+                    {(t("certificates.pdf") !== "certificates.pdf" && t("certificates.pdf")) || "PDF"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             );

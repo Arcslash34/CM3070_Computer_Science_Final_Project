@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useRef,
   useLayoutEffect,
+  useContext,
 } from "react";
 import {
   View,
@@ -31,9 +32,10 @@ import * as IntentLauncher from "expo-intent-launcher";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
-
+import { LanguageContext } from "./translations/language";
+import { t } from "./translations/translation";
 import InteractiveMapModal from "./interactiveMapModal";
-import translations from "./translations";
+import i18n from "./translations/translation";
 
 import {
   estimateFloodRisk,
@@ -47,8 +49,6 @@ import {
   fetchTemperatureData,
   loadEnvDatasetsFromFile,
 } from "./api";
-
-import { useLanguage } from "./language";
 
 // Hero sizing
 const HERO_SRC = require("./assets/home.jpg");
@@ -102,7 +102,7 @@ async function triggerAlert({
   title,
   body,
   type = "general",
-  showPopup = false, // <-- default: NO POPUP
+  showPopup = false,
   notifyDevice = true,
   bypassCooldown = false,
   onViewMap,
@@ -110,6 +110,8 @@ async function triggerAlert({
   const now = Date.now();
   const last = lastAlertByTypeRef.current[type] ?? 0;
   if (!bypassCooldown && now - last < ALERT_COOLDOWN_MS) return;
+
+  let delivered = false;
 
   if (showPopup) {
     queueNativeAlert({
@@ -120,12 +122,20 @@ async function triggerAlert({
         onViewMap ? { text: "View Map", onPress: onViewMap } : null,
       ].filter(Boolean),
     });
+    delivered = true;
   }
   if (notifyDevice) {
-    await AppPrefs.presentNotification({ title, body, data: { type } });
+    try {
+      await AppPrefs.presentNotification({ title, body, data: { type } });
+      delivered = true;
+    } catch (e) {
+      if (__DEV__) console.warn("presentNotification failed:", e);
+    }
   }
 
-  lastAlertByTypeRef.current[type] = now;
+  if (delivered) {
+    lastAlertByTypeRef.current[type] = now;
+  }
 }
 function distKm(a, b) {
   return getDistanceFromLatLonInKm(
@@ -251,9 +261,29 @@ const ARTICLE_ITEMS = [
   },
 ];
 
+// localized articles helper (falls back to ARTICLE_ITEMS)
+function getLocalizedArticles() {
+  const items = i18n?.translations?.[i18n.locale]?.homeArticles?.items;
+  
+  // Validate that localized articles have URLs
+  if (Array.isArray(items) && items.length) {
+    return items.map(item => ({
+      ...item,
+      url: item.url || findDefaultUrl(item.id) || "#" // Fallback to default URL or placeholder
+    }));
+  }
+  
+  return ARTICLE_ITEMS;
+}
+
+function findDefaultUrl(id) {
+  const defaultArticle = ARTICLE_ITEMS.find(item => item.id === id);
+  return defaultArticle?.url;
+}
+
 /* =========================================================================
-   Helpers for the alert card’s date row (design only)
-   ========================================================================= */
+    Helpers for the alert card’s date row (design only)
+    ========================================================================= */
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
   "January",
@@ -288,8 +318,8 @@ function formatAgo(dt) {
 }
 
 /* =========================================================================
-   Alert card UI (new design only; logic below stays the same)
-   ========================================================================= */
+    Alert card UI (new design only; logic below stays the same)
+    ========================================================================= */
 function RiskAlertCard({ variant, title, whenISO, areasText }) {
   const dt = whenISO ? new Date(whenISO) : null;
 
@@ -402,11 +432,10 @@ function RiskAlertCard({ variant, title, whenISO, areasText }) {
 }
 
 /* =========================================================================
-   SCREEN
-   ========================================================================= */
+    SCREEN
+    ========================================================================= */
 export default function HomeScreen() {
-  const { lang } = useLanguage();
-  const t = (key) => translations[lang][key] || key;
+  const { lang } = useContext(LanguageContext);
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -416,6 +445,7 @@ export default function HomeScreen() {
   const [coords, setCoords] = useState(null);
   const [mapExpanded, setMapExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const mockBootstrappedRef = useRef(false);
 
   const [locDeniedBanner, setLocDeniedBanner] = useState(false);
   const [locPermission, setLocPermission] = useState("undetermined");
@@ -571,7 +601,8 @@ export default function HomeScreen() {
 
             if (risk === "High" || risk === "Moderate") {
               const isMockEnv = usingMockRef.current || mockLocationOn;
-              const shouldNotify = mockDisasterOn || !isMockEnv; // push in real env, or when mock disaster is ON
+              const shouldNotify =
+                mockDisasterOn || mockLocationOn || !isMockEnv;
               await triggerAlert({
                 title: `🚨 Flood Risk: ${risk}`,
                 body: `Heavy rain detected at ${
@@ -582,6 +613,24 @@ export default function HomeScreen() {
                 onViewMap: () => setMapExpanded(true),
                 notifyDevice: shouldNotify,
               });
+            }
+            // If the banner is forced red by demo toggles (mock disaster + mock location / mock env),
+            // but the computed risk isn't High/Moderate, fire a demo push anyway.
+            if (mockDisasterOn && (mockLocationOn || usingMockRef.current)) {
+              const forcedRedButNoRealRisk = !(
+                risk === "High" || risk === "Moderate"
+              );
+              if (forcedRedButNoRealRisk) {
+                await triggerAlert({
+                  title: "🚨 Flash Flood Warning",
+                  body: "Demo: Flash flood warning active near Taman Jurong. Stay vigilant and check the map.",
+                  type: "mock-flood",
+                  notifyDevice: true,
+                  bypassCooldown: true, // so it always shows while you test
+                  showPopup: false,
+                  onViewMap: () => setMapExpanded(true),
+                });
+              }
             }
           } else {
             setUiRiskLevel(null);
@@ -657,10 +706,15 @@ export default function HomeScreen() {
   /** Apply mock flags immediately when they change / on focus */
   const applyMockFlags = useCallback(async () => {
     if (mockLocationOn) {
+      if (mockBootstrappedRef.current) return;
+      mockBootstrappedRef.current = true;
       usingMockRef.current = true;
       setCoords(mockDefault);
       setLocDeniedBanner(false);
       await fetchAll(mockDefault, { allowGeofence: false });
+    } else {
+      // if user turns mock OFF later, allow bootstrapping again next time
+      mockBootstrappedRef.current = false;
     }
   }, [mockLocationOn, fetchAll]);
 
@@ -924,7 +978,7 @@ export default function HomeScreen() {
       return (
         <RiskAlertCard
           variant="red"
-          title="Flash Flood Warning"
+          title={t("common.alert_flash_flood")}
           whenISO={updatedAt || new Date().toISOString()}
           areasText="Taman Jurong, Lakeside"
         />
@@ -948,7 +1002,7 @@ export default function HomeScreen() {
         return (
           <RiskAlertCard
             variant="orange"
-            title="Moderate Flood Risk"
+            title={t("common.alert_moderate_flood")}
             whenISO={updatedAt}
             areasText={locName}
           />
@@ -956,7 +1010,7 @@ export default function HomeScreen() {
       }
       // Low
       return (
-        <RiskAlertCard variant="green" title={`No Alert`} whenISO={updatedAt} />
+        <RiskAlertCard variant="green" title={t("common.alert_none")} whenISO={updatedAt} />
       );
     }
 
@@ -979,16 +1033,13 @@ export default function HomeScreen() {
         </View>
         {/* Title + description */}
         <View style={styles.heroText}>
-          <Text style={styles.heroTitle}>Always Be Prepared</Text>
-          <Text style={styles.heroDesc}>
-            Know what’s happening nearby, learn what to do, and act fast when it
-            matters.
-          </Text>
+          <Text style={styles.heroTitle}>{t("common.hero_title")}</Text>
+          <Text style={styles.heroDesc}>{t("common.hero_desc")}</Text>
         </View>
 
         {/* LIVE MAP */}
         <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>Live Map</Text>
+          <Text style={styles.sectionTitle}>{t("common.section_live_map")}</Text>
         </View>
         <View style={styles.mapShell}>
           {coords ? (
@@ -1006,7 +1057,7 @@ export default function HomeScreen() {
                 justifyContent: "center",
               }}
             >
-              <Text style={{ color: "#6B7280" }}>Locating…</Text>
+              <Text style={{ color: "#6B7280" }}>{t("common.locating")}</Text>
             </View>
           )}
         </View>
@@ -1024,19 +1075,16 @@ export default function HomeScreen() {
           >
             <View style={{ flex: 1 }}>
               <Text style={styles.bannerTitle}>
-                {!servicesEnabled
-                  ? "Location Services Off"
-                  : "Location Permission Denied"}
+                {!servicesEnabled ? t("common.banner_loc_services_off") : t("common.banner_loc_perm_denied")}
               </Text>
               <Text style={styles.bannerBody}>
-                Using demo data near Taman Jurong. Enable location for precise
-                readings.
+                {t("common.banner_loc_body")}
               </Text>
               <TouchableOpacity
                 onPress={onEnableLocationPress}
                 style={styles.enableBtn}
               >
-                <Text style={styles.enableBtnText}>Enable Location</Text>
+                <Text style={styles.enableBtnText}>{t("common.banner_enable_location")}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -1050,19 +1098,19 @@ export default function HomeScreen() {
 
         {/* News */}
         <View style={[styles.sectionRow, { marginTop: 12 }]}>
-          <Text style={styles.sectionTitle}>Articles</Text>
+          <Text style={styles.sectionTitle}>{t("common.section_articles")}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("Articles")}
             activeOpacity={0.8}
           >
-            <Text style={styles.viewAll}>View all</Text>
+            <Text style={styles.viewAll}>{t("common.section_view_all")}</Text>
           </TouchableOpacity>
         </View>
-        <HomeNewsStrip onOpen={(url) => Linking.openURL(url)} />
+        <HomeNewsStrip onOpen={(url) => Linking.openURL(url)} lang={lang} />
 
         {/* Local conditions */}
         <Text style={[styles.sectionTitle, { marginTop: 16, marginBottom: 8 }]}>
-          Local Conditions
+          {t("common.section_local_conditions")}
         </Text>
         <ScrollView
           horizontal
@@ -1071,44 +1119,44 @@ export default function HomeScreen() {
         >
           <HStatCard
             icon="rainy"
-            label="Rainfall"
+            label={t("common.stat_rainfall")}
             value={
               rainNearest?.rainfall != null ? `${rainNearest.rainfall} mm` : "—"
             }
-            sub={rainNearest?.name || "Nearest Station"}
+            sub={rainNearest?.name || t("common.stat_nearest_station")}
           />
           <HStatCard
             icon="leaf"
-            label="PM2.5"
+            label={t("common.stat_pm25")}
             value={
               pm25Nearest?.value != null ? `${pm25Nearest.value} µg/m³` : "—"
             }
-            sub={pm25Nearest?.name || "Nearest Region"}
+            sub={pm25Nearest?.name || t("common.stat_nearest_region")}
           />
           <HStatCard
             icon="thermometer"
-            label="Temp"
+            label={t("common.stat_temp")}
             value={
               tempNearest?.value != null ? `${tempNearest?.value} °C` : "—"
             }
-            sub={tempNearest?.name || "Nearest Station"}
+            sub={tempNearest?.name || t("common.stat_nearest_station")}
           />
           <HStatCard
             icon="water"
-            label="Humidity"
+            label={t("common.stat_humidity")}
             value={
               humidityNearest?.value != null ? `${humidityNearest.value}%` : "—"
             }
-            sub={humidityNearest?.name || "Nearest Station"}
+            sub={humidityNearest?.name || t("common.stat_nearest_station")}
           />
           <HStatCard
             icon="navigate"
-            label="Wind"
+            label={t("common.stat_wind")}
             value={windNearest?.speed != null ? `${windNearest.speed} kn` : "—"}
             sub={
               windNearest?.direction != null
                 ? `Dir ${windNearest.direction}°`
-                : windNearest?.name || "Nearest"
+                : windNearest?.name || t("common.stat_nearest")
             }
           />
         </ScrollView>
@@ -1117,26 +1165,26 @@ export default function HomeScreen() {
         <Text
           style={[styles.sectionTitle, { marginTop: 16, marginBottom: 10 }]}
         >
-          Emergency Preparedness
+          {t("common.section_emergency_prep")}
         </Text>
         <View style={styles.featuresGrid}>
           <FeatureCard
-            title="Resource Hub"
+            title={t("common.feature_resource_hub")}
             img={require("./assets/resource.jpg")}
             onPress={() => navigation.navigate("Resource")}
           />
           <FeatureCard
-            title="Checklist"
+            title={t("common.feature_checklist")}
             img={require("./assets/checklist.jpg")}
             onPress={() => navigation.navigate("Checklist")}
           />
           <FeatureCard
-            title="Quiz Game"
+            title={t("common.feature_quiz_game")}
             img={require("./assets/quiz.jpg")}
             onPress={() => navigation.navigate("Quizzes")}
           />
           <FeatureCard
-            title="Emergency Contact"
+            title={t("common.feature_emergency_contact")}
             img={require("./assets/emergency.jpg")}
             onPress={() => setEmergencyOpen(true)}
           />
@@ -1174,22 +1222,22 @@ export default function HomeScreen() {
 /* --- Mini Leaflet map (WebView) --- */
 function LeafletMiniMap({ lat, lng }) {
   const html = `
-  <!DOCTYPE html><html><head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <style>html,body,#map{height:100%;margin:0}.leaflet-control-zoom{display:none}</style>
-  </head><body>
-    <div id="map"></div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-      (function(){
-        var map=L.map('map',{zoomControl:false}).setView([${lat},${lng}],15);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-        L.marker([${lat},${lng}]).addTo(map).bindPopup('You are here');
-      })();
-    </script>
-  </body></html>`;
+    <!DOCTYPE html><html><head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+      <style>html,body,#map{height:100%;margin:0}.leaflet-control-zoom{display:none}</style>
+    </head><body>
+      <div id="map"></div>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script>
+        (function(){
+          var map=L.map('map',{zoomControl:false}).setView([${lat},${lng}],15);
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+          L.marker([${lat},${lng}]).addTo(map).bindPopup('You are here');
+        })();
+      </script>
+    </body></html>`;
   return (
     <View style={styles.mapShellInner}>
       <WebView
@@ -1241,8 +1289,11 @@ function FeatureCard({ title, img, onPress }) {
 }
 
 /* --- News carousel (auto-scrolls every 5s) --- */
-function HomeNewsStrip({ onOpen }) {
+/* --- News carousel (auto-scrolls every 5s) --- */
+function HomeNewsStrip({ onOpen, lang }) {
   const listRef = React.useRef(null);
+  // compute localized data whenever language changes
+  const DATA = React.useMemo(() => getLocalizedArticles(), [lang]);
   const [idx, setIdx] = useState(0);
   const [mounted, setMounted] = useState(false);
 
@@ -1265,7 +1316,7 @@ function HomeNewsStrip({ onOpen }) {
     if (!mounted) return;
     const t = setInterval(() => {
       setIdx((prev) => {
-        const next = (prev + 1) % ARTICLE_ITEMS.length;
+        const next = (prev + 1) % DATA.length;
         try {
           listRef.current?.scrollToIndex?.({ index: next, animated: true });
         } catch {}
@@ -1273,20 +1324,37 @@ function HomeNewsStrip({ onOpen }) {
       });
     }, 5000);
     return () => clearInterval(t);
-  }, [mounted]);
+  }, [mounted, DATA.length]);
 
   const onMomentumEnd = (e) => {
     const x = e.nativeEvent.contentOffset.x;
     const newIdx = Math.round(x / (CARD_W + SPACING));
     if (!Number.isNaN(newIdx)) {
-      setIdx(Math.max(0, Math.min(ARTICLE_ITEMS.length - 1, newIdx)));
+      setIdx(Math.max(0, Math.min(DATA.length - 1, newIdx)));
+    }
+  };
+
+  const handleArticlePress = (item) => {
+    if (!item.url) {
+      console.warn('Article URL is undefined for:', item.title);
+      Alert.alert('Error', 'This article is not available at the moment.');
+      return;
+    }
+    
+    // Validate URL format
+    try {
+      new URL(item.url); // This will throw if URL is invalid
+      onOpen(item.url);
+    } catch (error) {
+      console.warn('Invalid URL:', item.url);
+      Alert.alert('Error', 'This article link is invalid.');
     }
   };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => onOpen(item.url)}
+      onPress={() => handleArticlePress(item)}
       style={[newsStyles.card, { width: CARD_W, marginRight: SPACING }]}
     >
       <View style={newsStyles.rowTop}>
@@ -1297,7 +1365,7 @@ function HomeNewsStrip({ onOpen }) {
         {item.title}
       </Text>
       <View style={newsStyles.rowBottom}>
-        <Text style={newsStyles.linkText}>Open article</Text>
+        <Text style={newsStyles.linkText}>{t("common.article_open")}</Text>
         <Ionicons name="open-outline" size={16} color="#6366F1" />
       </View>
     </TouchableOpacity>
@@ -1306,7 +1374,7 @@ function HomeNewsStrip({ onOpen }) {
   return (
     <FlatList
       ref={listRef}
-      data={ARTICLE_ITEMS}
+      data={DATA}
       keyExtractor={(it) => it.id}
       renderItem={renderItem}
       horizontal
@@ -1355,8 +1423,8 @@ const newsStyles = StyleSheet.create({
 });
 
 /* =========================================================================
-   STYLES
-   ========================================================================= */
+    STYLES
+    ========================================================================= */
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FFFFFF" },
   container: { padding: 16 },

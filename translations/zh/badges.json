@@ -1,0 +1,46 @@
+{
+  "title": "我的徽章",
+  "totalBadges": "徽章总数",
+  "pointsEarned": "累计积分",
+  "tabs": {
+    "all": "全部",
+    "unlocked": "已解锁",
+    "locked": "未解锁"
+  },
+  "empty": {
+    "unlocked": "还没有解锁任何徽章。",
+    "locked": "所有徽章都已解锁 🎉"
+  },
+  "completed": "已完成",
+  "modal": {
+    "shareCta": "分享",
+    "close": "关闭",
+    "body": "你已解锁此徽章，做得很棒！把它分享给朋友，继续保持！🚀",
+    "fallbackTitle": "徽章"
+  },
+  "shareText": "我刚刚在 LifeShield 获得了“{{title}}”徽章！🏅 #LifeShield",
+  "shareFailedTitle": "分享失败",
+  "shareFailedBody": "无法打开系统分享。",
+  "groups": {
+    "learning": "学习成就",
+    "specialist": "灾害专家",
+    "streaks": "坚持 / 连续天数",
+    "other": "其他"
+  },
+  "catalog": {
+    "first-step": { "title": "第一步" },
+    "quiz-explorer": { "title": "测验探索者" },
+    "quiz-expert": { "title": "测验高手" },
+    "quiz-scholar": { "title": "测验学者" },
+    "earthquake-expert": { "title": "地震专家" },
+    "fire-expert": { "title": "火灾专家" },
+    "flood-expert": { "title": "洪水专家" },
+    "firstaid-expert": { "title": "急救专家" },
+    "streak-1": { "title": "1 天连续" },
+    "streak-3": { "title": "3 天连续" },
+    "streak-5": { "title": "5 天连续" },
+    "streak-7": { "title": "7 天连续" },
+    "streak-14": { "title": "14 天连续" },
+    "streak-21": { "title": "21 天连续" }
+  }
+}

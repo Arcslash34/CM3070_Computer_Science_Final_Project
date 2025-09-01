@@ -1,0 +1,17 @@
+{
+  "title": "资源中心",
+  "all": "全部",
+  "guide": "指南",
+  "guides": "指南",
+  "allTopics": "全部主题",
+  "matching": "匹配“{{q}}”",
+  "searchPlaceholder": "搜索急救指南…",
+  "clearSearch": "清除搜索",
+  "sortAToZ": "按字母排序",
+  "sortedAToZTapToRestore": "已按字母排序（点按恢复）",
+  "disclaimerInline": "本中心仅提供一般急救指导，不能替代专业医疗建议。紧急情况请拨打当地急救电话（例如新加坡 995）。",
+  "more": "条",
+  "readMore": "查看更多",
+  "noResults": "无结果",
+  "noResultsText": "试试更宽泛的词，例如“心肺复苏”“烧伤”或“扭伤”。"
+}

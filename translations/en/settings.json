@@ -1,0 +1,104 @@
+{
+  "title": "Settings",
+  "sections": {
+    "game": "Game Settings",
+    "langCert": "Language & Certificates",
+    "demo": "Demo / Mock",
+    "contactsList": "Contacts List",
+    "account": "Account Settings"
+  },
+  "labels": {
+    "notifications": "Notifications",
+    "sound": "Sound",
+    "vibration": "Vibration",
+    "language": "Language: {{code}}",
+    "region": "Region: ",
+    "tapToDetect": "Tap to detect",
+    "certificates": "Certificates",
+    "useMockLocation": "Use Mock Location",
+    "mockDisaster": "Mock Disaster",
+    "emergencyContacts": "Emergency Contacts",
+    "changePassword": "Change Password",
+    "logout": "Logout"
+  },
+  "langModal": {
+    "title": "Choose Language",
+    "en": "English",
+    "zh": "中文",
+    "close": "Close"
+  },
+  "passwordModal": {
+    "title": "Change Password",
+    "placeholder": "New password",
+    "update": "Update",
+    "cancel": "Cancel"
+  },
+  "profile": {
+    "editTitle": "Edit Profile",
+    "changePhoto": "Change Photo",
+    "name": "Name",
+    "username": "Username",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "contacts": {
+    "title": "Emergency Contacts",
+    "addContactBtn": "Add Contact ({{count}}/{{max}})",
+    "close": "Close",
+    "addTitle": "Add Contact",
+    "editTitle": "Edit Contact",
+    "fullName": "Full name",
+    "relation": "Relation (e.g. Spouse)",
+    "phone": "Phone number",
+    "add": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "deleteTitle": "Delete contact",
+    "deleteMsg": "Remove this contact?",
+    "limitReachedTitle": "Limit reached",
+    "limitReachedMsg": "You can save up to {{max}} close contacts.",
+    "missingInfoTitle": "Missing info",
+    "missingInfoMsg": "Name and phone are required."
+  },
+  "imageSource": {
+    "title": "Change Profile Picture",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "cancel": "Cancel"
+  },
+  "alerts": {
+    "notSignedInTitle": "Not signed in",
+    "notSignedInMsg": "Please log in to update your profile.",
+    "successTitle": "Success",
+    "avatarUpdated": "Profile picture updated successfully",
+    "uploadFailed": "Upload Failed",
+    "failedPickImage": "Failed to pick image",
+    "permissionDeniedTitle": "Permission Denied",
+    "cameraAccessRequired": "Camera access is required to take a photo.",
+    "error": "Error",
+    "failedOpenCamera": "Failed to open camera",
+    "usernameTakenTitle": "Username taken",
+    "usernameTakenMsg": "Please choose another username.",
+    "passwordUpdated": "Password updated.",
+    "failedUpdatePassword": "Failed to update password",
+    "logoutTitle": "Logout",
+    "logoutConfirm": "Are you sure you want to logout?",
+    "permissionNeededTitle": "Permission needed",
+    "regionPermMsg": "We need location permission to detect your region.",
+    "oops": "Oops",
+    "cannotDetectRegion": "Unable to determine your region.",
+    "failedDetectRegion": "Failed to detect region"
+  },
+  "generic": {
+    "guest": "Guest",
+    "update": "Update",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "call": "Call",
+    "camera": "Camera",
+    "gallery": "Gallery"
+  }
+}

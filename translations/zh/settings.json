@@ -1,0 +1,104 @@
+{
+  "title": "设置",
+  "sections": {
+    "game": "游戏设置",
+    "langCert": "语言与证书",
+    "demo": "演示 / 模拟",
+    "contactsList": "联系人列表",
+    "account": "账户设置"
+  },
+  "labels": {
+    "notifications": "通知",
+    "sound": "声音",
+    "vibration": "震动",
+    "language": "语言：{{code}}",
+    "region": "地区：",
+    "tapToDetect": "点击以检测",
+    "certificates": "证书",
+    "useMockLocation": "使用模拟定位",
+    "mockDisaster": "模拟灾情",
+    "emergencyContacts": "紧急联系人",
+    "changePassword": "修改密码",
+    "logout": "退出登录"
+  },
+  "langModal": {
+    "title": "选择语言",
+    "en": "English",
+    "zh": "中文",
+    "close": "关闭"
+  },
+  "passwordModal": {
+    "title": "修改密码",
+    "placeholder": "新密码",
+    "update": "更新",
+    "cancel": "取消"
+  },
+  "profile": {
+    "editTitle": "编辑个人资料",
+    "changePhoto": "更换头像",
+    "name": "姓名",
+    "username": "用户名",
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "contacts": {
+    "title": "紧急联系人",
+    "addContactBtn": "添加联系人（{{count}}/{{max}}）",
+    "close": "关闭",
+    "addTitle": "添加联系人",
+    "editTitle": "编辑联系人",
+    "fullName": "姓名",
+    "relation": "关系（如：配偶）",
+    "phone": "电话号码",
+    "add": "添加",
+    "save": "保存",
+    "cancel": "取消",
+    "deleteTitle": "删除联系人",
+    "deleteMsg": "确定要移除此联系人吗？",
+    "limitReachedTitle": "已达上限",
+    "limitReachedMsg": "最多可保存 {{max}} 位联系人。",
+    "missingInfoTitle": "信息缺失",
+    "missingInfoMsg": "姓名和电话号码为必填。"
+  },
+  "imageSource": {
+    "title": "更换头像",
+    "gallery": "相册",
+    "camera": "相机",
+    "cancel": "取消"
+  },
+  "alerts": {
+    "notSignedInTitle": "未登录",
+    "notSignedInMsg": "请先登录以更新个人资料。",
+    "successTitle": "成功",
+    "avatarUpdated": "头像更新成功",
+    "uploadFailed": "上传失败",
+    "failedPickImage": "选择图片失败",
+    "permissionDeniedTitle": "权限被拒绝",
+    "cameraAccessRequired": "需要相机权限以拍摄照片。",
+    "error": "错误",
+    "failedOpenCamera": "打开相机失败",
+    "usernameTakenTitle": "用户名已被占用",
+    "usernameTakenMsg": "请使用其他用户名。",
+    "passwordUpdated": "密码已更新。",
+    "failedUpdatePassword": "更新密码失败",
+    "logoutTitle": "退出登录",
+    "logoutConfirm": "确定要退出登录吗？",
+    "permissionNeededTitle": "需要权限",
+    "regionPermMsg": "我们需要定位权限来检测您的地区。",
+    "oops": "抱歉",
+    "cannotDetectRegion": "无法确定您的地区。",
+    "failedDetectRegion": "检测地区失败"
+  },
+  "generic": {
+    "guest": "访客",
+    "update": "更新",
+    "cancel": "取消",
+    "close": "关闭",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "call": "拨打",
+    "camera": "相机",
+    "gallery": "相册"
+  }
+}

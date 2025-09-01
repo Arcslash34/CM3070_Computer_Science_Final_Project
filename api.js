@@ -52,9 +52,12 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
 };
 
 /* =========================================================================
-   Simple in-memory cache
+   Simple in-memory cache + rate-limit helpers
    ========================================================================= */
-const _cache = new Map();
+const _cache = new Map();          // key -> { data, exp }
+const _inflight = new Map();       // url -> Promise
+const _lastWarnAt = new Map();     // label -> timestamp (to de-dup warnings)
+
 const getCache = (k) => {
   const v = _cache.get(k);
   if (!v) return null;
@@ -62,6 +65,107 @@ const getCache = (k) => {
   return v.data;
 };
 const setCache = (k, data, ttlMs) => _cache.set(k, { data, exp: Date.now() + ttlMs });
+
+function warnOnce(label, msg, everyMs = 60000) {
+  const last = _lastWarnAt.get(label) || 0;
+  const now = Date.now();
+  if (now - last >= everyMs) {
+    console.warn(msg);
+    _lastWarnAt.set(label, now);
+  }
+}
+
+/**
+ * Rate-limit aware JSON fetcher:
+ * - Dedupes concurrent calls to same URL
+ * - Uses short TTL cache
+ * - Retries once on 429 honoring Retry-After (max 2000ms)
+ * - Falls back to cached (if fresh) or lets caller fallback
+ */
+async function fetchJSON_RL(url, label, { ttlMs = 60000, timeoutMs = 8000 } = {}) {
+  // 1) Return cache if fresh
+  const cached = getCache(url);
+  if (cached) return cached;
+
+  // 2) Deduplicate in-flight for same URL
+  if (_inflight.has(url)) return _inflight.get(url);
+
+  const run = async () => {
+    if (!(await isConnected())) throw new Error('offline');
+    let res = await fetchWithTimeout(url, {}, timeoutMs);
+
+    if (res.status === 429) {
+      // honor Retry-After header up to 2s; else backoff 800-1200ms
+      const ra = res.headers.get('Retry-After');
+      let waitMs = 0;
+      if (ra) {
+        const n = Number(ra);
+        waitMs = Number.isFinite(n) ? Math.min(2000, Math.max(0, n * 1000)) : 0;
+      }
+      if (!waitMs) waitMs = 800 + Math.floor(Math.random() * 400);
+      await new Promise(r => setTimeout(r, waitMs));
+      // retry once
+      res = await fetchWithTimeout(url, {}, timeoutMs);
+    }
+
+    requireOk(res, label);
+    const json = await res.json();
+    setCache(url, json, ttlMs);
+    return json;
+  };
+
+  const p = run().finally(() => _inflight.delete(url)).catch((err) => {
+    if (String(err?.message || '').includes('429')) {
+      warnOnce(label, `${label} rate-limited (429) - using fallback if available`);
+    } else {
+      warnOnce(label, `${label} fetch error: ${err?.message || err}`);
+    }
+    throw err;
+  });
+
+  _inflight.set(url, p);
+  return p;
+}
+
+/* =========================================================================
+   Rolling rainfall buffer (for last-60-min when API only returns 1 slot)
+   ========================================================================= */
+// Map<stationId, Array<{ts:number, value:number}>>
+const _rollingRain = new Map();
+
+function _pushRollingRain(stationId, tsMs, value) {
+  if (!Number.isFinite(value)) return;
+  const arr = _rollingRain.get(stationId) || [];
+  arr.push({ ts: tsMs, value: Math.max(0, value) });
+  // keep only last ~65 minutes
+  const cutoff = tsMs - 65 * 60 * 1000;
+  const pruned = arr.filter((x) => x.ts >= cutoff);
+  _rollingRain.set(stationId, pruned);
+}
+
+function _sumLastHourFromRolling(stationId, refTsMs) {
+  const arr = _rollingRain.get(stationId) || [];
+  const cutoff = refTsMs - 60 * 60 * 1000;
+  let sum = 0;
+  let found = false;
+  for (const x of arr) {
+    if (x.ts >= cutoff && x.ts <= refTsMs && Number.isFinite(x.value)) {
+      sum += x.value;
+      found = true;
+    }
+  }
+  return found ? sum : null;
+}
+
+function _coverageLastHourFromRolling(stationId, refTsMs) {
+  const arr = _rollingRain.get(stationId) || [];
+  const cutoff = refTsMs - 60 * 60 * 1000;
+  const within = arr.filter(x => x.ts >= cutoff && x.ts <= refTsMs);
+  if (!within.length) return 0;
+  const earliest = within.reduce((m, x) => Math.min(m, x.ts), within[0].ts);
+  const mins = Math.max(0, Math.round((refTsMs - earliest) / 60000));
+  return Math.min(60, mins);
+}
 
 /* =========================================================================
    Snapshot (bundled-only)
@@ -73,7 +177,6 @@ export const getSnapshotDebugInfo = () => ({ source: _lastSnapshotSource });
 async function loadBundledSnapshot() {
   try {
     if (_bundledSnapshotCache) {
-      // Already loaded once; don’t spam logs
       return _bundledSnapshotCache;
     }
     _lastSnapshotSource = 'assets';
@@ -95,11 +198,29 @@ export async function loadEnvDatasetsFromFile() {
 /* =========================================================================
    Domain helpers
    ========================================================================= */
-export const estimateFloodRisk = (rainfall, lastHour) => {
-  const r = Number.isFinite(rainfall) ? rainfall : 0;
-  const h = Number.isFinite(lastHour) ? lastHour : 0;
-  if (r > 10 || h > 30) return 'High';
-  if (r > 5  || h > 15) return 'Moderate';
+export const estimateFloodRisk = (rainfall, lastHour, opts = {}) => {
+  const {
+    allowNull = false,
+    minCoverageMin = 0,
+    coverageMin = undefined,
+    nowHigh = 10, hourHigh = 30,
+    nowMod  = 5,  hourMod  = 15,
+  } = opts;
+
+  const hasR = Number.isFinite(rainfall);
+  const hasH = Number.isFinite(lastHour);
+
+  if (typeof coverageMin === 'number' && coverageMin < minCoverageMin) {
+    return allowNull ? null : 'Low';
+  }
+
+  const r = hasR ? rainfall : 0;
+  const h = hasH ? lastHour  : 0;
+
+  if (r > nowHigh || h > hourHigh) return 'High';
+  if (r > nowMod  || h > hourMod)  return 'Moderate';
+
+  if (allowNull && !hasR && !hasH) return null;
   return 'Low';
 };
 
@@ -116,33 +237,64 @@ export const getNearestForecastArea = (userCoords, metadata) => {
 };
 
 /* =========================================================================
-   NEA: 2-hour weather forecast
+   Helpers for rainfall slot normalization
+   ========================================================================= */
+function _ts(msOrISO) {
+  const n = new Date(msOrISO || 0).getTime();
+  return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * NEA sometimes returns multiple reading sets for the same (or very close) time.
+ * This function:
+ *  - sorts newest → oldest
+ *  - keeps only the newest item per 5-min bucket
+ *  - trims to the last 60 minutes (max 12 buckets)
+ */
+function normalizeRainSlots(readingSets) {
+  if (!Array.isArray(readingSets) || !readingSets.length) return [];
+
+  // 1) Sort newest → oldest by timestamp
+  const sorted = [...readingSets].sort((a, b) => _ts(b.timestamp) - _ts(a.timestamp));
+
+  const newestTs = _ts(sorted[0]?.timestamp);
+  if (!newestTs) return [];
+
+  const cutoff = newestTs - 60 * 60 * 1000;
+  // 2) Bucket by 5-min window key to dedupe jittered timestamps
+  const seenBuckets = new Set();
+  const windowSlots = [];
+  for (const s of sorted) {
+    const ts = _ts(s?.timestamp);
+    if (!ts || ts < cutoff) break; // stop once we go past 60 min from newest
+    const bucketKey = Math.floor(ts / (5 * 60 * 1000)); // 5-min bucket
+    if (seenBuckets.has(bucketKey)) continue; // keep the newest one only
+    seenBuckets.add(bucketKey);
+    windowSlots.push(s);
+    if (windowSlots.length >= 12) break; // cap to 12 buckets (~60 min)
+  }
+
+  return windowSlots;
+}
+
+/* =========================================================================
+   NEA: 2-hour weather forecast (TTL 5m)
    ========================================================================= */
 export const fetchWeatherForecast = async () => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const url = 'https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast';
+    const raw = await fetchJSON_RL(url, 'NEA 2hr forecast', { ttlMs: 5 * 60 * 1000, timeoutMs: 8000 });
 
-    const cacheKey = 'nea:twohr';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const res = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast');
-    requireOk(res, 'NEA 2hr forecast');
-
-    const json = await res.json();
     const data = {
-      forecasts: json?.data?.items?.[0]?.forecasts ?? [],
-      metadata: json?.data?.area_metadata ?? [],
-      timestamp: json?.data?.items?.[0]?.timestamp ?? null,
+      forecasts: raw?.data?.items?.[0]?.forecasts ?? [],
+      metadata: raw?.data?.area_metadata ?? [],
+      timestamp: raw?.data?.items?.[0]?.timestamp ?? null,
     };
-    if (!data.forecasts.length || !data.metadata.length) {
-      throw new Error('NEA 2hr payload empty');
-    }
+    if (!data.forecasts.length || !data.metadata.length) throw new Error('NEA 2hr payload empty');
 
-    setCache(cacheKey, data, 5 * 60 * 1000);
     return data;
   } catch (err) {
-    console.warn('fetchWeatherForecast -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA 2hr forecast', `fetchWeatherForecast -> fallback to bundled: ${err?.message || err}`);
     return await snapOr((snap) => {
       const f = snap?.twoHr?.forecasts ?? snap?.forecasts ?? [];
       const m = snap?.twoHr?.metadata ?? snap?.area_metadata ?? [];
@@ -154,53 +306,66 @@ export const fetchWeatherForecast = async () => {
 };
 
 /* =========================================================================
-   NEA: Real-time rainfall (ALL STATIONS + last-hour accumulation)
+   NEA: Real-time rainfall (ALL STATIONS + per-station last-hour accumulation)
+   TTL 60s
    ========================================================================= */
 export const fetchRainfallData = async (userCoords) => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const url = 'https://api-open.data.gov.sg/v2/real-time/api/rainfall';
+    const json = await fetchJSON_RL(url, 'NEA rainfall', { ttlMs: 60 * 1000, timeoutMs: 8000 });
 
-    const res = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/rainfall');
-    requireOk(res, 'NEA rainfall');
-
-    const json = await res.json();
     const stations = json?.data?.stations ?? [];
-    const readingSets = json?.data?.readings ?? []; // multiple 5-min sets (most recent first)
-    const firstTs = readingSets?.[0]?.timestamp ?? null;
+    const readingSets = json?.data?.readings ?? [];
     if (!stations.length || !readingSets.length) throw new Error('NEA rainfall payload empty');
 
-    // Strict last-60-min accumulation by timestamp window
-    const slots = [...readingSets].sort(
-      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-    );
-    const tLatest = new Date(slots[0]?.timestamp || 0).getTime();
-    const CUTOFF = tLatest - 60 * 60 * 1000;
-
-    // include only sets within the last 60 minutes (from latest timestamp)
-    const windowSlots = [];
-    for (const s of slots) {
-      const ts = new Date(s?.timestamp || 0).getTime();
-      if (!ts) continue;
-      if (ts < CUTOFF) break; // slots are newest→oldest
-      windowSlots.push(s);
+    // Normalize slots to last 60 min, dedup 5-min buckets, cap to 12
+    const windowSlots = normalizeRainSlots(readingSets);
+    if (!windowSlots.length) {
+      return { stations: stations.map(s => ({ id: s.id, name: s.name, location: s.location, rainfall: null, lastHour: null, lastHourCoverageMin: 0, distanceKm: null })), timestamp: null };
     }
 
-    // accumulate per-station over that window
-    const accByStation = new Map();
+    const newestTs = _ts(windowSlots[0]?.timestamp);
+
+    // Seed rolling buffer (helps when API returns only 1 bucket intermittently)
+    for (const s of windowSlots) {
+      const tsMs = _ts(s?.timestamp);
+      for (const d of (s.data || [])) {
+        const val = (typeof d.value === 'number' && Number.isFinite(d.value) && d.value >= 0) ? d.value : 0;
+        _pushRollingRain(d.stationId, tsMs, val);
+      }
+    }
+
+    // Latest 5-min readings (“now”)
+    const currentReadings = windowSlots[0]?.data ?? [];
+
+    // Strict accumulation across the normalized window
+    const accByStation = new Map(); // id -> sum(mm)
     for (const s of windowSlots) {
       for (const d of (s.data || [])) {
-        const val = (typeof d.value === 'number' && Number.isFinite(d.value)) ? d.value : 0;
+        const val = (typeof d.value === 'number' && Number.isFinite(d.value) && d.value >= 0) ? d.value : 0;
         accByStation.set(d.stationId, (accByStation.get(d.stationId) || 0) + val);
       }
     }
-    const coverageMin = Math.min(60, windowSlots.length * 5); // each slot ~5 min
 
-    // latest 5-min readings for “now”
-    const currentReadings = slots[0]?.data ?? [];
+    const hasMultiSlots = windowSlots.length > 1;
+    const coverageMinStrict = Math.min(60, windowSlots.length * 5);
 
     const all = stations.map((stn) => {
       const rainfallNow = currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
-      const lastHour = accByStation.get(stn.id) ?? null;
+
+      // Preferred: strict sum from normalized window
+      let lastHour = hasMultiSlots ? accByStation.get(stn.id) : null;
+      let lastHourCoverageMin = hasMultiSlots ? coverageMinStrict : 0;
+
+      // Fallback: rolling buffer when only 1 slot is available
+      if (!hasMultiSlots) {
+        lastHour = _sumLastHourFromRolling(stn.id, newestTs);
+        lastHourCoverageMin = _coverageLastHourFromRolling(stn.id, newestTs);
+      }
+
+      // Sanity: clamp negatives and NaNs
+      if (!Number.isFinite(lastHour) || lastHour < 0) lastHour = null;
+
       const distanceKm = (userCoords && stn?.location)
         ? getDistanceFromLatLonInKm(
             userCoords.latitude, userCoords.longitude,
@@ -213,15 +378,15 @@ export const fetchRainfallData = async (userCoords) => {
         name: stn.name,
         location: stn.location,           // { latitude, longitude }
         rainfall: rainfallNow,            // latest 5-min (mm)
-        lastHour,                         // strict last 60 min total (mm)
-        lastHourCoverageMin: coverageMin, // minutes of data considered (<= 60)
-        distanceKm,                       // convenience for UI
+        lastHour,                         // true last 60-min total (mm)
+        lastHourCoverageMin,              // minutes of data considered (0..60)
+        distanceKm,                       // for nearest logic in UI
       };
     });
 
-    return { stations: all, timestamp: slots[0]?.timestamp || null };
+    return { stations: all, timestamp: windowSlots[0]?.timestamp || null };
   } catch (err) {
-    console.warn('fetchRainfallData -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA rainfall', `fetchRainfallData -> fallback to bundled: ${err?.message || err}`);
 
     // Fallback attempts to normalize snapshot into the same { stations: [], timestamp } shape
     const norm = await snapOr((snap) => {
@@ -243,6 +408,7 @@ export const fetchRainfallData = async (userCoords) => {
         location: s.location,
         rainfall: s.rainfall ?? s.value ?? s.readings?.[0]?.value ?? null,
         lastHour: s.lastHour ?? 0,
+        lastHourCoverageMin: 0,
         distanceKm: null,
       }));
 
@@ -254,20 +420,13 @@ export const fetchRainfallData = async (userCoords) => {
 };
 
 /* =========================================================================
-   NEA: PM2.5
+   NEA: PM2.5 (TTL 5m)
    ========================================================================= */
 export const fetchPm25Data = async () => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const url = 'https://api-open.data.gov.sg/v2/real-time/api/pm25';
+    const json = await fetchJSON_RL(url, 'NEA PM2.5', { ttlMs: 5 * 60 * 1000, timeoutMs: 8000 });
 
-    const cacheKey = 'nea:pm25';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const res = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/pm25');
-    requireOk(res, 'NEA PM2.5');
-
-    const json = await res.json();
     const readings = json?.data?.items?.[0]?.readings?.pm25_one_hourly ?? {};
     const regions  = json?.data?.regionMetadata ?? [];
     if (!regions.length) throw new Error('NEA PM2.5 payload empty');
@@ -278,32 +437,25 @@ export const fetchPm25Data = async () => {
       value: readings[region.name] ?? null,
     }));
 
-    setCache(cacheKey, out, 5 * 60 * 1000);
     return out;
   } catch (err) {
-    console.warn('fetchPm25Data -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA PM2.5', `fetchPm25Data -> fallback to bundled: ${err?.message || err}`);
     return await snapOr((snap) => snap?.pm25 ?? [], []);
   }
 };
 
 /* =========================================================================
-   NEA: Wind (speed + direction)
+   NEA: Wind (speed + direction) (TTL 60s)
    ========================================================================= */
 export const fetchWindData = async () => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const speedURL = 'https://api-open.data.gov.sg/v2/real-time/api/wind-speed';
+    const dirURL   = 'https://api-open.data.gov.sg/v2/real-time/api/wind-direction';
 
-    const cacheKey = 'nea:wind';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const speedRes = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/wind-speed');
-    const dirRes   = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/wind-direction');
-    requireOk(speedRes, 'NEA wind-speed');
-    requireOk(dirRes,   'NEA wind-direction');
-
-    const speedJson = await speedRes.json();
-    const dirJson   = await dirRes.json();
+    const [speedJson, dirJson] = await Promise.all([
+      fetchJSON_RL(speedURL, 'NEA wind-speed', { ttlMs: 60 * 1000, timeoutMs: 8000 }),
+      fetchJSON_RL(dirURL,   'NEA wind-direction', { ttlMs: 60 * 1000, timeoutMs: 8000 }),
+    ]);
 
     const stations      = speedJson?.data?.stations ?? [];
     const speedReadings = speedJson?.data?.readings?.[0]?.data ?? [];
@@ -311,15 +463,14 @@ export const fetchWindData = async () => {
     if (!stations.length) throw new Error('NEA wind payload empty');
 
     const out = stations.map((stn) => {
-      const speed     = speedReadings.find((r) => r.stationId === stn.id)?.value ?? null;   // knots (NEA unit)
+      const speed     = speedReadings.find((r) => r.stationId === stn.id)?.value ?? null;   // knots
       const direction = dirReadings.find((r) => r.stationId === stn.id)?.value ?? null;     // degrees
       return { id: stn.id, name: stn.name, location: stn.location, speed, direction };
     });
 
-    setCache(cacheKey, out, 2 * 60 * 1000);
     return out;
   } catch (err) {
-    console.warn('fetchWindData -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA wind', `fetchWindData -> fallback to bundled: ${err?.message || err}`);
     return await snapOr((snap) => {
       if (Array.isArray(snap?.wind) && snap.wind.length) return snap.wind;
       const ws = snap?.windSpeedStations ?? [];
@@ -337,20 +488,13 @@ export const fetchWindData = async () => {
 };
 
 /* =========================================================================
-   NEA: Humidity
+   NEA: Humidity (TTL 2m)
    ========================================================================= */
 export const fetchHumidityData = async () => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const url = 'https://api-open.data.gov.sg/v2/real-time/api/relative-humidity';
+    const json = await fetchJSON_RL(url, 'NEA humidity', { ttlMs: 2 * 60 * 1000, timeoutMs: 8000 });
 
-    const cacheKey = 'nea:humidity';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const res = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/relative-humidity');
-    requireOk(res, 'NEA humidity');
-
-    const json = await res.json();
     const stations = json?.data?.stations ?? [];
     const readings = json?.data?.readings?.[0]?.data ?? [];
     if (!stations.length) throw new Error('NEA humidity payload empty');
@@ -362,29 +506,21 @@ export const fetchHumidityData = async () => {
       value: readings.find((r) => r.stationId === stn.id)?.value ?? null,
     }));
 
-    setCache(cacheKey, out, 2 * 60 * 1000);
     return out;
   } catch (err) {
-    console.warn('fetchHumidityData -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA humidity', `fetchHumidityData -> fallback to bundled: ${err?.message || err}`);
     return await snapOr((snap) => snap?.humidity ?? [], []);
   }
 };
 
 /* =========================================================================
-   NEA: Temperature
+   NEA: Temperature (TTL 2m)
    ========================================================================= */
 export const fetchTemperatureData = async () => {
   try {
-    if (!(await isConnected())) throw new Error('offline');
+    const url = 'https://api-open.data.gov.sg/v2/real-time/api/air-temperature';
+    const json = await fetchJSON_RL(url, 'NEA temperature', { ttlMs: 2 * 60 * 1000, timeoutMs: 8000 });
 
-    const cacheKey = 'nea:temp';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const res = await fetchWithTimeout('https://api-open.data.gov.sg/v2/real-time/api/air-temperature');
-    requireOk(res, 'NEA temperature');
-
-    const json = await res.json();
     const stations = json?.data?.stations ?? [];
     const readings = json?.data?.readings?.[0]?.data ?? [];
     if (!stations.length) throw new Error('NEA temperature payload empty');
@@ -396,10 +532,9 @@ export const fetchTemperatureData = async () => {
       value: readings.find((r) => r.stationId === stn.id)?.value ?? null,
     }));
 
-    setCache(cacheKey, out, 2 * 60 * 1000);
     return out;
   } catch (err) {
-    console.warn('fetchTemperatureData -> fallback to bundled:', err?.message || err);
+    warnOnce('NEA temperature', `fetchTemperatureData -> fallback to bundled: ${err?.message || err}`);
     return await snapOr((snap) => snap?.temp ?? [], []);
   }
 };

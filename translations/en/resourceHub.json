@@ -1,0 +1,17 @@
+{
+  "title": "Resource Hub",
+  "all": "All",
+  "guide": "Guide",
+  "guides": "Guides",
+  "allTopics": "All topics",
+  "matching": "matching “{{q}}”",
+  "searchPlaceholder": "Search first-aid guides…",
+  "clearSearch": "Clear search",
+  "sortAToZ": "Sort A to Z",
+  "sortedAToZTapToRestore": "Sorted A to Z (tap to restore)",
+  "disclaimerInline": "This hub provides general first-aid guidance and is not a substitute for professional medical advice. In emergencies call your local number (e.g., 995 in Singapore).",
+  "more": "more",
+  "readMore": "Read more",
+  "noResults": "No results",
+  "noResultsText": "Try a broader term like “CPR”, “burns”, or “sprain”."
+}

@@ -1,0 +1,24 @@
+{
+  "dailyTitle": "Daily Quiz",
+  "back": "Go back",
+  "hint": "Use a hint",
+  "qOfTotal": "Question %{n} of %{total}",
+  "submit": "Submit",
+  "next": "Next Question",
+  "finish": "Finish",
+  "viewExplanation": "View Explanation",
+  "loading": "Loading…",
+  "saving": "Saving results…",
+  "timesUp": "Time’s up!",
+  "niceTry": "Nice try — keep going!",
+  "plusXp": "+%{xp} XP",
+  "modal": {
+    "timeUp": "⌛ Time Up ⌛",
+    "correct": "🥳 Correct 🥳",
+    "incorrect": "😓 Incorrect 😓"
+  },
+  "leaveTitle": "Leave quiz?",
+  "leaveMsg": "Your current progress will not be saved.",
+  "stay": "Stay",
+  "leave": "Leave"
+}

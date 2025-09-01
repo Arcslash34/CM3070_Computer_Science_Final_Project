@@ -1,0 +1,50 @@
+{
+  "title": "环境数据互动地图",
+  "a11yClose": "关闭地图",
+  "loading": "正在准备地图数据…",
+  "layers": {
+    "rain": "降雨",
+    "pm25": "PM2.5",
+    "wind": "风速",
+    "temp": "气温",
+    "humidity": "湿度"
+  },
+  "a11yLayer": {
+    "rain": "显示降雨图层",
+    "pm25": "显示 PM2.5 图层",
+    "wind": "显示风速图层",
+    "temp": "显示气温图层",
+    "humidity": "显示湿度图层"
+  },
+  "html": {
+    "youAreHere": "您在这里",
+    "legend": {
+      "rain": "洪水风险",
+      "high": "高",
+      "moderate": "中",
+      "low": "低",
+      "pm25": "PM2.5",
+      "wind": "风速",
+      "temp": "气温",
+      "humidity": "湿度",
+      "chipPm25": "芯片：µg/m³",
+      "chipWind": "芯片：节",
+      "chipTemp": "芯片：°C",
+      "chipHumidity": "芯片：%"
+    },
+    "popup": {
+      "location": "位置",
+      "station": "测站",
+      "region": "区域",
+      "rainfall": "降雨",
+      "last1h": "近1小时",
+      "floodRisk": "洪水风险",
+      "pm25": "PM2.5",
+      "windSpeed": "风速",
+      "temperature": "气温",
+      "humidity": "湿度",
+      "na": "无"
+    },
+    "units": { "mm": "毫米", "kn": "节", "c": "°C", "percent": "%" }
+  }
+}

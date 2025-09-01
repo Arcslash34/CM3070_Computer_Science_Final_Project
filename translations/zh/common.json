@@ -1,0 +1,40 @@
+{
+  "cancel": "取消",
+  "delete": "删除",
+
+  "hero_title": "随时做好准备",
+  "hero_desc": "了解身边动态，学习应对措施，在关键时刻迅速行动。",
+
+  "section_live_map": "实时地图",
+  "section_articles": "文章",
+  "section_view_all": "查看全部",
+  "section_local_conditions": "本地状况",
+  "section_emergency_prep": "应急准备",
+
+  "locating": "正在定位…",
+
+  "article_open": "打开文章",
+
+  "stat_rainfall": "降雨量",
+  "stat_pm25": "PM2.5",
+  "stat_temp": "温度",
+  "stat_humidity": "湿度",
+  "stat_wind": "风速",
+  "stat_nearest_station": "最近站点",
+  "stat_nearest_region": "最近区域",
+  "stat_nearest": "最近",
+
+  "feature_resource_hub": "资源中心",
+  "feature_checklist": "清单",
+  "feature_quiz_game": "问答游戏",
+  "feature_emergency_contact": "紧急联系人",
+
+  "banner_loc_services_off": "定位服务已关闭",
+  "banner_loc_perm_denied": "定位权限被拒绝",
+  "banner_loc_body": "正在使用裕廊花园附近的演示数据。启用定位以获得更精确读数。",
+  "banner_enable_location": "启用定位",
+
+  "alert_flash_flood": "山洪警报",
+  "alert_moderate_flood": "中度洪水风险",
+  "alert_none": "无警报"
+}

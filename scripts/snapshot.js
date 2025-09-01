@@ -2,7 +2,7 @@
 // Fetch live data and write ./assets/env_snapshot.json (for bundling)
 //
 // Runtime: Node 18+ (native fetch & AbortController).
-// For Node <18, uncomment the line below and add node-fetch@3:
+// For Node <18, uncomment below and add node-fetch@3:
 // const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 
 'use strict';
@@ -16,7 +16,7 @@ const OUT_PATH = path.resolve(__dirname, '../assets/env_snapshot.json');
 // ---- Utils ----
 const isFiniteNumber = (v) => typeof v === 'number' && Number.isFinite(v);
 
-// Small helper to fetch with timeout (aborts the request)
+// Small helper: fetch with timeout (aborts the request)
 async function fetchWithTimeout(url, ms = 8000) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), ms);
@@ -44,8 +44,8 @@ const NEA = {
 // ---- Data fetchers ----
 async function getPm25() {
   const json = await fetchWithTimeout(NEA.pm25);
-  const readings = json.data?.items?.[0]?.readings?.pm25_one_hourly ?? {};
-  const regions = json.data?.regionMetadata ?? [];
+  const readings = json?.data?.items?.[0]?.readings?.pm25_one_hourly ?? {};
+  const regions = json?.data?.regionMetadata ?? [];
   return regions.map((r) => ({
     name: r.name,
     location: r.labelLocation,
@@ -59,9 +59,9 @@ async function getWind() {
     fetchWithTimeout(NEA.windDir),
   ]);
 
-  const stations = speedJson.data?.stations ?? [];
-  const speedReadings = speedJson.data?.readings?.[0]?.data ?? [];
-  const dirReadings = dirJson.data?.readings?.[0]?.data ?? [];
+  const stations = speedJson?.data?.stations ?? [];
+  const speedReadings = speedJson?.data?.readings?.[0]?.data ?? [];
+  const dirReadings = dirJson?.data?.readings?.[0]?.data ?? [];
 
   return stations.map((stn) => {
     const speed = speedReadings.find((r) => r.stationId === stn.id)?.value;
@@ -70,16 +70,16 @@ async function getWind() {
       id: stn.id,
       name: stn.name,
       location: stn.location,
-      speed: isFiniteNumber(speed) ? speed : null,
-      direction: isFiniteNumber(direction) ? direction : null,
+      speed: isFiniteNumber(speed) ? speed : null,       // knots
+      direction: isFiniteNumber(direction) ? direction : null, // degrees
     };
   });
 }
 
 async function getHumidity() {
   const json = await fetchWithTimeout(NEA.humidity);
-  const stations = json.data?.stations ?? [];
-  const readings = json.data?.readings?.[0]?.data ?? [];
+  const stations = json?.data?.stations ?? [];
+  const readings = json?.data?.readings?.[0]?.data ?? [];
 
   return stations.map((stn) => {
     const v = readings.find((r) => r.stationId === stn.id)?.value;
@@ -94,8 +94,8 @@ async function getHumidity() {
 
 async function getTemp() {
   const json = await fetchWithTimeout(NEA.temp);
-  const stations = json.data?.stations ?? [];
-  const readings = json.data?.readings?.[0]?.data ?? [];
+  const stations = json?.data?.stations ?? [];
+  const readings = json?.data?.readings?.[0]?.data ?? [];
 
   return stations.map((stn) => {
     const v = readings.find((r) => r.stationId === stn.id)?.value;
@@ -109,59 +109,101 @@ async function getTemp() {
 }
 
 /**
- * Rainfall: capture ALL stations, plus computed lastHour per station.
- * NEA returns multiple "readings" arrays. We:
- *   1) sort them latest->oldest by timestamp (defensive)
- *   2) include only sets within ~1 hour of the latest set (with 2-min slack)
- *   3) sum the values per station across those sets
+ * Normalize rainfall reading sets like api.js:
+ *  - newest → oldest
+ *  - dedupe to newest per 5-min bucket
+ *  - trim to last 60 minutes (max 12 buckets)
+ */
+function normalizeRainSlots(readingSets) {
+  const ts = (x) => {
+    const n = new Date(x || 0).getTime();
+    return Number.isFinite(n) ? n : 0;
+  };
+  if (!Array.isArray(readingSets) || !readingSets.length) return [];
+
+  const sorted = [...readingSets].sort((a, b) => ts(b?.timestamp) - ts(a?.timestamp));
+  const newestTs = ts(sorted[0]?.timestamp);
+  if (!newestTs) return [];
+
+  const cutoff = newestTs - 60 * 60 * 1000; // last 60 min
+  const seenBuckets = new Set();
+  const windowSlots = [];
+
+  for (const s of sorted) {
+    const t = ts(s?.timestamp);
+    if (!t || t < cutoff) break;
+    const bucketKey = Math.floor(t / (5 * 60 * 1000)); // 5-min bucket
+    if (seenBuckets.has(bucketKey)) continue; // keep newest only
+    seenBuckets.add(bucketKey);
+    windowSlots.push(s);
+    if (windowSlots.length >= 12) break; // cap ~60 min
+  }
+
+  return windowSlots;
+}
+
+/**
+ * Rainfall snapshot:
+ *  - Keep latest 5-min `rainfall`
+ *  - Strictly accumulate across normalized window for `lastHour`
+ *  - Include `lastHourCoverageMin` = 5 * number_of_buckets (<= 60)
  */
 async function getRainAll() {
   const json = await fetchWithTimeout(NEA.rainfall);
 
-  const stations = json.data?.stations ?? [];
-  const readingsRaw = json.data?.readings ?? []; // [{ timestamp, data: [{stationId, value}] }]
-  const readingSets = [...readingsRaw].sort(
-    (a, b) => new Date(b?.timestamp || 0) - new Date(a?.timestamp || 0)
-  );
+  const stations = json?.data?.stations ?? [];
+  const readingSets = json?.data?.readings ?? [];
 
-  const latestSet = readingSets[0];
-  const latestTs = new Date(latestSet?.timestamp || 0).getTime();
-  const slackMs = 2 * 60 * 1000;
+  const windowSlots = normalizeRainSlots(readingSets);
+  if (!windowSlots.length) {
+    return {
+      stations: stations.map((stn) => ({
+        id: stn.id,
+        name: stn.name,
+        location: stn.location,
+        rainfall: null,
+        lastHour: null,
+        lastHourCoverageMin: 0,
+      })),
+      timestamp: null,
+    };
+  }
 
-  // time-gated 1-hour window
-  const lastHourSets = readingSets.filter((s) => {
-    const t = new Date(s?.timestamp || 0).getTime();
-    return Number.isFinite(t) && Number.isFinite(latestTs) && (latestTs - t) <= 60 * 60 * 1000 + slackMs;
-  });
+  const latest = windowSlots[0];
+  const latestData = latest?.data ?? [];
+  const timestamp = latest?.timestamp ?? null;
 
-  const latest = latestSet?.data ?? [];
-  const timestamp = latestSet?.timestamp ?? null;
+  // strict accumulation across buckets
+  const accByStation = new Map(); // id -> sum(mm)
+  for (const s of windowSlots) {
+    for (const d of (s?.data || [])) {
+      const v = (typeof d.value === 'number' && Number.isFinite(d.value) && d.value >= 0) ? d.value : 0;
+      accByStation.set(d.stationId, (accByStation.get(d.stationId) || 0) + v);
+    }
+  }
+
+  const coverageMin = Math.min(60, windowSlots.length * 5);
+  const round2 = (x) => (isFiniteNumber(x) ? Math.round(x * 100) / 100 : x);
 
   const stationsOut = stations.map((stn) => {
-    const nowValRaw = latest.find((r) => r.stationId === stn.id)?.value;
-    const rainfall = isFiniteNumber(nowValRaw) ? nowValRaw : null;
+    const nowVal = latestData.find((r) => r.stationId === stn.id)?.value;
+    const rainfall = isFiniteNumber(nowVal) ? round2(nowVal) : null;
 
-    let lastHour = 0;
-    for (const set of lastHourSets) {
-      const v = set?.data?.find((d) => d.stationId === stn.id)?.value;
-      lastHour += isFiniteNumber(v) ? v : 0;
-    }
-
-    const round2 = (x) => (isFiniteNumber(x) ? Math.round(x * 100) / 100 : x);
+    let lastHour = accByStation.get(stn.id);
+    if (!isFiniteNumber(lastHour)) lastHour = null;
+    else lastHour = round2(lastHour);
 
     return {
       id: stn.id,
       name: stn.name,
       location: stn.location,
-      rainfall: round2(rainfall),
-      lastHour: round2(lastHour),
+      rainfall,                 // latest 5-min (mm)
+      lastHour,                 // strict sum across buckets
+      lastHourCoverageMin: coverageMin, // 0..60
     };
   });
 
-  return {
-    stations: stationsOut,
-    timestamp,
-  };
+  return { stations: stationsOut, timestamp };
 }
 
 // ---- Main ----
@@ -177,7 +219,7 @@ async function main() {
   ]);
 
   const snapshot = {
-    rain,       // { timestamp, stations: [...] }
+    rain,       // { timestamp, stations: [...] with lastHourCoverageMin }
     pm25,       // array
     wind,       // array
     temp,       // array

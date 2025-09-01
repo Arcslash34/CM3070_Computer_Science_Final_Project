@@ -1,0 +1,15 @@
+{
+  "headlineOutstanding": "Outstanding!",
+  "headlineGreat": "Great job!",
+  "headlineNice": "Nice effort — keep going!",
+  "headlineKeepTrying": "Don't give up — try again!",
+  "qNumber": "Q{{n}}",
+  "incorrect": "Wrong Answer",
+  "unanswered": "Time’s up, No Answer Selected",
+  "correctAnswer": "Correct Answer:",
+  "yourAnswer": "Your Answer:",
+  "yourScore": "Your Score",
+  "xpEarned": "XP Earned",
+  "answerReview": "Answer Review",
+  "nothingToShow": "Nothing to show. (Unknown difficulty or quiz list missing.)"
+}

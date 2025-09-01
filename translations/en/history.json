@@ -1,0 +1,12 @@
+{
+  "history": {
+    "title": "Quiz History",
+    "confirm": "Confirm",
+    "deleteAllMsg": "Delete all quiz results?",
+    "quizFallback": "Quiz",
+    "scoreLabel": "Score",
+    "searchPlaceholder": "Search quizzes…",
+    "emptyTitle": "No quiz history yet",
+    "emptyText": "Finish a quiz to see it here."
+  }
+}

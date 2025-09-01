@@ -33,7 +33,7 @@ import * as Location from "expo-location";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "./supabase";
 import DefaultProfileImage from "./assets/profile.png";
-import { LanguageContext } from "./language";
+import { LanguageContext } from "./translations/language";
 import { MaterialIcons } from "@expo/vector-icons";
 import Logo1 from "./assets/logo1.png";
 import {
@@ -41,6 +41,7 @@ import {
   setSoundEnabled,
   setVibrationEnabled,
 } from "./appPrefs";
+import { t } from "./translations/translation";
 
 const TOGGLE_KEYS = {
   notifications: "settings:notifications",
@@ -111,7 +112,10 @@ export default function Settings() {
   const handleImageUpload = useCallback(
     async (uri) => {
       if (!session?.user) {
-        Alert.alert("Not signed in", "Please log in to update your profile.");
+        Alert.alert(
+          t("settings.alerts.notSignedInTitle"),
+          t("settings.alerts.notSignedInMsg")
+        );
         return;
       }
 
@@ -160,10 +164,16 @@ export default function Settings() {
 
         setAvatarUrl(publicUrl);
         setProfile((p) => (p ? { ...p, avatar_url: publicUrl } : p));
-        Alert.alert("Success", "Profile picture updated successfully");
+        Alert.alert(
+          t("settings.alerts.successTitle"),
+          t("settings.alerts.avatarUpdated")
+        );
       } catch (error) {
         console.error("Upload error:", error);
-        Alert.alert("Upload Failed", error.message || "Failed to upload image");
+        Alert.alert(
+          t("settings.alerts.uploadFailed"),
+          error.message || t("settings.alerts.failedPickImage")
+        );
       }
     },
     [session?.user]
@@ -263,21 +273,26 @@ export default function Settings() {
   }, [loadingRegion, spinAnim]);
 
   /* ---------- Derived profile display ---------- */
-  const userDisplay = profile?.username || session?.user?.email || "Guest";
+  const userDisplay =
+    profile?.username || session?.user?.email || t("settings.generic.guest");
   const email = session?.user?.email || "";
 
   /* ---------- Actions ---------- */
   const onLogout = useCallback(() => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Logout",
-        style: "destructive",
-        onPress: async () => {
-          await supabase.auth.signOut();
+    Alert.alert(
+      t("settings.alerts.logoutTitle"),
+      t("settings.alerts.logoutConfirm"),
+      [
+        { text: t("settings.generic.cancel"), style: "cancel" },
+        {
+          text: t("settings.labels.logout"),
+          style: "destructive",
+          onPress: async () => {
+            await supabase.auth.signOut();
+          },
         },
-      },
-    ]);
+      ]
+    );
   }, []);
 
   const onChangePassword = useCallback(async () => {
@@ -287,19 +302,25 @@ export default function Settings() {
         password: newPassword,
       });
       if (error) throw error;
-      Alert.alert("Success", "Password updated.");
+      Alert.alert(
+        t("settings.alerts.successTitle"),
+        t("settings.alerts.passwordUpdated")
+      );
       setShowPassword(false);
       setNewPassword("");
     } catch (e) {
-      Alert.alert("Error", e.message || "Failed to update password");
+      Alert.alert(
+        t("settings.alerts.error"),
+        e.message || t("settings.alerts.failedUpdatePassword")
+      );
     }
   }, [newPassword]);
 
   const pickAndUploadAvatar = useCallback(async () => {
     if (!session?.user) {
       return Alert.alert(
-        "Not signed in",
-        "Please log in to update your profile."
+        t("settings.alerts.notSignedInTitle"),
+        t("settings.alerts.notSignedInMsg")
       );
     }
 
@@ -318,7 +339,7 @@ export default function Settings() {
       await handleImageUpload(result.assets[0].uri);
     } catch (error) {
       console.error("Picker error:", error);
-      Alert.alert("Error", "Failed to pick image");
+      Alert.alert(t("settings.alerts.error"), t("settings.alerts.failedPickImage"));
     }
   }, [session?.user, handleImageUpload]);
 
@@ -327,8 +348,8 @@ export default function Settings() {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== "granted") {
         return Alert.alert(
-          "Permission Denied",
-          "Camera access is required to take a photo."
+          t("settings.alerts.permissionDeniedTitle"),
+          t("settings.alerts.cameraAccessRequired")
         );
       }
 
@@ -343,7 +364,7 @@ export default function Settings() {
       }
     } catch (error) {
       console.error("Camera error:", error);
-      Alert.alert("Error", "Failed to open camera");
+      Alert.alert(t("settings.alerts.error"), t("settings.alerts.failedOpenCamera"));
     }
   }, [session?.user]);
 
@@ -378,7 +399,10 @@ export default function Settings() {
         .neq("id", session.user.id)
         .maybeSingle();
       if (existing) {
-        return Alert.alert("Username taken", "Please choose another username.");
+        return Alert.alert(
+          t("settings.alerts.usernameTakenTitle"),
+          t("settings.alerts.usernameTakenMsg")
+        );
       }
     }
 
@@ -392,7 +416,7 @@ export default function Settings() {
     const { error } = await supabase
       .from("profiles")
       .upsert(payload, { onConflict: "id" });
-    if (error) return Alert.alert("Error", error.message);
+    if (error) return Alert.alert(t("settings.alerts.error"), error.message);
     setProfile((p) => ({ ...(p || {}), ...payload, avatar_url: avatarUrl }));
     setShowEditProfile(false);
   }, [
@@ -412,8 +436,8 @@ export default function Settings() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
-          "Permission needed",
-          "We need location permission to detect your region."
+          t("settings.alerts.permissionNeededTitle"),
+          t("settings.alerts.regionPermMsg")
         );
         return;
       }
@@ -425,14 +449,15 @@ export default function Settings() {
 
       const places = await Location.reverseGeocodeAsync(pos.coords);
       if (!places?.length) {
-        Alert.alert("Oops", "Unable to determine your region.");
+        Alert.alert(
+          t("settings.alerts.oops"),
+          t("settings.alerts.cannotDetectRegion")
+        );
         return;
       }
 
       const { country = "Unknown", isoCountryCode = "" } = places[0];
-      const value = `${country} ${countryCodeToFlagEmoji(
-        isoCountryCode || ""
-      )}`;
+      const value = `${country} ${countryCodeToFlagEmoji(isoCountryCode || "")}`;
       setRegion(value);
 
       if (session?.user?.id) {
@@ -444,7 +469,10 @@ export default function Settings() {
         setProfile((p) => (p ? { ...p, region: value } : p));
       }
     } catch (e) {
-      Alert.alert("Error", e.message || "Failed to detect region");
+      Alert.alert(
+        t("settings.alerts.error"),
+        e.message || t("settings.alerts.failedDetectRegion")
+      );
     } finally {
       setLoadingRegion(false);
     }
@@ -460,8 +488,8 @@ export default function Settings() {
   const openAddContact = () => {
     if (contacts.length >= MAX_CONTACTS) {
       return Alert.alert(
-        "Limit reached",
-        `You can save up to ${MAX_CONTACTS} close contacts.`
+        t("settings.contacts.limitReachedTitle"),
+        t("settings.contacts.limitReachedMsg", { max: MAX_CONTACTS })
       );
     }
     resetContactForm();
@@ -475,21 +503,28 @@ export default function Settings() {
     setShowContactForm(true);
   };
   const deleteContact = (id) => {
-    Alert.alert("Delete contact", "Remove this contact?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          const next = contacts.filter((c) => c.id !== id);
-          saveContacts(next);
+    Alert.alert(
+      t("settings.contacts.deleteTitle"),
+      t("settings.contacts.deleteMsg"),
+      [
+        { text: t("settings.generic.cancel"), style: "cancel" },
+        {
+          text: t("settings.generic.delete"),
+          style: "destructive",
+          onPress: () => {
+            const next = contacts.filter((c) => c.id !== id);
+            saveContacts(next);
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
   const saveContact = () => {
     if (!cName.trim() || !cPhone.trim()) {
-      return Alert.alert("Missing info", "Name and phone are required.");
+      return Alert.alert(
+        t("settings.contacts.missingInfoTitle"),
+        t("settings.contacts.missingInfoMsg")
+      );
     }
     const item = {
       id: editingId || uuidv4(),
@@ -514,7 +549,7 @@ export default function Settings() {
       <View style={{ paddingTop: insets.top + 10, paddingHorizontal: 16 }}>
         <View style={styles.brandRow}>
           <Image source={Logo1} style={styles.brandLogo} />
-          <Text style={styles.brandTitle}>Settings</Text>
+          <Text style={styles.brandTitle}>{t("settings.title")}</Text>
         </View>
       </View>
       <ScrollView
@@ -541,10 +576,10 @@ export default function Settings() {
         </TouchableOpacity>
 
         {/* Game Settings */}
-        <SectionTitle>Game Settings</SectionTitle>
+        <SectionTitle>{t("settings.sections.game")}</SectionTitle>
         <CardRow
           icon="notifications"
-          label="Notifications"
+          label={t("settings.labels.notifications")}
           right={
             <Switch
               value={notifications}
@@ -557,7 +592,7 @@ export default function Settings() {
         />
         <CardRow
           icon="volume-high"
-          label="Sound"
+          label={t("settings.labels.sound")}
           right={
             <Switch
               value={sound}
@@ -570,7 +605,7 @@ export default function Settings() {
         />
         <CardRow
           icon="phone-portrait"
-          label="Vibration"
+          label={t("settings.labels.vibration")}
           right={
             <Switch
               value={vibration}
@@ -583,10 +618,10 @@ export default function Settings() {
         />
 
         {/* Language & Certificates */}
-        <SectionTitle>Language & Certificates</SectionTitle>
+        <SectionTitle>{t("settings.sections.langCert")}</SectionTitle>
         <CardRow
           icon="language"
-          label={`Language: ${lang.toUpperCase()}`}
+          label={t("settings.labels.language", { code: lang.toUpperCase() })}
           onPress={() => setShowLang(true)}
           chevron
         />
@@ -605,9 +640,9 @@ export default function Settings() {
                 style={{ marginRight: 10 }}
               />
               <Text style={styles.rowText}>
-                Region:{" "}
+                {t("settings.labels.region")}
                 <Text style={styles.regionValue}>
-                  {region || "Tap to detect"}
+                  {region || t("settings.labels.tapToDetect")}
                 </Text>
               </Text>
             </View>
@@ -633,16 +668,16 @@ export default function Settings() {
         </TouchableOpacity>
         <CardRow
           icon="document-text"
-          label="Certificates"
+          label={t("settings.labels.certificates")}
           onPress={() => navigation.navigate("Certificates")}
           chevron
         />
 
         {/* NEW: Demo toggles */}
-        <SectionTitle>Demo / Mock</SectionTitle>
+        <SectionTitle>{t("settings.sections.demo")}</SectionTitle>
         <CardRow
           icon="location"
-          label="Use Mock Location"
+          label={t("settings.labels.useMockLocation")}
           right={
             <Switch
               value={mockLocation}
@@ -655,7 +690,7 @@ export default function Settings() {
         />
         <CardRow
           icon="warning"
-          label="Mock Disaster"
+          label={t("settings.labels.mockDisaster")}
           right={
             <Switch
               value={mockDisaster}
@@ -668,23 +703,28 @@ export default function Settings() {
         />
 
         {/* Contacts List */}
-        <SectionTitle>Contacts List</SectionTitle>
+        <SectionTitle>{t("settings.sections.contactsList")}</SectionTitle>
         <CardRow
           icon="people"
-          label="Emergency Contacts"
+          label={t("settings.labels.emergencyContacts")}
           onPress={() => setShowContacts(true)}
           chevron
         />
 
         {/* Account */}
-        <SectionTitle>Account Settings</SectionTitle>
+        <SectionTitle>{t("settings.sections.account")}</SectionTitle>
         <CardRow
           icon="key"
-          label="Change Password"
+          label={t("settings.labels.changePassword")}
           onPress={() => setShowPassword(true)}
           chevron
         />
-        <CardRow icon="log-out" label="Logout" onPress={onLogout} chevron />
+        <CardRow
+          icon="log-out"
+          label={t("settings.labels.logout")}
+          onPress={onLogout}
+          chevron
+        />
         <View style={{ height: 24 }} />
       </ScrollView>
 
@@ -697,23 +737,23 @@ export default function Settings() {
       >
         <Pressable style={styles.backdrop} onPress={() => setShowLang(false)}>
           <View style={styles.modalCard} onStartShouldSetResponder={() => true}>
-            <Text style={styles.modalTitle}>Choose Language</Text>
+            <Text style={styles.modalTitle}>{t("settings.langModal.title")}</Text>
             <ModalButton
-              text="English"
+              text={t("settings.langModal.en")}
               onPress={() => {
                 setLang("en");
                 setShowLang(false);
               }}
             />
             <ModalButton
-              text="中文"
+              text={t("settings.langModal.zh")}
               onPress={() => {
                 setLang("zh");
                 setShowLang(false);
               }}
             />
             <ModalButton
-              text="Close"
+              text={t("settings.langModal.close")}
               variant="secondary"
               onPress={() => setShowLang(false)}
             />
@@ -733,7 +773,7 @@ export default function Settings() {
           onPress={() => setShowPassword(false)}
         >
           <View style={styles.modalCard} onStartShouldSetResponder={() => true}>
-            <Text style={styles.modalTitle}>Change Password</Text>
+            <Text style={styles.modalTitle}>{t("settings.passwordModal.title")}</Text>
             <View style={styles.inputWrap}>
               <Ionicons
                 name="lock-closed"
@@ -742,16 +782,16 @@ export default function Settings() {
                 style={{ marginRight: 6 }}
               />
               <TextInput
-                placeholder="New password"
+                placeholder={t("settings.passwordModal.placeholder")}
                 secureTextEntry
                 value={newPassword}
                 onChangeText={setNewPassword}
                 style={{ flex: 1 }}
               />
             </View>
-            <ModalButton text="Update" onPress={onChangePassword} />
+            <ModalButton text={t("settings.passwordModal.update")} onPress={onChangePassword} />
             <ModalButton
-              text="Cancel"
+              text={t("settings.passwordModal.cancel")}
               variant="secondary"
               onPress={() => setShowPassword(false)}
             />
@@ -771,7 +811,7 @@ export default function Settings() {
           onPress={() => setShowEditProfile(false)}
         >
           <View style={styles.editCard} onStartShouldSetResponder={() => true}>
-            <Text style={styles.editTitle}>Edit Profile</Text>
+            <Text style={styles.editTitle}>{t("settings.profile.editTitle")}</Text>
             <View
               style={{ alignItems: "center", marginTop: 4, marginBottom: 16 }}
             >
@@ -780,7 +820,7 @@ export default function Settings() {
                 style={styles.editAvatarLarge}
               />
               <TouchableOpacity onPress={pickImage} style={styles.smallBtn}>
-                <Text style={styles.smallBtnText}>Change Photo</Text>
+                <Text style={styles.smallBtnText}>{t("settings.profile.changePhoto")}</Text>
               </TouchableOpacity>
             </View>
 
@@ -793,7 +833,7 @@ export default function Settings() {
                 style={styles.inputIcon}
               />
               <TextInput
-                placeholder="Name"
+                placeholder={t("settings.profile.name")}
                 value={editName}
                 onChangeText={setEditName}
                 style={styles.pillField}
@@ -810,7 +850,7 @@ export default function Settings() {
                 style={styles.inputIcon}
               />
               <TextInput
-                placeholder="Username"
+                placeholder={t("settings.profile.username")}
                 autoCapitalize="none"
                 value={editUsername}
                 onChangeText={setEditUsername}
@@ -820,7 +860,7 @@ export default function Settings() {
             </View>
 
             <TouchableOpacity onPress={saveProfile} style={styles.primaryBtn}>
-              <Text style={styles.primaryBtnText}>Save</Text>
+              <Text style={styles.primaryBtnText}>{t("settings.profile.save")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -828,7 +868,7 @@ export default function Settings() {
               activeOpacity={0.85}
               style={styles.secondaryBtn}
             >
-              <Text style={styles.secondaryBtnText}>Cancel</Text>
+              <Text style={styles.secondaryBtnText}>{t("settings.profile.cancel")}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
@@ -849,7 +889,7 @@ export default function Settings() {
             style={[styles.modalCard, { maxHeight: "80%" }]}
             onStartShouldSetResponder={() => true}
           >
-            <Text style={styles.modalTitle}>Emergency Contacts</Text>
+            <Text style={styles.modalTitle}>{t("settings.contacts.title")}</Text>
 
             {contacts.map((c) => (
               <View key={c.id} style={styles.contactRow}>
@@ -903,12 +943,15 @@ export default function Settings() {
               disabled={contacts.length >= MAX_CONTACTS}
             >
               <Text style={styles.modalBtnText}>
-                Add Contact ({contacts.length}/{MAX_CONTACTS})
+                {t("settings.contacts.addContactBtn", {
+                  count: contacts.length,
+                  max: MAX_CONTACTS,
+                })}
               </Text>
             </TouchableOpacity>
 
             <ModalButton
-              text="Close"
+              text={t("settings.contacts.close")}
               variant="secondary"
               onPress={() => setShowContacts(false)}
             />
@@ -929,7 +972,9 @@ export default function Settings() {
         >
           <View style={styles.modalCard} onStartShouldSetResponder={() => true}>
             <Text style={styles.modalTitle}>
-              {editingId ? "Edit Contact" : "Add Contact"}
+              {editingId
+                ? t("settings.contacts.editTitle")
+                : t("settings.contacts.addTitle")}
             </Text>
             <View style={styles.inputWrap}>
               <Ionicons
@@ -939,7 +984,7 @@ export default function Settings() {
                 style={{ marginRight: 6 }}
               />
               <TextInput
-                placeholder="Full name"
+                placeholder={t("settings.contacts.fullName")}
                 value={cName}
                 onChangeText={setCName}
                 style={{ flex: 1 }}
@@ -953,7 +998,7 @@ export default function Settings() {
                 style={{ marginRight: 6 }}
               />
               <TextInput
-                placeholder="Relation (e.g. Spouse)"
+                placeholder={t("settings.contacts.relation")}
                 value={cRelation}
                 onChangeText={setCRelation}
                 style={{ flex: 1 }}
@@ -967,7 +1012,7 @@ export default function Settings() {
                 style={{ marginRight: 6 }}
               />
               <TextInput
-                placeholder="Phone number"
+                placeholder={t("settings.contacts.phone")}
                 keyboardType="phone-pad"
                 value={cPhone}
                 onChangeText={setCPhone}
@@ -975,17 +1020,20 @@ export default function Settings() {
               />
             </View>
             <ModalButton
-              text={editingId ? "Save" : "Add"}
+              text={
+                editingId ? t("settings.contacts.save") : t("settings.contacts.add")
+              }
               onPress={saveContact}
             />
             <ModalButton
-              text="Cancel"
+              text={t("settings.contacts.cancel")}
               variant="secondary"
               onPress={() => setShowContactForm(false)}
             />
           </View>
         </Pressable>
       </Modal>
+
       {/* Image source modal */}
       <Modal
         visible={showImageSource}
@@ -998,7 +1046,7 @@ export default function Settings() {
           onPress={() => setShowImageSource(false)}
         >
           <View style={styles.modalCard} onStartShouldSetResponder={() => true}>
-            <Text style={styles.modalTitle}>Change Profile Picture</Text>
+            <Text style={styles.modalTitle}>{t("settings.imageSource.title")}</Text>
 
             <View style={styles.optionRow}>
               <TouchableOpacity
@@ -1009,7 +1057,9 @@ export default function Settings() {
                 <View style={styles.optionIconWrap}>
                   <Ionicons name="images-outline" size={28} color="#2563eb" />
                 </View>
-                <Text style={styles.optionLabel}>Gallery</Text>
+                <Text style={styles.optionLabel}>
+                  {t("settings.imageSource.gallery")}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -1020,12 +1070,14 @@ export default function Settings() {
                 <View style={styles.optionIconWrap}>
                   <Ionicons name="camera-outline" size={28} color="#2563eb" />
                 </View>
-                <Text style={styles.optionLabel}>Camera</Text>
+                <Text style={styles.optionLabel}>
+                  {t("settings.imageSource.camera")}
+                </Text>
               </TouchableOpacity>
             </View>
 
             <ModalButton
-              text="Cancel"
+              text={t("settings.imageSource.cancel")}
               variant="secondary"
               onPress={() => setShowImageSource(false)}
             />
@@ -1292,7 +1344,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-between",
-    gap: 12, // you’re already using gap elsewhere
+    gap: 12,
     marginTop: 4,
     marginBottom: 6,
   },

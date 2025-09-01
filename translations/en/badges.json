@@ -1,0 +1,46 @@
+{
+  "title": "My Badges",
+  "totalBadges": "Total Badges",
+  "pointsEarned": "Points Earned",
+  "tabs": {
+    "all": "All",
+    "unlocked": "Unlocked",
+    "locked": "Locked"
+  },
+  "empty": {
+    "unlocked": "No badges unlocked yet.",
+    "locked": "All badges are unlocked 🎉"
+  },
+  "completed": "Completed",
+  "modal": {
+    "shareCta": "Share",
+    "close": "Close",
+    "body": "You unlocked this badge—nice work! Share it with your friends and keep the streak going. 🚀",
+    "fallbackTitle": "Badge"
+  },
+  "shareText": "I just earned the \"{{title}}\" badge in LifeShield! 🏅 #LifeShield",
+  "shareFailedTitle": "Share failed",
+  "shareFailedBody": "Unable to open share sheet.",
+  "groups": {
+    "learning": "Learning Achievements",
+    "specialist": "Disaster Specialist",
+    "streaks": "Consistency / Streaks",
+    "other": "Other"
+  },
+  "catalog": {
+    "first-step": { "title": "First Step" },
+    "quiz-explorer": { "title": "Quiz Explorer" },
+    "quiz-expert": { "title": "Quiz Expert" },
+    "quiz-scholar": { "title": "Quiz Scholar" },
+    "earthquake-expert": { "title": "Earthquake Expert" },
+    "fire-expert": { "title": "Fire Expert" },
+    "flood-expert": { "title": "Flood Expert" },
+    "firstaid-expert": { "title": "First-Aid Expert" },
+    "streak-1": { "title": "1-Day Streak" },
+    "streak-3": { "title": "3-Day Streak" },
+    "streak-5": { "title": "5-Day Streak" },
+    "streak-7": { "title": "7-Day Streak" },
+    "streak-14": { "title": "14-Day Streak" },
+    "streak-21": { "title": "21-Day Streak" }
+  }
+}

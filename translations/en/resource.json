@@ -1,6 +1,5 @@
-[
-  {
-    "id": "flooding",
+{
+  "flooding": {
     "title": "Flooding (Heavy Rain & Flash Floods)",
     "category": "Flooding",
     "icon": "rainy",
@@ -68,10 +67,19 @@
         "url": "https://go.gov.sg/be-flood-ready"
       }
     ],
-    "tags": ["Flood", "Flash flood", "Heavy rain", "F.L.A.S.H.", "Safety", "Pedestrian", "Motorist", "Homeowner", "Business"]
+    "tags": [
+      "Flood",
+      "Flash flood",
+      "Heavy rain",
+      "F.L.A.S.H.",
+      "Safety",
+      "Pedestrian",
+      "Motorist",
+      "Homeowner",
+      "Business"
+    ]
   },
-  {
-    "id": "fire-safety",
+  "fire-safety": {
     "title": "Fire Safety & What To Do in a Fire",
     "category": "Fire",
     "icon": "flame",
@@ -132,10 +140,17 @@
         "url": "https://www.scdf.gov.sg/"
       }
     ],
-    "tags": ["Fire", "SCDF", "Extinguisher", "High-rise", "Smoke", "Prevention", "Evacuation"]
+    "tags": [
+      "Fire",
+      "SCDF",
+      "Extinguisher",
+      "High-rise",
+      "Smoke",
+      "Prevention",
+      "Evacuation"
+    ]
   },
-  {
-    "id": "mosquito-dengue",
+  "mosquito-dengue": {
     "title": "Mosquito & Dengue: Symptoms and Prevention",
     "category": "Infectious",
     "icon": "bug",
@@ -179,8 +194,7 @@
     ],
     "tags": ["Dengue", "Mosquito", "S-A-W", "B-L-O-C-K", "Repellent"]
   },
-  {
-    "id": "cpr-aed-adult",
+  "cpr-aed-adult": {
     "title": "CPR + AED (Adult)",
     "category": "Cardiac",
     "icon": "heart",
@@ -231,8 +245,7 @@
     ],
     "tags": ["CPR", "AED", "Cardiac"]
   },
-  {
-    "id": "choking-adult",
+  "choking-adult": {
     "title": "Choking (Adult)",
     "category": "Airway",
     "icon": "warning",
@@ -280,8 +293,7 @@
     "links": [],
     "tags": ["Choking", "Airway", "Heimlich", "Back blows"]
   },
-  {
-    "id": "severe-bleeding",
+  "severe-bleeding": {
     "title": "Severe Bleeding",
     "category": "Trauma",
     "icon": "bandage",
@@ -325,8 +337,7 @@
     "links": [],
     "tags": ["Bleeding", "Trauma", "Tourniquet", "First Aid"]
   },
-  {
-    "id": "burns",
+  "burns": {
     "title": "Burns (Thermal)",
     "category": "Burns",
     "icon": "flame",
@@ -369,8 +380,7 @@
     ],
     "tags": ["Burns", "Scalds", "Children", "First Aid"]
   },
-  {
-    "id": "heat-stroke",
+  "heat-stroke": {
     "title": "Heat Stroke",
     "category": "Environmental",
     "icon": "sunny",
@@ -407,8 +417,7 @@
     "links": [],
     "tags": ["Heat", "Environment", "Emergency", "First Aid"]
   },
-  {
-    "id": "fracture-sprain",
+  "fracture-sprain": {
     "title": "Fracture & Sprain",
     "category": "Trauma",
     "icon": "fitness",
@@ -447,4 +456,4 @@
     "links": [],
     "tags": ["Fracture", "Sprain", "PRICE", "Trauma"]
   }
-]
+}

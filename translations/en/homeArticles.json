@@ -1,0 +1,6 @@
+{
+  "title": "Articles",
+  "open": "Open article",
+  "a11yOpen": "Open article: %{title} from %{source}",
+  "items": []
+}

@@ -1,0 +1,12 @@
+{
+  "history": {
+    "title": "测验历史",
+    "confirm": "确认",
+    "deleteAllMsg": "删除所有测验记录？",
+    "quizFallback": "测验",
+    "scoreLabel": "得分",
+    "searchPlaceholder": "搜索测验…",
+    "emptyTitle": "暂无测验历史",
+    "emptyText": "完成一次测验后会显示在这里。"
+  }
+}

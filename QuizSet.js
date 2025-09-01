@@ -7,14 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context"; // 👈 use the context version
+import { SafeAreaView } from "react-native-safe-area-context";
+import { t } from "./translations/translation";
 
 // Load quiz data from JSON
-import quizData from "./assets/quiz.json";
+import { getQuiz } from "./quizLoader";
+import { i18n } from "./translations/translation";
 
 // How many questions your Daily Quiz shows (matches QuizGame's daily sample: 8)
 const DAILY_QUESTION_COUNT = 8;
@@ -36,7 +37,7 @@ function HeaderBar({ title, onBack }) {
       <TouchableOpacity
         onPress={onBack}
         style={s.headerBtn}
-        accessibilityLabel="Back"
+        accessibilityLabel={t("quizSet.back")}
       >
         <Ionicons name="chevron-back" size={22} color="#111827" />
       </TouchableOpacity>
@@ -50,6 +51,7 @@ function HeaderBar({ title, onBack }) {
 
 export default function QuizSet() {
   const navigation = useNavigation();
+  const quizData = React.useMemo(() => getQuiz(), [i18n.locale]);
   const { params } = useRoute();
   const topicId = params?.topicId ?? "daily";
   const topicNameParam = params?.topicTitle;
@@ -62,11 +64,16 @@ export default function QuizSet() {
       (c) => String(c.id).toLowerCase() === String(topicId).toLowerCase()
     );
 
+  // Title priority: param from previous screen (already localized) → daily key → category title → fallback
   const topicTitle = useMemo(() => {
     if (topicNameParam) return topicNameParam;
-    if (isDaily) return "Daily Quiz";
-    return category?.title || "Quiz";
-  }, [topicNameParam, isDaily, category?.title]);
+    if (isDaily) return t("quizzes.daily.title");
+    // try localized category name from translations, fallback to JSON / 'Quiz'
+    return (
+      t(`quizzes.categories.${topicId}.title`, { defaultValue: category?.title }) ||
+      t("quizSet.quiz")
+    );
+  }, [topicNameParam, isDaily, category?.title, topicId]);
 
   const topicImage = CATEGORY_IMAGES[topicId] || CATEGORY_IMAGES.daily;
 
@@ -77,7 +84,7 @@ export default function QuizSet() {
         {
           id: "daily-today",
           index: 1,
-          title: "Today’s Quiz",
+          title: t("quizSet.today"), // “Today’s Quiz”
           questions: DAILY_QUESTION_COUNT,
           img: CATEGORY_IMAGES.daily,
         },
@@ -111,20 +118,15 @@ export default function QuizSet() {
     <SafeAreaView style={s.safeArea} edges={["top", "left", "right"]}>
       <HeaderBar title={topicTitle} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={s.container}>
-        <Text style={s.pageTitle}>Choose a set</Text>
-        <Text style={s.pageSub}>
-          Pick any set to begin. Questions are the same difficulty, 30s per
-          question.
-        </Text>
+        <Text style={s.pageTitle}>{t("quizSet.chooseASet")}</Text>
+        <Text style={s.pageSub}>{t("quizSet.subtitle")}</Text>
 
         <View style={{ height: 6 }} />
 
         {sets.length === 0 ? (
           <View style={s.emptyBox}>
             <Ionicons name="alert-circle-outline" size={20} color="#9CA3AF" />
-            <Text style={s.emptyText}>
-              No sets available for this category.
-            </Text>
+            <Text style={s.emptyText}>{t("quizSet.noSets")}</Text>
           </View>
         ) : (
           sets.map((set) => (
@@ -139,7 +141,9 @@ export default function QuizSet() {
                 <Text style={s.setTitle} numberOfLines={1}>
                   {set.title}
                 </Text>
-                <Text style={s.setSub}>{set.questions} Questions</Text>
+                <Text style={s.setSub}>
+                  {set.questions} {t("quizSet.questions")}
+                </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#111827" />
             </TouchableOpacity>

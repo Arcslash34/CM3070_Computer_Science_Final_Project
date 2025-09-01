@@ -1,5 +1,5 @@
 // chatbot.js
-import { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -14,8 +14,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useLanguage } from "./language";
-import translations from "./translations";
+import { LanguageContext } from "./translations/language";
+import { t } from "./translations/translation";
 
 // ===== Env + model =====
 const OPENROUTER_ENDPOINT = process.env.EXPO_PUBLIC_OPENROUTER_ENDPOINT ?? "";
@@ -44,7 +44,9 @@ function HeaderBar({ title, onBack }) {
       <TouchableOpacity
         onPress={onBack}
         style={styles.headerBtn}
-        accessibilityLabel="Back"
+        accessibilityLabel={
+          (t("chatbot.back") !== "chatbot.back" && t("chatbot.back")) || "Back"
+        }
       >
         <Ionicons name="chevron-back" size={22} color="#111827" />
       </TouchableOpacity>
@@ -61,9 +63,11 @@ export default function ChatbotScreen() {
   const [loading, setLoading] = useState(false);
   const [showPresets, setShowPresets] = useState(true);
   const scrollViewRef = useRef();
-  const { lang } = useLanguage();
-  const t = (key) => translations[lang][key] || key;
-  const presetQuestions = translations[lang].presetQuestions || [];
+  const { lang } = useContext(LanguageContext);
+
+  // Preset questions pulled from i18n (expects an array under "chatbot.presetQuestions")
+  const presetQuestions =
+    t("chatbot.presetQuestions", { returnObjects: true }) || [];
 
   const sendMessage = async (text = input) => {
     if (!text.trim() || loading) return;
@@ -145,7 +149,13 @@ export default function ChatbotScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.root}>
-        <HeaderBar title="Chatbot" onBack={() => navigation.goBack()} />
+        <HeaderBar
+          title={
+            (t("chatbot.title") !== "chatbot.title" && t("chatbot.title")) ||
+            "Chatbot"
+          }
+          onBack={() => navigation.goBack()}
+        />
 
         <KeyboardAvoidingView
           style={styles.container}
@@ -173,7 +183,8 @@ export default function ChatbotScreen() {
               <View style={[styles.message, styles.ai]}>
                 <Text>
                   🤖{" "}
-                  {(t("typing") !== "typing" && t("typing")) ||
+                  {(t("chatbot.typing") !== "chatbot.typing" &&
+                    t("chatbot.typing")) ||
                     "Bot is typing..."}
                 </Text>
               </View>
@@ -185,7 +196,15 @@ export default function ChatbotScreen() {
             style={styles.toggleButton}
           >
             <Text style={styles.toggleText}>
-              {showPresets ? "⬇️ Hide Suggestions" : "⬆️ Show Suggestions"}
+              {showPresets
+                ? (t("chatbot.hideSuggestions") !==
+                    "chatbot.hideSuggestions" &&
+                    t("chatbot.hideSuggestions")) ||
+                  "⬇️ Hide Suggestions"
+                : (t("chatbot.showSuggestions") !==
+                    "chatbot.showSuggestions" &&
+                    t("chatbot.showSuggestions")) ||
+                  "⬆️ Show Suggestions"}
             </Text>
           </TouchableOpacity>
 
@@ -209,7 +228,8 @@ export default function ChatbotScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={
-                  (t("askQuestion") !== "askQuestion" && t("askQuestion")) ||
+                  (t("chatbot.askQuestion") !== "chatbot.askQuestion" &&
+                    t("chatbot.askQuestion")) ||
                   "Type your question here..."
                 }
                 value={input}
@@ -224,7 +244,11 @@ export default function ChatbotScreen() {
             <TouchableOpacity
               onPress={() => sendMessage()}
               disabled={loading || !input.trim()}
-              accessibilityLabel="Send message"
+              accessibilityLabel={
+                (t("chatbot.sendMessage") !== "chatbot.sendMessage" &&
+                  t("chatbot.sendMessage")) ||
+                "Send message"
+              }
               activeOpacity={0.7}
               style={[
                 styles.sendBtnOutside,

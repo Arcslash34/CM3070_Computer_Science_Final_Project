@@ -1,8 +1,5 @@
 // badgesLogic.js
-// Centralized badge rules + insertion into public.user_disaster_badges
-// Also provides per-badge progress for the UI progress bars.
-
-import { BADGE_CATALOG } from "./badgeCatalog";
+import { BADGE_CATALOG as BADGE_CATALOG_FN } from "./badgeCatalog";
 
 /* ---------------------- helpers ---------------------- */
 
@@ -11,25 +8,26 @@ async function getUserId(supabase) {
   return data?.session?.user?.id || null;
 }
 
+// Make category detection work for EN + ZH quiz titles
 function categorizeTitle(title) {
-  const t = String(title || "").toLowerCase();
-  if (t.includes("fire")) return "fire";
-  if (t.includes("flood")) return "flood";
-  if (t.includes("earth")) return "earthquake";
-  if (t.includes("first") || t.includes("aid")) return "firstaid";
+  const s = String(title || "").toLowerCase();
+
+  // English tokens
+  if (s.includes("fire")) return "fire";
+  if (s.includes("flood")) return "flood";
+  if (s.includes("earth")) return "earthquake";
+  if (s.includes("first") || s.includes("aid")) return "firstaid";
+
+  // Chinese tokens
+  if (title && /火|火灾|火警/.test(title)) return "fire";
+  if (title && /洪|洪水|淹/.test(title)) return "flood";
+  if (title && /地震|震/.test(title)) return "earthquake";
+  if (title && /急救/.test(title)) return "firstaid";
+
   return null;
 }
 
 /* ------------------ progress summary ------------------ */
-/**
- * Returns the summary your UI needs to compute progress:
- * {
- *   userId,
- *   totalQuizzes,
- *   perfectByCategory: { fire, flood, earthquake, firstaid },
- *   streakDays
- * }
- */
 export async function getProgressSummary(supabase) {
   const userId = await getUserId(supabase);
   if (!userId) {
@@ -41,7 +39,7 @@ export async function getProgressSummary(supabase) {
     };
   }
 
-  // 1) Exact count of all quizzes completed
+  // exact count
   let totalQuizzes = 0;
   try {
     const { count, error } = await supabase
@@ -54,7 +52,7 @@ export async function getProgressSummary(supabase) {
     console.warn("Count quizzes failed:", e?.message || e);
   }
 
-  // 2) Pull titles/scores to compute perfect-by-category + current streak
+  // rows for perfect & streak
   const { data: rows, error: rowsErr } = await supabase
     .from("quiz_results")
     .select("quiz_title, score, created_at")
@@ -77,7 +75,7 @@ export async function getProgressSummary(supabase) {
     }
   });
 
-  // daily streak (consecutive days with >=1 quiz)
+  // streak calc
   let streakDays = 0;
   for (let i = 0; i < 400; i++) {
     const d = new Date();
@@ -95,12 +93,6 @@ export async function getProgressSummary(supabase) {
 }
 
 /* ----------------- per-badge progress ----------------- */
-/**
- * Maps a badgeId -> { value, goal } used by badges.js to render progress bars.
- * Expert category badges show perfect-count / 5 (e.g., 1/5).
- * Learning achievements show quiz-count / target (1,5,10,20).
- * Streaks show current streak / threshold.
- */
 export function computeBadgeProgress(badgeId, summary) {
   const q = Number(summary?.totalQuizzes || 0);
   const streak = Number(summary?.streakDays || 0);
@@ -122,7 +114,7 @@ export function computeBadgeProgress(badgeId, summary) {
     case "quiz-scholar":
       return { value: Math.min(q, 20), goal: 20 };
 
-    // Disaster Specialist — require 5 perfect scores in that category
+    // Disaster Specialist — require 5 perfect scores
     case "fire-expert":
       return { value: Math.min(p.fire, 5), goal: 5 };
     case "flood-expert":
@@ -147,7 +139,6 @@ export function computeBadgeProgress(badgeId, summary) {
       return { value: Math.min(streak, 21), goal: 21 };
 
     default:
-      // Unknown badge -> no progress
       return { value: 0, goal: 1 };
   }
 }
@@ -155,9 +146,6 @@ export function computeBadgeProgress(badgeId, summary) {
 /* --------------------- awarding rules --------------------- */
 
 function makeRules(summary, context) {
-  // We can still accept lastQuiz, but expert badges now key off counts.
-  const last = context?.lastQuiz || null;
-
   const q = Number(summary?.totalQuizzes || 0);
   const s = Number(summary?.streakDays || 0);
   const p = summary?.perfectByCategory || {
@@ -168,35 +156,32 @@ function makeRules(summary, context) {
   };
 
   return [
-    // Learning Achievements (total quizzes completed)
-    { id: "first-step",    test: () => q >= 1 },
+    // Learning Achievements
+    { id: "first-step", test: () => q >= 1 },
     { id: "quiz-explorer", test: () => q >= 5 },
-    { id: "quiz-expert",   test: () => q >= 10 },
-    { id: "quiz-scholar",  test: () => q >= 20 },
+    { id: "quiz-expert", test: () => q >= 10 },
+    { id: "quiz-scholar", test: () => q >= 20 },
 
-    // Disaster Specialist (need 5 perfect quizzes per category)
-    { id: "fire-expert",       test: () => p.fire >= 5 },
-    { id: "flood-expert",      test: () => p.flood >= 5 },
+    // Disaster Specialist
+    { id: "fire-expert", test: () => p.fire >= 5 },
+    { id: "flood-expert", test: () => p.flood >= 5 },
     { id: "earthquake-expert", test: () => p.earthquake >= 5 },
-    { id: "firstaid-expert",   test: () => p.firstaid >= 5 },
+    { id: "firstaid-expert", test: () => p.firstaid >= 5 },
 
-    // Consistency / Streaks
-    { id: "streak-1",  test: () => s >= 1 },
-    { id: "streak-3",  test: () => s >= 3 },
-    { id: "streak-5",  test: () => s >= 5 },
-    { id: "streak-7",  test: () => s >= 7 },
+    // Streaks
+    { id: "streak-1", test: () => s >= 1 },
+    { id: "streak-3", test: () => s >= 3 },
+    { id: "streak-5", test: () => s >= 5 },
+    { id: "streak-7", test: () => s >= 7 },
     { id: "streak-14", test: () => s >= 14 },
     { id: "streak-21", test: () => s >= 21 },
   ];
 }
 
-/* ---------------- award + metadata exports ---------------- */
-
 export async function checkAndAwardBadges(supabase, { lastQuiz = null } = {}) {
   const userId = await getUserId(supabase);
   if (!userId) return { newlyAwarded: [], alreadyHad: [] };
 
-  // load what the user already has
   const { data: ownedRows, error: ownErr } = await supabase
     .from("user_disaster_badges")
     .select("badge_id")
@@ -204,7 +189,6 @@ export async function checkAndAwardBadges(supabase, { lastQuiz = null } = {}) {
   if (ownErr) throw ownErr;
   const owned = new Set((ownedRows || []).map((r) => r.badge_id));
 
-  // build rules from current summary
   const summary = await getProgressSummary(supabase);
   const rules = makeRules(summary, { lastQuiz });
 
@@ -223,8 +207,7 @@ export async function checkAndAwardBadges(supabase, { lastQuiz = null } = {}) {
     const { error } = await supabase
       .from("user_disaster_badges")
       .insert(toAward.map((badge_id) => ({ user_id: userId, badge_id })));
-    // ignore "duplicate key" races
-    if (error && !String(error.message || "").includes("duplicate key")) {  
+    if (error && !String(error.message || "").includes("duplicate key")) {
       throw error;
     }
   }
@@ -234,6 +217,9 @@ export async function checkAndAwardBadges(supabase, { lastQuiz = null } = {}) {
 
 export function getBadgeMeta(badgeId) {
   return (
-    BADGE_CATALOG.find((b) => b.id === badgeId) || { id: badgeId, title: badgeId }
+    (BADGE_CATALOG_FN() || []).find((b) => b.id === badgeId) || {
+      id: badgeId,
+      title: badgeId,
+    }
   );
 }

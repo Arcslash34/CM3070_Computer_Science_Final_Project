@@ -1,0 +1,22 @@
+{
+  "title": "Disaster Preparedness Checklist",
+  "resetCategory": {
+    "a11y": "Reset current category"
+  },
+  "search": {
+    "placeholder": "Search checklist…",
+    "clear": "Clear search",
+    "noMatches": "No items match “{{query}}”."
+  },
+  "categoryProgress": "Category Progress",
+  "items": "items",
+  "noCategorySelected": "No category selected.",
+  "badge": {
+    "critical": "CRITICAL"
+  },
+  "congrats": {
+    "title": "All set for this category! 🎉",
+    "subtitle": "You’ve completed every item in “{{category}}”.",
+    "cta": "Nice!"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "title": "证书",
+  "anonymous": "匿名",
+  "demoMode": "演示模式",
+  "showUsername": "在证书上显示用户名",
+  "printingAs": "打印姓名：",
+  "masteryTitle": "急救掌握情况",
+  "loading": "正在载入进度…",
+  "perfectCount": "急救第1–5套满分次数：",
+  "unlockHint": "全部五套均取得100%即可解锁证书下载。",
+  "demoEnabled": "已开启演示模式——测试期间可直接下载。",
+  "disclaimer": "这不是正式证书，仅用于项目/演示目的生成。",
+  "unavailableTitle": "不可用",
+  "unavailableBody": "需在五套急救测验（#1–#5）中全部取得100%成绩后，方可下载此证书。",
+  "shareTitle": "分享 {{title}}",
+  "generateFail": "证书生成失败。",
+  "completed": "已完成：{{count}}/{{total}}",
+  "demoUnlocked": "演示已解锁",
+  "pdf": "PDF",
+  "items": {
+    "cpr": "心肺复苏证书",
+    "aed": "自动体外除颤器证书",
+    "bleed": "严重出血处置证书"
+  }
+}

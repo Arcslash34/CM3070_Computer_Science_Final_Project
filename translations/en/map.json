@@ -1,0 +1,50 @@
+{
+  "title": "Live Environmental Map",
+  "a11yClose": "Close map",
+  "loading": "Preparing map data...",
+  "layers": {
+    "rain": "RAIN",
+    "pm25": "PM2.5",
+    "wind": "WIND",
+    "temp": "TEMP",
+    "humidity": "HUMID"
+  },
+  "a11yLayer": {
+    "rain": "Show rain layer",
+    "pm25": "Show PM2.5 layer",
+    "wind": "Show wind layer",
+    "temp": "Show temperature layer",
+    "humidity": "Show humidity layer"
+  },
+  "html": {
+    "youAreHere": "You are here",
+    "legend": {
+      "rain": "Flood Risk",
+      "high": "High",
+      "moderate": "Moderate",
+      "low": "Low",
+      "pm25": "PM2.5",
+      "wind": "Wind",
+      "temp": "Temperature",
+      "humidity": "Humidity",
+      "chipPm25": "Chip: µg/m³",
+      "chipWind": "Chip: knots",
+      "chipTemp": "Chip: °C",
+      "chipHumidity": "Chip: %"
+    },
+    "popup": {
+      "location": "Location",
+      "station": "Station",
+      "region": "Region",
+      "rainfall": "Rainfall",
+      "last1h": "Last 1h",
+      "floodRisk": "Flood Risk",
+      "pm25": "PM2.5",
+      "windSpeed": "Wind speed",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "na": "n/a"
+    },
+    "units": { "mm": "mm", "kn": "kn", "c": "°C", "percent": "%" }
+  }
+}

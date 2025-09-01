@@ -1,0 +1,42 @@
+{
+  "title": "文章",
+  "open": "打开文章",
+  "a11yOpen": "打开文章：来自 %{source} 的「%{title}」",
+  "items": [
+    {
+      "id": "st-flood",
+      "title": "裕廊市政厅路突发积水；敦南路发布警示",
+      "source": "海峡时报"
+    },
+    {
+      "id": "st-strong-winds-2024-09-17",
+      "title": "9 月 17 日新加坡多地录得强风，东海岸公园达 83.2 公里/时",
+      "source": "海峡时报"
+    },
+    {
+      "id": "nea-haze",
+      "title": "烟霾：1 小时 PM2.5 与 24 小时 PSI（实时地图）",
+      "source": "新加坡国家环境局（NEA）"
+    },
+    {
+      "id": "nea-dengue-zika",
+      "title": "登革热与寨卡：聚集区、防范与病例",
+      "source": "新加坡国家环境局（NEA）"
+    },
+    {
+      "id": "scdf-fire-residential",
+      "title": "住宅区消防安全指南",
+      "source": "新加坡民防部队（SCDF）"
+    },
+    {
+      "id": "independent-johor-quakes",
+      "title": "周末地震震动柔佛：专家警告马来半岛与新加坡未来并非完全免于震感",
+      "source": "新加坡独立报"
+    },
+    {
+      "id": "shf-cpr-aed-adults",
+      "title": "成人心肺复苏术（CPR）+ 自动体外除颤器（AED）操作指南",
+      "source": "新加坡心脏基金会"
+    }
+  ]
+}

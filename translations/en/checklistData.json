@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "updated": "2025-08-26",
+  "categories": [
+    {
+      "id": "go-bag",
+      "title": "Go-Bag Essentials",
+      "icon": "bag",
+      "subcategories": [
+        {
+          "id": "go-bag-basics",
+          "title": "Basics",
+          "items": [
+            { "id": "go-bag-basics-water", "label": "Water (3L per person/day for 3 days)", "desc": "Rotate every 6 months; store sealed.", "critical": true },
+            { "id": "go-bag-basics-food", "label": "Non-perishable food (3-day supply)", "desc": "Canned or dry foods; include can opener.", "critical": true },
+            { "id": "go-bag-basics-flashlight", "label": "Flashlight + spare batteries", "desc": "Headlamp preferred for hands-free use.", "critical": true },
+            { "id": "go-bag-basics-first-aid", "label": "First-aid kit", "desc": "Bandages, gauze, antiseptic, pain reliever.", "critical": true },
+            { "id": "go-bag-basics-powerbank", "label": "Power bank + charging cable", "desc": "Keep fully charged; carry wall plug.", "critical": true },
+            { "id": "go-bag-basics-whistle", "label": "Whistle", "desc": "3 blasts for distress.", "optional": true },
+            { "id": "go-bag-basics-blanket", "label": "Thermal blanket", "optional": true },
+            { "id": "go-bag-basics-cash", "label": "Cash (small notes)", "desc": "ATMs/terminals may be down.", "optional": true },
+            { "id": "go-bag-basics-docs", "label": "Copies of IDs & key documents", "desc": "Printed + digital backups; waterproof pouch.", "critical": true }
+          ]
+        },
+        {
+          "id": "go-bag-hygiene",
+          "title": "Hygiene",
+          "items": [
+            { "id": "go-bag-hygiene-masks", "label": "Face masks (spares)", "optional": true },
+            { "id": "go-bag-hygiene-sanitizer", "label": "Hand sanitizer / wet wipes", "optional": true },
+            { "id": "go-bag-hygiene-soap", "label": "Soap / toiletries", "optional": true },
+            { "id": "go-bag-hygiene-bags", "label": "Trash bags / zip bags", "desc": "For waste and waterproofing.", "optional": true }
+          ]
+        },
+        {
+          "id": "go-bag-tools",
+          "title": "Tools & Extras",
+          "items": [
+            { "id": "go-bag-tools-multitool", "label": "Multi-tool or basic toolkit", "optional": true },
+            { "id": "go-bag-tools-ducttape", "label": "Duct tape", "optional": true },
+            { "id": "go-bag-tools-matches", "label": "Waterproof matches/lighter", "optional": true },
+            { "id": "go-bag-tools-poncho", "label": "Rain poncho", "optional": true },
+            { "id": "go-bag-tools-paracord", "label": "Paracord/rope", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flood",
+      "title": "Flood Preparedness",
+      "icon": "rainy",
+      "subcategories": [
+        {
+          "id": "flood-before",
+          "title": "Before a Flood",
+          "items": [
+            { "id": "flood-before-drains", "label": "Clear drains and gutters", "desc": "Remove leaves/debris to improve runoff." },
+            { "id": "flood-before-sandbags", "label": "Prepare sandbags or flood barriers", "desc": "Protect doorways and low vents." },
+            { "id": "flood-before-elevate", "label": "Elevate appliances and valuables", "desc": "Move items above expected water line." },
+            { "id": "flood-before-backflow", "label": "Check/install backflow plugs", "desc": "Reduce risk of sewage backup.", "optional": true },
+            { "id": "flood-before-photos", "label": "Photograph home & documents", "desc": "For insurance and claims." }
+          ]
+        },
+        {
+          "id": "flood-during",
+          "title": "During a Flood",
+          "items": [
+            { "id": "flood-during-monitor", "label": "Monitor official alerts", "desc": "Use app notifications and radio.", "critical": true },
+            { "id": "flood-during-avoidwater", "label": "Avoid floodwaters", "desc": "6 inches can knock you down; 12 inches can carry a car.", "critical": true },
+            { "id": "flood-during-power", "label": "Turn off electricity (if safe)", "desc": "Never touch wet electrical equipment.", "critical": true },
+            { "id": "flood-during-evacuate", "label": "Move to higher ground / prepare to evacuate", "critical": true },
+            { "id": "flood-during-go-bag", "label": "Carry your go-bag and meds", "critical": true }
+          ]
+        },
+        {
+          "id": "flood-after",
+          "title": "After a Flood",
+          "items": [
+            { "id": "flood-after-return", "label": "Return home only when authorities say it’s safe" },
+            { "id": "flood-after-avoidstanding", "label": "Avoid standing water", "desc": "May be electrically charged or contaminated." },
+            { "id": "flood-after-photodamage", "label": "Photograph damage before cleanup" },
+            { "id": "flood-after-ventilate", "label": "Ventilate and dry the home", "desc": "Open windows, use fans/dehumidifiers." },
+            { "id": "flood-after-disinfect", "label": "Disinfect surfaces and discard porous items", "desc": "To prevent mold growth." },
+            { "id": "flood-after-food", "label": "Discard spoiled food and compromised water" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "Fire Safety",
+      "icon": "flame",
+      "subcategories": [
+        {
+          "id": "fire-prevent",
+          "title": "Prevention",
+          "items": [
+            { "id": "fire-prevent-smokealarms", "label": "Test smoke alarms monthly", "critical": true },
+            { "id": "fire-prevent-extinguisher", "label": "Keep an ABC fire extinguisher", "desc": "Know PASS: Pull, Aim, Squeeze, Sweep.", "critical": true },
+            { "id": "fire-prevent-outlets", "label": "Avoid overloaded outlets and damaged cords" },
+            { "id": "fire-prevent-flammables", "label": "Store flammables safely away from heat" },
+            { "id": "fire-prevent-escapeplan", "label": "Create & practice a home escape plan", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-during",
+          "title": "During a Fire",
+          "items": [
+            { "id": "fire-during-911", "label": "Call emergency services once safely outside", "critical": true },
+            { "id": "fire-during-low", "label": "Stay low and crawl under smoke", "critical": true },
+            { "id": "fire-during-doorheat", "label": "Check door temperature with back of hand" },
+            { "id": "fire-during-closedoors", "label": "Close doors behind you to slow spread" },
+            { "id": "fire-during-stopdroproll", "label": "If clothes catch fire: Stop, Drop, Roll", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-after",
+          "title": "After a Fire",
+          "items": [
+            { "id": "fire-after-reenter", "label": "Do not reenter until cleared by authorities", "critical": true },
+            { "id": "fire-after-insurance", "label": "Contact insurer & document damage" },
+            { "id": "fire-after-utilities", "label": "Have utilities inspected before turning on" },
+            { "id": "fire-after-detectors", "label": "Replace damaged smoke detectors" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "health-first-aid",
+      "title": "Health & First Aid",
+      "icon": "medkit",
+      "subcategories": [
+        {
+          "id": "health-meds",
+          "title": "Personal Medications",
+          "items": [
+            { "id": "health-meds-list", "label": "Maintain updated medication list", "desc": "Include dosages and allergies.", "critical": true },
+            { "id": "health-meds-7days", "label": "7-day backup supply (if possible)", "optional": true },
+            { "id": "health-meds-copies", "label": "Copies of prescriptions", "optional": true }
+          ]
+        },
+        {
+          "id": "health-firstaid-kit",
+          "title": "First Aid Kit",
+          "items": [
+            { "id": "health-firstaid-bandages", "label": "Adhesive bandages & sterile gauze", "critical": true },
+            { "id": "health-firstaid-antiseptic", "label": "Antiseptic wipes / solution", "critical": true },
+            { "id": "health-firstaid-tape", "label": "Medical tape & scissors" },
+            { "id": "health-firstaid-gloves", "label": "Disposable gloves & masks" },
+            { "id": "health-firstaid-pain", "label": "Pain/fever reliever", "optional": true },
+            { "id": "health-firstaid-thermometer", "label": "Thermometer", "optional": true }
+          ]
+        },
+        {
+          "id": "health-hygiene",
+          "title": "Hygiene",
+          "items": [
+            { "id": "health-hygiene-soap", "label": "Soap, toothbrushes, toothpaste" },
+            { "id": "health-hygiene-wipes", "label": "Sanitizer & wipes" },
+            { "id": "health-hygiene-feminine", "label": "Feminine hygiene supplies", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "family-comm",
+      "title": "Family & Communications",
+      "icon": "people",
+      "subcategories": [
+        {
+          "id": "family-contacts",
+          "title": "Contacts",
+          "items": [
+            { "id": "family-contacts-ice", "label": "List ICE contacts on phone & printed", "desc": "Include medical and next-of-kin.", "critical": true },
+            { "id": "family-contacts-outofarea", "label": "Choose an out-of-area contact", "desc": "Family checks in if local lines are busy." },
+            { "id": "family-contacts-emergency", "label": "Save local emergency numbers", "desc": "Police, Fire/Ambulance, Utility hotline." }
+          ]
+        },
+        {
+          "id": "family-plan",
+          "title": "Family Plan",
+          "items": [
+            { "id": "family-plan-meetpoints", "label": "Set primary & backup meeting points", "critical": true },
+            { "id": "family-plan-routes", "label": "Agree on evacuation routes" },
+            { "id": "family-plan-pets", "label": "Plan for pets (carriers, food, records)" },
+            { "id": "family-plan-drills", "label": "Practice drills (quarterly)", "optional": true }
+          ]
+        },
+        {
+          "id": "family-docs",
+          "title": "Documents",
+          "items": [
+            { "id": "family-docs-backups", "label": "Secure digital backups of key documents", "desc": "Encrypted cloud + offline copy." },
+            { "id": "family-docs-waterproof", "label": "Waterproof pouch for originals", "critical": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "updated": "2025-08-26",
+  "categories": [
+    {
+      "id": "go-bag",
+      "title": "应急背包必备",
+      "icon": "bag",
+      "subcategories": [
+        {
+          "id": "go-bag-basics",
+          "title": "基础物资",
+          "items": [
+            { "id": "go-bag-basics-water", "label": "饮用水（每人每天3升，备3天）", "desc": "每6个月轮换；密封保存。", "critical": true },
+            { "id": "go-bag-basics-food", "label": "耐储存食物（3天份）", "desc": "罐头或干粮；别忘了开罐器。", "critical": true },
+            { "id": "go-bag-basics-flashlight", "label": "手电筒 + 备用电池", "desc": "优先选头灯，解放双手。", "critical": true },
+            { "id": "go-bag-basics-first-aid", "label": "急救包", "desc": "绷带、纱布、消毒用品、止痛药等。", "critical": true },
+            { "id": "go-bag-basics-powerbank", "label": "充电宝 + 数据线", "desc": "保持满电；携带插头。", "critical": true },
+            { "id": "go-bag-basics-whistle", "label": "哨子", "desc": "遇险连续3声求救。", "optional": true },
+            { "id": "go-bag-basics-blanket", "label": "急救保温毯", "optional": true },
+            { "id": "go-bag-basics-cash", "label": "现金（小面额）", "desc": "ATM/终端可能无法使用。", "optional": true },
+            { "id": "go-bag-basics-docs", "label": "身份证件与重要文件的复印件", "desc": "纸质+电子备份；防水袋保存。", "critical": true }
+          ]
+        },
+        {
+          "id": "go-bag-hygiene",
+          "title": "清洁卫生",
+          "items": [
+            { "id": "go-bag-hygiene-masks", "label": "口罩（备用）", "optional": true },
+            { "id": "go-bag-hygiene-sanitizer", "label": "免洗消毒液 / 湿巾", "optional": true },
+            { "id": "go-bag-hygiene-soap", "label": "香皂 / 盥洗用品", "optional": true },
+            { "id": "go-bag-hygiene-bags", "label": "垃圾袋 / 密封袋", "desc": "用于处理废弃物和防水。", "optional": true }
+          ]
+        },
+        {
+          "id": "go-bag-tools",
+          "title": "工具与其它",
+          "items": [
+            { "id": "go-bag-tools-multitool", "label": "多功能工具钳或基础工具", "optional": true },
+            { "id": "go-bag-tools-ducttape", "label": "管道胶带", "optional": true },
+            { "id": "go-bag-tools-matches", "label": "防水火柴/打火机", "optional": true },
+            { "id": "go-bag-tools-poncho", "label": "雨披", "optional": true },
+            { "id": "go-bag-tools-paracord", "label": "伞绳/绳索", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flood",
+      "title": "洪水防范",
+      "icon": "rainy",
+      "subcategories": [
+        {
+          "id": "flood-before",
+          "title": "洪水来临前",
+          "items": [
+            { "id": "flood-before-drains", "label": "清理排水沟和雨水槽", "desc": "清除落叶/杂物以提升排水。" },
+            { "id": "flood-before-sandbags", "label": "准备沙袋或防洪挡板", "desc": "保护门口和低位通风口。" },
+            { "id": "flood-before-elevate", "label": "抬高电器和贵重物品", "desc": "放至预计水位之上。" },
+            { "id": "flood-before-backflow", "label": "检查/安装防反水阀", "desc": "降低污水倒灌风险。", "optional": true },
+            { "id": "flood-before-photos", "label": "拍摄住所与文件留底", "desc": "用于保险与理赔。" }
+          ]
+        },
+        {
+          "id": "flood-during",
+          "title": "洪水期间",
+          "items": [
+            { "id": "flood-during-monitor", "label": "关注官方警报", "desc": "使用App通知与收音机。", "critical": true },
+            { "id": "flood-during-avoidwater", "label": "远离洪水", "desc": "15厘米积水可使人跌倒；30厘米可冲走汽车。", "critical": true },
+            { "id": "flood-during-power", "label": "在安全前提下关闭电源", "desc": "切勿触碰被水浸的电器。", "critical": true },
+            { "id": "flood-during-evacuate", "label": "转移至高处/准备撤离", "critical": true },
+            { "id": "flood-during-go-bag", "label": "携带应急背包与常用药物", "critical": true }
+          ]
+        },
+        {
+          "id": "flood-after",
+          "title": "洪水过后",
+          "items": [
+            { "id": "flood-after-return", "label": "仅在官方宣布安全后方可返家" },
+            { "id": "flood-after-avoidstanding", "label": "避免接触积水", "desc": "可能带电或被污染。" },
+            { "id": "flood-after-photodamage", "label": "清理前先拍摄损坏情况" },
+            { "id": "flood-after-ventilate", "label": "通风并尽快干燥室内", "desc": "开窗，使用风扇/除湿机。" },
+            { "id": "flood-after-disinfect", "label": "消毒表面并丢弃多孔物品", "desc": "防止霉菌滋生。" },
+            { "id": "flood-after-food", "label": "丢弃变质食物与受污染水源" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "火灾安全",
+      "icon": "flame",
+      "subcategories": [
+        {
+          "id": "fire-prevent",
+          "title": "预防措施",
+          "items": [
+            { "id": "fire-prevent-smokealarms", "label": "每月测试烟雾报警器", "critical": true },
+            { "id": "fire-prevent-extinguisher", "label": "配置ABC灭火器", "desc": "牢记 PASS：拉、瞄、压、扫。", "critical": true },
+            { "id": "fire-prevent-outlets", "label": "避免插座过载与损坏电线" },
+            { "id": "fire-prevent-flammables", "label": "易燃物远离热源安全存放" },
+            { "id": "fire-prevent-escapeplan", "label": "制定并演练家庭逃生计划", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-during",
+          "title": "火灾中",
+          "items": [
+            { "id": "fire-during-911", "label": "撤离到安全地带后立即报警", "critical": true },
+            { "id": "fire-during-low", "label": "贴近地面在烟雾下匍匐前进", "critical": true },
+            { "id": "fire-during-doorheat", "label": "用手背测试门是否烫手" },
+            { "id": "fire-during-closedoors", "label": "随手关门以延缓火势蔓延" },
+            { "id": "fire-during-stopdroproll", "label": "衣物着火：停、倒、滚", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-after",
+          "title": "火灾后",
+          "items": [
+            { "id": "fire-after-reenter", "label": "未获官方许可前切勿返入", "critical": true },
+            { "id": "fire-after-insurance", "label": "联系保险并记录损失" },
+            { "id": "fire-after-utilities", "label": "通电前请专业人员检查水电气" },
+            { "id": "fire-after-detectors", "label": "更换受损的烟雾报警器" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "health-first-aid",
+      "title": "健康与急救",
+      "icon": "medkit",
+      "subcategories": [
+        {
+          "id": "health-meds",
+          "title": "个人药物",
+          "items": [
+            { "id": "health-meds-list", "label": "保持用药清单最新", "desc": "注明剂量与过敏史。", "critical": true },
+            { "id": "health-meds-7days", "label": "备用7天药量（如可行）", "optional": true },
+            { "id": "health-meds-copies", "label": "处方复印件", "optional": true }
+          ]
+        },
+        {
+          "id": "health-firstaid-kit",
+          "title": "急救包",
+          "items": [
+            { "id": "health-firstaid-bandages", "label": "创可贴与无菌纱布", "critical": true },
+            { "id": "health-firstaid-antiseptic", "label": "消毒湿巾/溶液", "critical": true },
+            { "id": "health-firstaid-tape", "label": "医用胶带与剪刀" },
+            { "id": "health-firstaid-gloves", "label": "一次性手套与口罩" },
+            { "id": "health-firstaid-pain", "label": "止痛/退烧药", "optional": true },
+            { "id": "health-firstaid-thermometer", "label": "体温计", "optional": true }
+          ]
+        },
+        {
+          "id": "health-hygiene",
+          "title": "日常清洁",
+          "items": [
+            { "id": "health-hygiene-soap", "label": "香皂、牙刷、牙膏" },
+            { "id": "health-hygiene-wipes", "label": "消毒液与湿巾" },
+            { "id": "health-hygiene-feminine", "label": "女性卫生用品", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "family-comm",
+      "title": "家庭与通讯",
+      "icon": "people",
+      "subcategories": [
+        {
+          "id": "family-contacts",
+          "title": "联系人",
+          "items": [
+            { "id": "family-contacts-ice", "label": "在手机与纸质上保存紧急联系人", "desc": "包含就医信息和直系亲属。", "critical": true },
+            { "id": "family-contacts-outofarea", "label": "指定区外联系人", "desc": "本地线路拥堵时家人统一报平安。" },
+            { "id": "family-contacts-emergency", "label": "保存本地紧急电话", "desc": "警方、消防/救护、公共服务热线。" }
+          ]
+        },
+        {
+          "id": "family-plan",
+          "title": "家庭计划",
+          "items": [
+            { "id": "family-plan-meetpoints", "label": "约定主备集合点", "critical": true },
+            { "id": "family-plan-routes", "label": "商定撤离路线" },
+            { "id": "family-plan-pets", "label": "宠物安排（笼具、食物、记录）" },
+            { "id": "family-plan-drills", "label": "定期演练（每季度）", "optional": true }
+          ]
+        },
+        {
+          "id": "family-docs",
+          "title": "重要文件",
+          "items": [
+            { "id": "family-docs-backups", "label": "为关键文件制作数字备份", "desc": "加密云端 + 离线副本。" },
+            { "id": "family-docs-waterproof", "label": "原件使用防水袋保存", "critical": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 // resourceHub.js
-import React, { useMemo, useState, useLayoutEffect } from "react";
+import React, { useMemo, useState, useLayoutEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -17,14 +17,36 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import RESOURCES from "./assets/resource.json";
+import { t } from "./translations/translation";
+import { LanguageContext } from "./translations/language";
 
-const CATEGORIES = [
-  "All",
-  ...Array.from(new Set(RESOURCES.map((r) => r.category))),
-];
+/* ---------------- Build resources from i18n ---------------- */
+function useTranslatedResources() {
+  // Depend on lang so switch triggers recompute
+  const { lang } = useContext(LanguageContext);
+  const dict = t("resources", { returnObjects: true }) || {};
+  return useMemo(
+    () => Object.entries(dict).map(([id, v]) => ({ id, ...v })),
+    [dict, lang]
+  );
+}
 
-// visual accents per category
+/* ------------- Category -> accent mapping (locale-agnostic) -------------
+   We map by resource ID (stable) to a neutral accent key.
+*/
+const CATEGORY_BY_ID = {
+  "flooding": "Flooding",
+  "fire-safety": "Fire",
+  "mosquito-dengue": "Infectious",
+  "cpr-aed-adult": "Cardiac",
+  "choking-adult": "Airway",
+  "severe-bleeding": "Trauma",
+  "burns": "Burns",
+  "heat-stroke": "Environmental",
+  "fracture-sprain": "Trauma",
+};
+
+// visual accents per accent key
 const CAT_ACCENTS = {
   Cardiac: { bg: "#FDF2F2", text: "#B91C1C", stripe: "#FCA5A5" },
   Airway: { bg: "#EFF6FF", text: "#1D4ED8", stripe: "#93C5FD" },
@@ -44,11 +66,22 @@ const CHIP_ROW_HEIGHT = CHIP_HEIGHT + CHIP_ROW_VPAD * 2;
 const MAX_QUICK = 3;
 
 export default function ResourceHub() {
+  const { lang } = useContext(LanguageContext);
   const insets = useSafeAreaInsets();
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
-  const [sortAlpha, setSortAlpha] = useState(false);
   const navigation = useNavigation();
+
+  const RESOURCES = useTranslatedResources();
+
+  // Localized categories list (includes localized "All" + unique localized category labels)
+  const CATEGORIES = useMemo(() => {
+    const all = t("resourceHub.all");
+    const uniq = Array.from(new Set(RESOURCES.map((r) => r.category)));
+    return [all, ...uniq];
+  }, [RESOURCES, lang]);
+
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState(t("resourceHub.all"));
+  const [sortAlpha, setSortAlpha] = useState(false);
 
   // Hide native header for this screen
   useLayoutEffect(() => {
@@ -59,34 +92,39 @@ export default function ResourceHub() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return RESOURCES.filter((r) => {
-      const inCategory = category === "All" || r.category === category;
+      const inCategory = category === t("resourceHub.all") || r.category === category;
       const inText =
         !q ||
-        r.title.toLowerCase().includes(q) ||
-        (r.tags?.some?.((t) => t.toLowerCase().includes(q)) ?? false);
+        r.title?.toLowerCase?.().includes(q) ||
+        (r.tags?.some?.((tag) => tag?.toLowerCase?.().includes(q)) ?? false);
       return inCategory && inText;
     });
-  }, [query, category]);
+  }, [query, category, RESOURCES, lang]);
 
   // Sort
   const items = useMemo(() => {
     const arr = [...filtered];
     if (sortAlpha) arr.sort((a, b) => a.title.localeCompare(b.title));
     return arr;
-  }, [filtered, sortAlpha]);
+  }, [filtered, sortAlpha, lang]);
+
+  // Header accent color: infer from the first item that matches the chosen (localized) category
+  const headerAccent = useMemo(() => {
+    if (category === t("resourceHub.all")) return "#6B7280";
+    const match = RESOURCES.find((r) => r.category === category);
+    const key = match ? CATEGORY_BY_ID[match.id] : "default";
+    return (CAT_ACCENTS[key] || CAT_ACCENTS.default).text;
+  }, [category, RESOURCES, lang]);
 
   const hasQuery = query.trim().length > 0;
   const countLabel = `${filtered.length} ${
-    filtered.length === 1 ? "Guide" : "Guides"
+    filtered.length === 1 ? t("resourceHub.guide") : t("resourceHub.guides")
   }`;
-  const scopeLabel = category === "All" ? "All topics" : category;
+  const scopeLabel =
+    category === t("resourceHub.all") ? t("resourceHub.allTopics") : category;
   const headerText = hasQuery
-    ? `${countLabel} • matching “${query.trim()}”`
+    ? `${countLabel} • ${t("resourceHub.matching", { q: query.trim() })}`
     : `${countLabel} • ${scopeLabel}`;
-  const headerAccent =
-    category === "All"
-      ? "#6B7280"
-      : (CAT_ACCENTS[category] || CAT_ACCENTS.default).text;
 
   const openArticle = (item) =>
     navigation.navigate("ResourceArticle", { article: item });
@@ -110,14 +148,14 @@ export default function ResourceHub() {
           source={require("./assets/logo1.png")}
           style={styles.brandLogoImg}
         />
-        <Text style={styles.brandTitle}>Resource Hub</Text>
+        <Text style={styles.brandTitle}>{t("resourceHub.title")}</Text>
       </View>
 
       {/* Search + Sort */}
       <View style={styles.searchRow}>
         <Ionicons name="search" size={16} color="#6B7280" />
         <TextInput
-          placeholder="Search first-aid guides…"
+          placeholder={t("resourceHub.searchPlaceholder")}
           placeholderTextColor="#9CA3AF"
           style={styles.searchInput}
           value={query}
@@ -127,7 +165,7 @@ export default function ResourceHub() {
         {query.length > 0 && (
           <TouchableOpacity
             onPress={() => setQuery("")}
-            accessibilityLabel="Clear search"
+            accessibilityLabel={t("resourceHub.clearSearch")}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Ionicons name="close-circle" size={16} color="#9CA3AF" />
@@ -137,7 +175,9 @@ export default function ResourceHub() {
           onPress={() => setSortAlpha((s) => !s)}
           style={styles.sortBtn}
           accessibilityLabel={
-            sortAlpha ? "Sorted A to Z (tap to restore)" : "Sort A to Z"
+            sortAlpha
+              ? t("resourceHub.sortedAToZTapToRestore")
+              : t("resourceHub.sortAToZ")
           }
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
@@ -156,11 +196,11 @@ export default function ResourceHub() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chipsRow}
         >
-          {CATEGORIES.map((c) => {
+          {CATEGORIES.map((c, i) => {
             const active = c === category;
             return (
               <TouchableOpacity
-                key={c}
+                key={`cat-${i}-${String(c)}`}
                 onPress={() => setCategory(c)}
                 style={[styles.chip, active && styles.chipActive]}
                 activeOpacity={0.85}
@@ -188,20 +228,19 @@ export default function ResourceHub() {
             {headerText}
           </Text>
           <Text style={styles.disclaimerInline}>
-            This hub provides general first-aid guidance and is not a substitute
-            for professional medical advice. In emergencies call your local
-            number (e.g., 995 in Singapore).
+            {t("resourceHub.disclaimerInline")}
           </Text>
         </View>
 
         {/* Cards */}
-        {items.map((item) => {
-          const accent = CAT_ACCENTS[item.category] || CAT_ACCENTS.default;
+        {items.map((item, i) => {
+          const accentKey = CATEGORY_BY_ID[item.id] || "default";
+          const accent = CAT_ACCENTS[accentKey] || CAT_ACCENTS.default;
           const extraCount = Math.max(0, (item.quick?.length || 0) - MAX_QUICK);
           const ionName = item.icon || "information-circle";
           return (
             <TouchableOpacity
-              key={item.id}
+              key={item.id ?? `res-${i}`}
               style={[
                 styles.card,
                 { shadowOpacity: Platform.OS === "ios" ? 0.08 : 0.12 },
@@ -248,8 +287,8 @@ export default function ResourceHub() {
 
                 {/* Quick tips checklist */}
                 <View style={styles.quickList}>
-                  {(item.quick || []).slice(0, MAX_QUICK).map((q, i) => (
-                    <View key={i} style={styles.quickItem}>
+                  {(item.quick || []).slice(0, MAX_QUICK).map((q, qi) => (
+                    <View key={`q-${item.id ?? "x"}-${qi}`} style={styles.quickItem}>
                       <Ionicons
                         name="checkmark-circle"
                         size={14}
@@ -268,7 +307,7 @@ export default function ResourceHub() {
                       <Text
                         style={[styles.morePillText, { color: accent.text }]}
                       >
-                        +{extraCount} more
+                        +{extraCount} {t("resourceHub.more")}
                       </Text>
                     </View>
                   )}
@@ -277,7 +316,7 @@ export default function ResourceHub() {
                 {/* Read more */}
                 <View style={styles.readMoreRow}>
                   <Text style={[styles.readMoreText, { color: accent.text }]}>
-                    Read more
+                    {t("resourceHub.readMore")}
                   </Text>
                   <Ionicons
                     name="chevron-forward"
@@ -293,10 +332,8 @@ export default function ResourceHub() {
         {items.length === 0 && (
           <View style={styles.empty}>
             <Ionicons name="search" size={20} color="#9CA3AF" />
-            <Text style={styles.emptyTitle}>No results</Text>
-            <Text style={styles.emptyText}>
-              Try a broader term like “CPR”, “burns”, or “sprain”.
-            </Text>
+            <Text style={styles.emptyTitle}>{t("resourceHub.noResults")}</Text>
+            <Text style={styles.emptyText}>{t("resourceHub.noResultsText")}</Text>
           </View>
         )}
       </ScrollView>

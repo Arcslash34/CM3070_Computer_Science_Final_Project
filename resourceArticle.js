@@ -26,6 +26,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { t } from "./translations/translation";
 
 // Map imageKey (from resource.json) -> local asset
 const IMAGE_MAP = {
@@ -156,7 +157,10 @@ export default function ResourceArticle() {
               onPress={() => navigation.goBack()}
               style={[styles.backFab, { top: (insets.top || 0) + 8 }]}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              accessibilityLabel="Go back"
+              accessibilityLabel={
+                (t("resourceArticle.back") !== "resourceArticle.back" && t("resourceArticle.back")) ||
+                "Go back"
+              }
             >
               <Ionicons name="chevron-back" size={24} color="#111827" />
             </TouchableOpacity>
@@ -165,7 +169,11 @@ export default function ResourceArticle() {
 
         {/* TITLE */}
         <View style={styles.headerTextBlock}>
-          <Text style={styles.title}>{article?.title || "Guide"}</Text>
+          <Text style={styles.title}>
+            {article?.title ||
+              (t("resourceArticle.guide") !== "resourceArticle.guide" && t("resourceArticle.guide")) ||
+              "Guide"}
+          </Text>
         </View>
 
         {/* TAGS */}
@@ -175,10 +183,10 @@ export default function ResourceArticle() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tagsRow}
           >
-            {article.tags.map((t, i) => (
-              <View key={`${t}-${i}`} style={styles.tagPill}>
+            {article.tags.map((tTag, i) => (
+              <View key={`${tTag}-${i}`} style={styles.tagPill}>
                 <Ionicons name="pricetag" size={12} color="#4F46E5" />
-                <Text style={styles.tagText}>{t}</Text>
+                <Text style={styles.tagText}>{tTag}</Text>
               </View>
             ))}
           </ScrollView>
@@ -187,7 +195,11 @@ export default function ResourceArticle() {
         {/* ---------- NEW: News Articles section (click rows to open) ---------- */}
         {hasNews && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>News Articles</Text>
+            <Text style={styles.sectionTitle}>
+              {(t("resourceArticle.newsArticles") !== "resourceArticle.newsArticles" &&
+                t("resourceArticle.newsArticles")) ||
+                "News Articles"}
+            </Text>
             {article.newsLinks.map((n, idx) => (
               <TouchableOpacity
                 key={`${n.url}-${idx}`}
@@ -215,7 +227,11 @@ export default function ResourceArticle() {
         {/* QUICK STEPS */}
         {hasQuick && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Quick Steps</Text>
+            <Text style={styles.sectionTitle}>
+              {(t("resourceArticle.quickSteps") !== "resourceArticle.quickSteps" &&
+                t("resourceArticle.quickSteps")) ||
+                "Quick Steps"}
+            </Text>
             {article.quick.slice(0, 5).map((q, i) => (
               <View key={i} style={styles.stepRow}>
                 <View style={styles.bullet}>
@@ -260,7 +276,10 @@ export default function ResourceArticle() {
         {/* Legacy fallback */}
         {!hasSections && hasLegacyBody && (
           <View style={styles.section}>
-            <Text style={styles.subheading}>Details</Text>
+            <Text style={styles.subheading}>
+              {(t("resourceArticle.details") !== "resourceArticle.details" && t("resourceArticle.details")) ||
+                "Details"}
+            </Text>
             {article.body.map((p, i) => (
               <Text key={i} style={styles.paragraph}>
                 {p}
@@ -272,7 +291,11 @@ export default function ResourceArticle() {
         {/* REFERENCES */}
         {Array.isArray(article?.links) && article.links.length > 0 && (
           <View style={[styles.section, { marginTop: 8 }]}>
-            <Text style={styles.sectionTitle}>References</Text>
+            <Text style={styles.sectionTitle}>
+              {(t("resourceArticle.references") !== "resourceArticle.references" &&
+                t("resourceArticle.references")) ||
+                "References"}
+            </Text>
             {article.links.map((l, i) => (
               <TouchableOpacity
                 key={i}
@@ -294,9 +317,9 @@ export default function ResourceArticle() {
             style={styles.infoIcon}
           />
           <Text style={styles.infoText}>
-            This guide is for general first-aid education only and does not
-            replace professional medical training or advice. In emergencies,
-            call the local emergency number immediately.
+            {t("resourceArticle.disclaimer") !== "resourceArticle.disclaimer"
+              ? t("resourceArticle.disclaimer")
+              : "This guide is for general first-aid education only and does not replace professional medical training or advice. In emergencies, call the local emergency number immediately."}
           </Text>
         </View>
       </ScrollView>

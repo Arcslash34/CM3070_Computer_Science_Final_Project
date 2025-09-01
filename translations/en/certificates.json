@@ -1,0 +1,25 @@
+{
+  "title": "Certificates",
+  "anonymous": "Anonymous",
+  "demoMode": "Demo mode",
+  "showUsername": "Show username on certificate",
+  "printingAs": "Printing as:",
+  "masteryTitle": "First Aid Mastery",
+  "loading": "Loading progress…",
+  "perfectCount": "Perfect scores on First Aid 1–5:",
+  "unlockHint": "Complete all five with 100% to unlock certificate downloads.",
+  "demoEnabled": "Demo mode enabled — downloads are unlocked for testing.",
+  "disclaimer": "This is not an official certificate. It is generated for project/demo purposes only.",
+  "unavailableTitle": "Unavailable",
+  "unavailableBody": "You must score 100% on all five First Aid quizzes (#1–#5) to download this certificate.",
+  "shareTitle": "Share {{title}}",
+  "generateFail": "Failed to generate certificate.",
+  "completed": "Completed: {{count}}/{{total}}",
+  "demoUnlocked": "Demo unlocked",
+  "pdf": "PDF",
+  "items": {
+    "cpr": "CPR Certificate",
+    "aed": "AED Certificate",
+    "bleed": "Severe Bleeding Certificate"
+  }
+}

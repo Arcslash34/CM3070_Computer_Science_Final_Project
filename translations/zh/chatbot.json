@@ -1,0 +1,15 @@
+{
+  "title": "聊天助理",
+  "back": "返回",
+  "showSuggestions": "⬆️ 显示建议",
+  "hideSuggestions": "⬇️ 隐藏建议",
+  "sendMessage": "发送消息",
+  "presetQuestions": [
+    "家庭应急包需要准备哪些物品？",
+    "在新加坡如何防范洪水？",
+    "地震时我该怎么做？",
+    "在哪里查看实时空气质量？"
+  ],
+  "typing": "机器人正在输入…",
+  "askQuestion": "在此输入你的问题…"
+}

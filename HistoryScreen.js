@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "./supabase";
+import { t, i18n } from "./translations/translation";
 
 const CATEGORY_IMAGES = {
   flood: require("./assets/flood.jpg"),
@@ -32,30 +33,44 @@ const ICONS = {
 
 const ICON = { size: 14, gap: 6 };
 
-function getThumbByTitle(title = "") {
-  const t = String(title).toLowerCase();
-  if (t.includes("flood")) return CATEGORY_IMAGES.flood;
-  if (t.includes("fire")) return CATEGORY_IMAGES.fire;
-  if (t.includes("dengue") || t.includes("mosquito"))
-    return CATEGORY_IMAGES.dengue;
-  if (t.includes("first") || t.includes("aid")) return CATEGORY_IMAGES.firstaid;
-  if (t.includes("disease")) return CATEGORY_IMAGES.disease;
-  if (t.includes("earth") || t.includes("quake"))
-    return CATEGORY_IMAGES.earthquake;
-  if (t.includes("daily")) return CATEGORY_IMAGES.daily;
+function getThumb({ topic_id, quiz_title }) {
+  // Prefer the saved topic_id if available
+  if (topic_id && CATEGORY_IMAGES[topic_id]) return CATEGORY_IMAGES[topic_id];
+
+  // Fallback: keyword detection in multiple languages
+  const s = String(quiz_title || "").toLowerCase();
+  const MATCH = [
+    { id: "flood", rx: [/flood/, /防洪|洪|积水/] },
+    { id: "fire", rx: [/fire/, /火灾|消防/] },
+    { id: "dengue", rx: [/dengue|mosquito/, /登革|蚊/] },
+    { id: "firstaid", rx: [/first.?aid/, /急救/] },
+    { id: "disease", rx: [/disease|respir|virus/, /传染|疾病/] },
+    { id: "earthquake", rx: [/earth|quake|earthquake/, /地震/] },
+    { id: "daily", rx: [/daily/, /每日|每天|天天/] },
+  ];
+  for (const m of MATCH) {
+    if (m.rx.some((r) => r.test(s))) return CATEGORY_IMAGES[m.id];
+  }
   return CATEGORY_IMAGES.daily;
 }
 
 const fmtDateOnly = (iso) => {
   try {
-    return new Date(iso).toLocaleDateString();
+    return new Intl.DateTimeFormat(i18n.locale || undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(iso));
   } catch {
     return "—";
   }
 };
 const fmtTimeOnly = (iso) => {
   try {
-    return new Date(iso).toLocaleTimeString();
+    return new Intl.DateTimeFormat(i18n.locale || undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(iso));
   } catch {
     return "—";
   }
@@ -81,6 +96,25 @@ function StatRow({ src, text, tint = "#6B7280" }) {
   );
 }
 
+/** Map a saved row to a localized, user-visible title */
+function getLocalizedTitle(item) {
+  const topicId = item?.topic_id;
+  const saved = String(item?.quiz_title || "");
+
+  // Grab trailing set number in formats like: "Flood #1", "Flood 1", "Flood Set 1"
+  const m = saved.match(/(?:#|\bset\s*)?(\d+)\b/i);
+  const setNum = m ? m[1] : null;
+
+  const base =
+    topicId === "daily"
+      ? t("quizzes.daily.title")
+      : topicId
+      ? t(`quizzes.categories.${topicId}.title`, { defaultValue: saved })
+      : saved;
+
+  return setNum ? `${base} #${setNum}` : base;
+}
+
 export default function HistoryScreen() {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
@@ -102,25 +136,29 @@ export default function HistoryScreen() {
   }, []);
 
   const handleDeleteAll = useCallback(() => {
-    Alert.alert("Confirm", "Delete all quiz results?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          const { data: session } = await supabase.auth.getSession();
-          const userId = session?.session?.user?.id;
-          if (!userId) return;
-          await supabase.from("quiz_results").delete().eq("user_id", userId);
-          loadResults();
+    Alert.alert(
+      t("history.history.confirm"),
+      t("history.history.deleteAllMsg"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            const { data: session } = await supabase.auth.getSession();
+            const userId = session?.session?.user?.id;
+            if (!userId) return;
+            await supabase.from("quiz_results").delete().eq("user_id", userId);
+            loadResults();
+          },
         },
-      },
-    ]);
+      ]
+    );
   }, [loadResults]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Quiz History",
+      headerTitle: t("history.history.title"),
       headerTitleAlign: "center",
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -145,7 +183,7 @@ export default function HistoryScreen() {
         </View>
       ),
     });
-  }, [navigation, handleDeleteAll, results.length]);
+  }, [navigation, handleDeleteAll, results.length, i18n.locale]);
 
   useFocusEffect(
     useCallback(() => {
@@ -156,17 +194,20 @@ export default function HistoryScreen() {
   const filtered = useMemo(() => {
     if (!query.trim()) return results;
     const q = query.trim().toLowerCase();
+    // Search against the LOCALIZED title so search makes sense in the current UI language
     return results.filter((r) =>
-      String(r.quiz_title || "")
+      String(getLocalizedTitle(r) || "")
         .toLowerCase()
         .includes(q)
     );
-  }, [results, query]);
+  }, [results, query, i18n.locale]);
 
   const openSummary = (quiz) => {
+    // Pass a localized title into the summary screen
+    const localized = getLocalizedTitle(quiz);
     navigation.navigate("ResultSummary", {
       reviewData: quiz.review_data || quiz.answers,
-      quizTitle: quiz.quiz_title,
+      quizTitle: localized,
       scorePercent: quiz.score != null ? quiz.score : 0,
       xp: quiz.xp ?? 0,
       userAnswers: quiz.answers,
@@ -175,8 +216,15 @@ export default function HistoryScreen() {
   };
 
   const renderItem = ({ item, index }) => {
-    const thumb = getThumbByTitle(item.quiz_title);
-    const title = `#${index + 1} ${item.quiz_title || "Quiz"}`;
+    const thumb = getThumb({
+      topic_id: item.topic_id,
+      quiz_title: item.quiz_title,
+    });
+
+    // LOCALIZED title for display
+    const localizedTitle = getLocalizedTitle(item);
+    const title = `#${index + 1} ${localizedTitle}`;
+
     const scoreText = item.score != null ? `${item.score}%` : "—";
     const xpVal = Number.isFinite(item.xp) ? item.xp : 0;
 
@@ -197,7 +245,7 @@ export default function HistoryScreen() {
             {/* Left column: Score over Date (align with calendar icon) */}
             <View style={styles.col}>
               <Text style={styles.scoreText} numberOfLines={1}>
-                Score: {scoreText}
+                {t("history.history.scoreLabel")}: {scoreText}
               </Text>
               <StatRow src={ICONS.date} text={fmtDateOnly(item.created_at)} />
             </View>
@@ -236,7 +284,7 @@ export default function HistoryScreen() {
           <View style={styles.searchWrap}>
             <Ionicons name="search-outline" size={18} color="#6B7280" />
             <TextInput
-              placeholder="Search quizzes…"
+              placeholder={t("history.history.searchPlaceholder")}
               placeholderTextColor="#9CA3AF"
               style={styles.searchInput}
               value={query}
@@ -254,8 +302,12 @@ export default function HistoryScreen() {
         {filtered.length === 0 ? (
           <View style={styles.emptyBox}>
             <Ionicons name="alert-circle-outline" size={20} color="#9CA3AF" />
-            <Text style={styles.emptyTitle}>No quiz history yet</Text>
-            <Text style={styles.emptyText}>Finish a quiz to see it here.</Text>
+            <Text style={styles.emptyTitle}>
+              {t("history.history.emptyTitle")}
+            </Text>
+            <Text style={styles.emptyText}>
+              {t("history.history.emptyText")}
+            </Text>
           </View>
         ) : (
           <FlatList

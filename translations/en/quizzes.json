@@ -1,0 +1,19 @@
+{
+  "title": "Quizzes",
+  "description": "Build disaster-ready instincts with quick, fun quizzes. Try the Daily Quiz or pick a category below!",
+  "daily": {
+    "title": "Daily Quiz",
+    "subtitle": "Everyday Learn & Play",
+    "cta": "Start Quiz"
+  },
+  "categoriesTitle": "Quiz Categories",
+  "pastResults": "Past Results",
+  "categories": {
+    "flood": { "title": "Flood" },
+    "fire": { "title": "Fire" },
+    "dengue": { "title": "Dengue" },
+    "firstaid": { "title": "First Aid" },
+    "disease": { "title": "Disease Outbreaks" },
+    "earthquake": { "title": "Earthquake" }
+  }
+}

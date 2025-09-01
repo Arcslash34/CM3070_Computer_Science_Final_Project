@@ -1,5 +1,5 @@
-// Quizzes.js — Topic grid + Daily banner + "Past Results" link
-import React, { useLayoutEffect } from "react";
+// Quizzes.js — Topic grid + Daily banner + "Past Results" link (i18n)
+import React, { useLayoutEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Logo1 from "./assets/logo1.png";
+import { t } from "./translations/translation";
 
 // Load quiz categories from JSON
-const QUIZ = require("./assets/quiz.json");
+import { getQuiz } from "./quizLoader";
+import { i18n } from "./translations/translation";
 
 // Static image mapping (RN requires static require paths)
 const CATEGORY_IMAGES = {
@@ -28,32 +30,29 @@ const CATEGORY_IMAGES = {
 };
 
 // Keep a stable order for display
-const TOPIC_ORDER = [
-  "flood",
-  "fire",
-  "dengue",
-  "firstaid",
-  "disease",
-  "earthquake",
-];
-
-// Build topics from JSON + image map
-const TOPICS = TOPIC_ORDER.map((id) => {
-  const cat = QUIZ.categories.find((c) => c.id === id);
-  return {
-    id,
-    title: cat?.title ?? id,
-    img: CATEGORY_IMAGES[id],
-  };
-});
+const TOPIC_ORDER = ["flood", "fire", "dengue", "firstaid", "disease", "earthquake"];
 
 export default function QuizzesHome() {
   const navigation = useNavigation();
+
+  const QUIZ = React.useMemo(() => getQuiz(), [i18n.locale]);
 
   // Hide native header (match other screens)
   useLayoutEffect(() => {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
+
+  // Build topics from JSON + image map, but localize titles
+  const TOPICS = useMemo(() => {
+    return TOPIC_ORDER.map((id) => {
+      const cat = QUIZ?.categories?.find?.((c) => c.id === id);
+      return {
+        id,
+        title: t(`quizzes.categories.${id}.title`, { defaultValue: cat?.title ?? id }),
+        img: CATEGORY_IMAGES[id],
+      };
+    });
+  }, [QUIZ, i18n.locale]);
 
   const renderHeader = () => (
     <>
@@ -63,7 +62,7 @@ export default function QuizzesHome() {
         onPress={() =>
           navigation.navigate("QuizGame", {
             topicId: "daily",
-            topicTitle: "Daily Quiz",
+            topicTitle: t("quizzes.daily.title"),
             isDaily: true,
           })
         }
@@ -75,24 +74,24 @@ export default function QuizzesHome() {
         >
           <View style={styles.bannerOverlay} />
           <View style={styles.bannerContent}>
-            <Text style={styles.bannerTitle}>Daily Quiz</Text>
-            <Text style={styles.bannerSub}>Everyday Learn &amp; Play</Text>
+            <Text style={styles.bannerTitle}>{t("quizzes.daily.title")}</Text>
+            <Text style={styles.bannerSub}>{t("quizzes.daily.subtitle")}</Text>
             <View style={styles.startBtn}>
-              <Text style={styles.startBtnText}>Start Quiz</Text>
+              <Text style={styles.startBtnText}>{t("quizzes.daily.cta")}</Text>
             </View>
           </View>
         </ImageBackground>
       </TouchableOpacity>
 
       <View style={styles.sectionRow}>
-        <Text style={styles.sectionTitle}>Quiz Categories</Text>
+        <Text style={styles.sectionTitle}>{t("quizzes.categoriesTitle")}</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("HistoryScreen")}
           style={styles.resultsPill}
           activeOpacity={0.85}
         >
           <Ionicons name="book-outline" size={16} color="#4F46E5" />
-          <Text style={styles.resultsPillText}>Past Results</Text>
+          <Text style={styles.resultsPillText}>{t("quizzes.pastResults")}</Text>
         </TouchableOpacity>
       </View>
     </>
@@ -107,19 +106,11 @@ export default function QuizzesHome() {
       <View style={{ paddingTop: 8, paddingHorizontal: 16, paddingBottom: 6 }}>
         <View style={styles.brandRow}>
           <Image source={Logo1} style={styles.brandLogo} />
-          <Text style={styles.brandTitle}>Quizzes</Text>
+          <Text style={styles.brandTitle}>{t("quizzes.title")}</Text>
         </View>
         <View style={styles.descCard}>
-          <Ionicons
-            name="rocket"
-            size={36}
-            color="#4F46E5"
-            style={{ marginRight: 4 }}
-          />
-          <Text style={styles.descText}>
-            Build disaster-ready instincts with quick, fun quizzes. Try the
-            Daily Quiz or pick a category below!
-          </Text>
+          <Ionicons name="rocket" size={36} color="#4F46E5" style={{ marginRight: 4 }} />
+          <Text style={styles.descText}>{t("quizzes.description")}</Text>
         </View>
       </View>
 
@@ -137,7 +128,7 @@ export default function QuizzesHome() {
               onPress={() =>
                 navigation.navigate("QuizSet", {
                   topicId: item.id,
-                  topicTitle: item.title,
+                  topicTitle: item.title, // localized title
                 })
               }
               style={styles.card}
