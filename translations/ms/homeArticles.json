@@ -1,0 +1,42 @@
+{
+  "title": "Artikel",
+  "open": "Buka artikel",
+  "a11yOpen": "Buka artikel: \"%{title}\" daripada %{source}",
+  "items": [
+    {
+      "id": "st-flood",
+      "title": "Banjir kilat di Jurong Town Hall Road; amaran dikeluarkan untuk Dunearn Road",
+      "source": "The Straits Times"
+    },
+    {
+      "id": "st-strong-winds-2024-09-17",
+      "title": "17 Sept: Angin kencang direkod di beberapa kawasan Singapura, East Coast Park capai 83.2 km/j",
+      "source": "The Straits Times"
+    },
+    {
+      "id": "nea-haze",
+      "title": "Jerebu: PM2.5 1 jam & PSI 24 jam (Peta Langsung)",
+      "source": "Agensi Alam Sekitar Kebangsaan (NEA)"
+    },
+    {
+      "id": "nea-dengue-zika",
+      "title": "Denggi & Zika: Kluster, pencegahan dan kes",
+      "source": "Agensi Alam Sekitar Kebangsaan (NEA)"
+    },
+    {
+      "id": "scdf-fire-residential",
+      "title": "Garis Panduan Keselamatan Kebakaran untuk Kawasan Perumahan",
+      "source": "Pasukan Pertahanan Awam Singapura (SCDF)"
+    },
+    {
+      "id": "independent-johor-quakes",
+      "title": "Gempa hujung minggu gegarkan Johor: Pakar beri amaran Semenanjung Malaysia dan Singapura tidak kebal sepenuhnya",
+      "source": "The Independent Singapore"
+    },
+    {
+      "id": "shf-cpr-aed-adults",
+      "title": "Panduan CPR Dewasa + Penggunaan AED",
+      "source": "Yayasan Jantung Singapura"
+    }
+  ]
+}

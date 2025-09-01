@@ -1,0 +1,459 @@
+{
+  "flooding": {
+    "title": "Banjir (Hujan Lebat & Banjir Kilat)",
+    "category": "Banjir",
+    "icon": "rainy",
+    "imageKey": "flood",
+    "quick": [
+      "F.L.A.S.H.: Ikut • Lihat • Elak • Kongsi • Bantu",
+      "Elak air banjir; naik ke tempat tinggi",
+      "Jangan pandu masuk jalan yang banjir",
+      "Tutup suis utama sebelum keluar",
+      "Bantu orang lain hanya jika selamat"
+    ],
+    "sections": [
+      {
+        "title": "Kekal dimaklumkan (amaran rasmi pilihan)",
+        "bullets": [
+          "Aktifkan amaran hujan lebat / paras air daripada saluran rasmi jika berguna.",
+          "Kemas kini jalan & nasihat banjir membantu rancang laluan lebih selamat."
+        ]
+      },
+      {
+        "title": "Mnemonik F.L.A.S.H.",
+        "bullets": [
+          "Ikut nasihat & papan tanda rasmi.",
+          "Lihat kawasan bertakung & mudah banjir.",
+          "Elak berjalan/memandu melalui air banjir.",
+          "Kongsi kemas kini keselamatan yang relevan.",
+          "Bantu orang lain jika keadaan selamat."
+        ]
+      },
+      {
+        "title": "Pejalan kaki",
+        "bullets": [
+          "Elak air melebihi buku lali; longkang tersembunyi berbahaya.",
+          "Guna kayu/payung untuk semak pijakan; kekal di kawasan tinggi.",
+          "Jauhi terusan & air yang mengalir deras."
+        ]
+      },
+      {
+        "title": "Pemandu",
+        "bullets": [
+          "Jangan masuk air melebihi paras tebing jalan atau apabila garisan jalan tidak kelihatan.",
+          "Jika terpaksa dan selamat, pandu perlahan & stabil — satu kenderaan pada satu masa.",
+          "Jika enjin mati, jangan hidupkan semula; pasang lampu bahaya dan pindah ke tempat tinggi."
+        ]
+      },
+      {
+        "title": "Rumah & Bangunan",
+        "bullets": [
+          "Pastikan longkang bersih; pasang penghalang awal jika ada.",
+          "Alih barang penting ke tingkat atas.",
+          "Tutup bekalan elektrik utama sebelum keluar; jangan sentuh suis jika basah."
+        ]
+      },
+      {
+        "title": "Selepas air surut",
+        "bullets": [
+          "Waspada kerosakan tersembunyi, penutup terbuka & sisa licin.",
+          "Elak air tercemar; masuk semula hanya apabila disahkan selamat."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Gambaran keselamatan banjir (rasmi)",
+        "url": "https://go.gov.sg/be-flood-ready"
+      }
+    ],
+    "tags": [
+      "Banjir",
+      "Banjir kilat",
+      "Hujan lebat",
+      "F.L.A.S.H.",
+      "Keselamatan",
+      "Pejalan kaki",
+      "Pemandu",
+      "Pemilik rumah",
+      "Perniagaan"
+    ]
+  },
+  "fire-safety": {
+    "title": "Keselamatan Kebakaran & Tindakan Semasa Kebakaran",
+    "category": "Kebakaran",
+    "icon": "flame",
+    "imageKey": "fire",
+    "quick": [
+      "Hubungi 995 segera",
+      "Jangan guna lif; guna tangga",
+      "Jika terperangkap: bilik selamat, halang asap",
+      "Ingat P.A.S.S. untuk alat pemadam"
+    ],
+    "sections": [
+      {
+        "title": "Jika anda menemui kebakaran",
+        "bullets": [
+          "Bertenang; jerit minta tolong dan hubungi kecemasan (995).",
+          "Maklumkan orang lain dan segera keluar.",
+          "Tutup pintu/tingkap bilik kebakaran jika selamat; tutup gas jika boleh."
+        ]
+      },
+      {
+        "title": "Jika terperangkap",
+        "bullets": [
+          "Bergerak ke bilik yang ada tingkap menghadap jalan; tutup pintu (jangan kunci).",
+          "Halang asap pada celah bawah pintu menggunakan tuala/kain basah.",
+          "Hubungi bantuan & berikan lokasi tepat; beri isyarat di tingkap."
+        ]
+      },
+      {
+        "title": "Menggunakan alat pemadam (P.A.S.S.)",
+        "bullets": [
+          "Pull: Tarik pin keselamatan.",
+          "Aim: Halakan ke pangkal api.",
+          "Squeeze: Tekan pemegang.",
+          "Sweep: Sapu kiri ke kanan.",
+          "Hanya cuba jika api kecil dan laluan keluar jelas."
+        ]
+      },
+      {
+        "title": "Pencegahan",
+        "bullets": [
+          "Tutup peralatan apabila tidak digunakan; jangan bebankan soket.",
+          "Jangan tinggalkan masakan tanpa pengawasan; padam puntung rokok sepenuhnya.",
+          "Pastikan laluan keluar & gelendong hos tidak terhalang; pasang penggera asap."
+        ]
+      },
+      {
+        "title": "Pemindahan",
+        "bullets": [
+          "Guna tangga — jangan sekali-kali guna lif.",
+          "Turun ke bawah; jika tangga berasap, berlindung di bilik selamat.",
+          "Jangan masuk semula sehingga pihak berkuasa mengesahkan selamat."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Tip keselamatan kebakaran di rumah (rasmi)",
+        "url": "https://www.scdf.gov.sg/"
+      }
+    ],
+    "tags": [
+      "Kebakaran",
+      "SCDF",
+      "Pemadam api",
+      "Bangunan tinggi",
+      "Asap",
+      "Pencegahan",
+      "Pemindahan"
+    ]
+  },
+  "mosquito-dengue": {
+    "title": "Nyamuk & Denggi: Gejala dan Pencegahan",
+    "category": "Penyakit berjangkit",
+    "icon": "bug",
+    "imageKey": "mosquito",
+    "quick": [
+      "Kenal pasti gejala: demam, sakit badan, ruam, loya",
+      "S-A-W: Spray • Apply repellent • Wear lengan panjang",
+      "B-L-O-C-K air bertakung"
+    ],
+    "sections": [
+      {
+        "title": "Gejala biasa",
+        "bullets": [
+          "Demam mendadak (2–7 hari), sakit kepala (belakang mata), sakit otot/sendi.",
+          "Ruam, loya/muntah, pendarahan ringan hidung/gusi.",
+          "Dapatkan rawatan jika gejala bertambah teruk."
+        ]
+      },
+      {
+        "title": "Lindungi diri (S-A-W)",
+        "bullets": [
+          "Sembur racun serangga di sudut gelap tempat nyamuk berehat.",
+          "Guna repelan nyamuk secara berkala.",
+          "Pakai baju lengan panjang & seluar, terutama waktu subuh/senja."
+        ]
+      },
+      {
+        "title": "Hentikan pembiakan (B-L-O-C-K)",
+        "bullets": [
+          "Gemburkan tanah yang keras; kosongkan piring pasu bunga.",
+          "Terbalikkan baldi; tukar air dalam pasu.",
+          "Bersihkan longkang/salur — sedikit air bersih pun boleh biakkan nyamuk."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Gejala & perlindungan denggi (rasmi)",
+        "url": "https://www.gov.sg/explainers/dengue-know-the-symptoms-and-how-to-protect-yourself"
+      }
+    ],
+    "tags": ["Denggi", "Nyamuk", "S-A-W", "B-L-O-C-K", "Repelan"]
+  },
+  "cpr-aed-adult": {
+    "title": "CPR + AED (Dewasa)",
+    "category": "Kardiak",
+    "icon": "heart",
+    "imageKey": "cpr",
+    "quick": [
+      "DRS ABC: Danger • Response • Shout 995 • AED • Breathing",
+      "Mulakan CPR 100–120/min, kedalaman ±5–6 cm",
+      "Guna AED secepat mungkin; ikut arahan"
+    ],
+    "sections": [
+      {
+        "title": "Semakan awal (DRS ABC)",
+        "bullets": [
+          "Pastikan kawasan selamat; semak respons.",
+          "Jerit minta tolong dan hubungi kecemasan (guna pembesar suara).",
+          "Nilai pernafasan — jika tidak normal, mula CPR."
+        ]
+      },
+      {
+        "title": "Mulakan CPR",
+        "bullets": [
+          "Letak tangan di tengah dada.",
+          "Kadar 100–120/min, kedalaman ~5–6 cm, benarkan dada kembali (recoil) penuh.",
+          "Minimumkan jeda."
+        ]
+      },
+      {
+        "title": "Guna AED",
+        "bullets": [
+          "Hidupkan dan ikut arahan suara.",
+          "Dada perlu terdedah/kering; letak pad — dada kanan atas & kiri bawah.",
+          "Umumkan “jangan sentuh” semasa analisis/kejutan."
+        ]
+      },
+      {
+        "title": "Teruskan",
+        "bullets": [
+          "Sambung CPR serta-merta selepas kejutan atau analisis.",
+          "Teruskan hingga pernafasan/respons normal atau serah kepada paramedik."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Gambaran teknik CPR+AED (rasmi)",
+        "url": "https://www.myheart.org.sg/techniques/cpraed-for-adults/"
+      }
+    ],
+    "tags": ["CPR", "AED", "Kardiak"]
+  },
+  "choking-adult": {
+    "title": "Tercekik (Dewasa)",
+    "category": "Saluran pernafasan",
+    "icon": "warning",
+    "imageKey": "choking",
+    "quick": [
+      "Tanda umum: tangan di tekak",
+      "Jika boleh batuk/bercakap → galakkan batuk",
+      "Jika serius: 5 hentakan belakang + 5 tekanan perut",
+      "Jika tidak responsif: hubungi 995 dan mula CPR"
+    ],
+    "sections": [
+      {
+        "title": "Kenal pasti",
+        "bullets": [
+          "Tidak boleh bercakap, batuk lemah/tidak berkesan, bibir/kulit kebiruan, mungkin rebah."
+        ]
+      },
+      {
+        "title": "Jika halangan ringan",
+        "bullets": ["Galakkan batuk kuat; pantau rapat."]
+      },
+      {
+        "title": "Jika halangan teruk",
+        "bullets": [
+          "Beri sehingga 5 hentakan belakang di antara belikat.",
+          "Jika belum lega, lakukan sehingga 5 tekanan perut.",
+          "Ulang 5 hentakan belakang dan 5 tekanan hingga lega atau tidak responsif."
+        ]
+      },
+      {
+        "title": "Kes khas",
+        "bullets": [
+          "Hamil/obes: guna tekanan dada (tangan lebih tinggi di tulang dada).",
+          "Tercekik sendiri: tekan penumbuk ke permukaan kukuh ke dalam & ke atas."
+        ]
+      },
+      {
+        "title": "Jika tidak responsif",
+        "bullets": [
+          "Hubungi kecemasan segera; mulakan CPR.",
+          "Periksa mulut antara kitaran untuk objek kelihatan (hanya keluarkan jika nampak)."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Tercekik", "Saluran pernafasan", "Heimlich", "Hentakan belakang"]
+  },
+  "severe-bleeding": {
+    "title": "Pendarahan Teruk",
+    "category": "Trauma",
+    "icon": "bandage",
+    "imageKey": "bleeding",
+    "quick": [
+      "Hubungi kecemasan",
+      "Tekan terus dengan kuat ≥10 min",
+      "Tambah pad/pembalut; jangan tanggalkan yang basah",
+      "Tourniquet jika terlatih; rawat kejutan"
+    ],
+    "sections": [
+      {
+        "title": "Kawal pendarahan",
+        "bullets": [
+          "Pakai sarung tangan jika ada; dedahkan luka.",
+          "Tekan kuat secara langsung dengan pad bersih sekurang-kurangnya 10 minit.",
+          "Jangan tanggalkan balutan yang basah — tambah lagi di atas dan balut kemas."
+        ]
+      },
+      {
+        "title": "Jika pendarahan berterusan",
+        "bullets": [
+          "Ganti dengan pad tebal yang baru dan tekan semula.",
+          "Jika pendarahan anggota mengancam nyawa dan anda terlatih, pasang tourniquet 5–7 cm di atas luka (jangan atas sendi). Catat masa."
+        ]
+      },
+      {
+        "title": "Objek tertanam",
+        "bullets": [
+          "JANGAN keluarkan; lapik di sekeliling dan balut untuk menstabilkan tanpa menekan objek."
+        ]
+      },
+      {
+        "title": "Pendarahan dalaman / kejutan",
+        "bullets": [
+          "Hubungi kecemasan segera.",
+          "Baring rata, angkat kaki jika sesuai, kekalkan haba badan, pantau tanda vital."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Pendarahan", "Trauma", "Tourniquet", "Pertolongan cemas"]
+  },
+  "burns": {
+    "title": "Melecur (Haba)",
+    "category": "Melecur",
+    "icon": "flame",
+    "imageKey": "burn",
+    "quick": [
+      "Sejukkan di bawah air mengalir 20 min",
+      "Tanggalkan barang kemas/pakaian ketat awal",
+      "Tutup dengan balutan bersih yang tidak melekat",
+      "JANGAN pecahkan lepuh atau sapu krim"
+    ],
+    "sections": [
+      {
+        "title": "Penjagaan segera",
+        "bullets": [
+          "Sejukkan di bawah air mengalir sekurang-kurangnya 20 minit (tanpa ais).",
+          "Tanggalkan barang kemas/pakaian ketat sebelum bengkak; jika tersangkut, potong di sekeliling — jangan tarik."
+        ]
+      },
+      {
+        "title": "Tutup & lindungi",
+        "bullets": [
+          "Tutup dengan balutan steril tidak melekat, plastik pelekat (cling film), atau kain bersih.",
+          "Elak tisu/kertas yang melekat; elak krim/minyak."
+        ]
+      },
+      {
+        "title": "Dapatkan rawatan segera jika",
+        "bullets": [
+          "Lecur besar (> saiz tapak tangan), dalam/putih/berarang.",
+          "Melibatkan muka, tangan, kaki, alat sulit, sendi, saluran udara.",
+          "Lecur kimia/elektrik, atau mangsa kanak-kanak/warga emas."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Pertolongan cemas lecur (gambaran rasmi)",
+        "url": "https://www.moh.gov.sg/seeking-healthcare/getting-medical-help/conditions/mild-burns-and-scalds"
+      }
+    ],
+    "tags": ["Melecur", "Lecur air panas", "Kanak-kanak", "Pertolongan cemas"]
+  },
+  "heat-stroke": {
+    "title": "Strok Haba",
+    "category": "Persekitaran",
+    "icon": "sunny",
+    "imageKey": "heatstroke",
+    "quick": [
+      "Mengancam nyawa — hubungi kecemasan",
+      "Alih ke tempat teduh/sejuk",
+      "Sejukkan cepat (air/pek ais)",
+      "Longgarkan/buka pakaian"
+    ],
+    "sections": [
+      {
+        "title": "Kenal pasti",
+        "bullets": [
+          "Suhu sangat tinggi, kulit panas kering, keliru, rebah, tidak sedar."
+        ]
+      },
+      {
+        "title": "Tindakan segera",
+        "bullets": [
+          "Hubungi kecemasan; pindah ke tempat sejuk/berteduh.",
+          "Longgarkan/buka pakaian berlebihan.",
+          "Jika sedar, beri minum air sejuk sedikit-sedikit."
+        ]
+      },
+      {
+        "title": "Penyejukan pantas",
+        "bullets": [
+          "Letakkan pek sejuk di leher, ketiak, pangkal paha.",
+          "Basahkan kulit + kipas atau rendam dalam air sejuk jika sesuai."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Haba", "Persekitaran", "Kecemasan", "Pertolongan cemas"]
+  },
+  "fracture-sprain": {
+    "title": "Patah & Terseliuh",
+    "category": "Trauma",
+    "icon": "fitness",
+    "imageKey": "fracture",
+    "quick": ["Lindungi & rehat", "Ais 15–20 min", "Kompres", "Tinggikan"],
+    "sections": [
+      {
+        "title": "Tanda bahaya",
+        "bullets": [
+          "Kecacatan teruk, luka terbuka, trauma berat → hubungi kecemasan."
+        ]
+      },
+      {
+        "title": "Pertolongan cemas (P.R.I.C.E.)",
+        "bullets": [
+          "Protect & Rest: Lindungi & rehatkan kawasan cedera.",
+          "Ice: Ais 15–20 minit dibalut kain (berkala).",
+          "Compress & Elevate: Balut elastik & tinggikan atas paras jantung."
+        ]
+      },
+      {
+        "title": "Imobilisasi",
+        "bullets": [
+          "Jangan luruskan anggota yang cacat.",
+          "Imobilisasikan sendi di atas dan bawah jika patah disyaki."
+        ]
+      },
+      {
+        "title": "Dapatkan bantuan perubatan jika",
+        "bullets": [
+          "Sakit teruk, bengkak, kebas, tidak boleh bergerak/menampung berat.",
+          "Tiada penambahbaikan selepas 2–3 hari."
+        ]
+      }
+    ],
+    "links": [],
+    "tags": ["Patah", "Terseliuh", "PRICE", "Trauma"]
+  }
+}

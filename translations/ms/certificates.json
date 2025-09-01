@@ -1,0 +1,25 @@
+{
+  "title": "Sijil",
+  "anonymous": "Tanpa Nama",
+  "demoMode": "Mod demo",
+  "showUsername": "Tunjukkan nama pengguna pada sijil",
+  "printingAs": "Mencetak sebagai:",
+  "masteryTitle": "Penguasaan Pertolongan Cemas",
+  "loading": "Memuatkan kemajuan…",
+  "perfectCount": "Markah penuh dalam Pertolongan Cemas 1–5:",
+  "unlockHint": "Lengkapkan semua lima dengan 100% untuk membuka muat turun sijil.",
+  "demoEnabled": "Mod demo diaktifkan — muat turun dibuka untuk ujian.",
+  "disclaimer": "Ini bukan sijil rasmi. Ia dijana untuk tujuan projek/demo sahaja.",
+  "unavailableTitle": "Tidak Tersedia",
+  "unavailableBody": "Anda mesti mendapat 100% dalam semua lima kuiz Pertolongan Cemas (#1–#5) untuk memuat turun sijil ini.",
+  "shareTitle": "Kongsi {{title}}",
+  "generateFail": "Gagal menjana sijil.",
+  "completed": "Selesai: {{count}}/{{total}}",
+  "demoUnlocked": "Demo dibuka",
+  "pdf": "PDF",
+  "items": {
+    "cpr": "Sijil CPR",
+    "aed": "Sijil AED",
+    "bleed": "Sijil Pendarahan Teruk"
+  }
+}

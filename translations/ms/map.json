@@ -1,0 +1,50 @@
+{
+  "title": "Peta Alam Sekitar Langsung",
+  "a11yClose": "Tutup peta",
+  "loading": "Sedang menyediakan data peta...",
+  "layers": {
+    "rain": "HUJAN",
+    "pm25": "PM2.5",
+    "wind": "ANGIN",
+    "temp": "SUHU",
+    "humidity": "KELEMBAPAN"
+  },
+  "a11yLayer": {
+    "rain": "Tunjukkan lapisan hujan",
+    "pm25": "Tunjukkan lapisan PM2.5",
+    "wind": "Tunjukkan lapisan angin",
+    "temp": "Tunjukkan lapisan suhu",
+    "humidity": "Tunjukkan lapisan kelembapan"
+  },
+  "html": {
+    "youAreHere": "Anda berada di sini",
+    "legend": {
+      "rain": "Risiko Banjir",
+      "high": "Tinggi",
+      "moderate": "Sederhana",
+      "low": "Rendah",
+      "pm25": "PM2.5",
+      "wind": "Angin",
+      "temp": "Suhu",
+      "humidity": "Kelembapan",
+      "chipPm25": "Cip: µg/m³",
+      "chipWind": "Cip: knot",
+      "chipTemp": "Cip: °C",
+      "chipHumidity": "Cip: %"
+    },
+    "popup": {
+      "location": "Lokasi",
+      "station": "Stesen",
+      "region": "Wilayah",
+      "rainfall": "Hujan",
+      "last1h": "1 jam terakhir",
+      "floodRisk": "Risiko Banjir",
+      "pm25": "PM2.5",
+      "windSpeed": "Kelajuan angin",
+      "temperature": "Suhu",
+      "humidity": "Kelembapan",
+      "na": "tiada"
+    },
+    "units": { "mm": "mm", "kn": "kn", "c": "°C", "percent": "%" }
+  }
+}

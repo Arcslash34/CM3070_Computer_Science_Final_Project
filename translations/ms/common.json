@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "home": "Laman Utama",
+    "quizzes": "Kuiz",
+    "badges": "Lencana",
+    "resource": "Sumber",
+    "settings": "Tetapan",
+    "pastResults": "Keputusan Terdahulu",
+    "guide": "Panduan"
+  },
+
+  "common": {
+    "cancel": "Batal",
+    "delete": "Padam",
+    "close": "Tutup",
+
+    "locating": "Sedang mengesan…",
+    "article_open": "Buka artikel",
+
+    "hero_title": "Sentiasa Bersedia",
+    "hero_desc": "Ketahui apa yang berlaku di sekitar, pelajari tindakan yang perlu diambil, dan bertindak pantas apabila perlu.",
+
+    "section_live_map": "Peta Langsung",
+    "section_articles": "Artikel",
+    "section_view_all": "Lihat semua",
+    "section_local_conditions": "Keadaan Tempatan",
+    "section_emergency_prep": "Persediaan Kecemasan",
+
+    "stat_rainfall": "Hujan",
+    "stat_pm25": "PM2.5",
+    "stat_temp": "Suhu",
+    "stat_humidity": "Kelembapan",
+    "stat_wind": "Angin",
+    "stat_nearest_station": "Stesen Terdekat",
+    "stat_nearest_region": "Kawasan Terdekat",
+    "stat_nearest": "Terdekat",
+
+    "feature_resource_hub": "Pusat Sumber",
+    "feature_checklist": "Senarai Semak",
+    "feature_quiz_game": "Permainan Kuiz",
+    "feature_emergency_contact": "Kenalan Kecemasan",
+
+    "banner_loc_services_off": "Perkhidmatan Lokasi Dimatikan",
+    "banner_loc_perm_denied": "Kebenaran Lokasi Ditolak",
+    "banner_loc_body": "Menggunakan data demo berhampiran Taman Jurong. Aktifkan lokasi untuk bacaan tepat.",
+    "banner_enable_location": "Aktifkan Lokasi",
+
+    "alert_flash_flood": "Amaran Banjir Kilat",
+    "alert_moderate_flood": "Risiko Banjir Sederhana",
+    "alert_none": "Tiada Risiko Banjir"
+  },
+
+  "home": {
+    "emergency": {
+      "title": "Kenalan Kecemasan",
+      "call": "Hubungi",
+      "callA11y": "Hubungi %{name}",
+      "callConfirmTitle": "Hubungi %{number}?",
+      "callConfirmBody": "Ini akan membuka dail telefon anda.",
+      "contacts": {
+        "scdf": { "name": "SCDF (Bomba / Ambulans)" },
+        "ambulance": { "name": "Ambulans Bukan Kecemasan" },
+        "police": { "name": "Polis" }
+      }
+    }
+  },
+
+  "time": {
+    "justNow": "Baru sahaja",
+    "minAgo": "%{count} min lalu",
+    "hrAgo": "%{count} jam lalu",
+    "dayAgo": "%{count} hari lalu"
+  },
+
+  "map": {
+    "html": {
+      "youAreHere": "Anda di sini"
+    }
+  }
+}

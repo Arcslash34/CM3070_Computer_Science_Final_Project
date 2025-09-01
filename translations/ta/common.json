@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "home": "முகப்பு",
+    "quizzes": "வினாடி வினா",
+    "badges": "பட்டங்கள்",
+    "resource": "வளங்கள்",
+    "settings": "அமைப்புகள்",
+    "pastResults": "முந்தைய முடிவுகள்",
+    "guide": "வழிகாட்டி"
+  },
+
+  "common": {
+    "cancel": "ரத்து செய்",
+    "delete": "அழி",
+    "close": "மூடு",
+
+    "locating": "இருப்பிடம் கண்டறியப்படுகிறது…",
+    "article_open": "கட்டுரையை திறக்க",
+
+    "hero_title": "எப்போதும் தயார் இருங்கள்",
+    "hero_desc": "சுற்றியுள்ளதை அறிந்து கொள்ளுங்கள், என்ன செய்ய வேண்டும் என்பதை கற்றுக்கொள்ளுங்கள், அவசியமான நேரத்தில் விரைவாக செயல்படுங்கள்.",
+
+    "section_live_map": "நேரடி வரைபடம்",
+    "section_articles": "கட்டுரைகள்",
+    "section_view_all": "அனைத்தையும் காண்க",
+    "section_local_conditions": "உள்ளூர் நிலை",
+    "section_emergency_prep": "அவசர தயாரிப்பு",
+
+    "stat_rainfall": "மழை அளவு",
+    "stat_pm25": "PM2.5",
+    "stat_temp": "வெப்பநிலை",
+    "stat_humidity": "ஈரப்பதம்",
+    "stat_wind": "காற்று",
+    "stat_nearest_station": "அருகிலுள்ள நிலையம்",
+    "stat_nearest_region": "அருகிலுள்ள பகுதி",
+    "stat_nearest": "அருகிலுள்ள",
+
+    "feature_resource_hub": "வள மையம்",
+    "feature_checklist": "சரிபார்ப்பு பட்டியல்",
+    "feature_quiz_game": "வினாடி வினா விளையாட்டு",
+    "feature_emergency_contact": "அவசர தொடர்புகள்",
+
+    "banner_loc_services_off": "இருப்பிட சேவை அணைக்கப்பட்டுள்ளது",
+    "banner_loc_perm_denied": "இருப்பிட அனுமதி மறுக்கப்பட்டது",
+    "banner_loc_body": "ஜூரோங் பூங்கா அருகே டெமோ தரவைப் பயன்படுத்துகிறது. துல்லியமான அளவுகளுக்கு இருப்பிடத்தை இயக்கவும்.",
+    "banner_enable_location": "இருப்பிடத்தை இயக்கு",
+
+    "alert_flash_flood": "திடீர் வெள்ள எச்சரிக்கை",
+    "alert_moderate_flood": "மிதமான வெள்ள அபாயம்",
+    "alert_none": "வெள்ள அபாயம் இல்லை"
+  },
+
+  "home": {
+    "emergency": {
+      "title": "அவசர தொடர்புகள்",
+      "call": "அழைக்க",
+      "callA11y": "%{name} க்கு அழைக்க",
+      "callConfirmTitle": "%{number} க்கு அழைக்கவா?",
+      "callConfirmBody": "இது உங்கள் தொலைபேசி டயலரைத் திறக்கும்.",
+      "contacts": {
+        "scdf": { "name": "SCDF (தீ / ஆம்புலன்ஸ்)" },
+        "ambulance": { "name": "அவசரமற்ற ஆம்புலன்ஸ்" },
+        "police": { "name": "போலீஸ்" }
+      }
+    }
+  },
+
+  "time": {
+    "justNow": "இப்போதுதான்",
+    "minAgo": "%{count} நிமிடங்களுக்கு முன்",
+    "hrAgo": "%{count} மணி நேரத்திற்கு முன்",
+    "dayAgo": "%{count} நாள்களுக்கு முன்"
+  },
+
+  "map": {
+    "html": {
+      "youAreHere": "நீங்கள் இங்கு உள்ளீர்கள்"
+    }
+  }
+}

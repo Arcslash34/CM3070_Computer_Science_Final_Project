@@ -1,0 +1,1856 @@
+{
+  "version": "1.0",
+  "categories": [
+    {
+      "id": "flood",
+      "title": "Keselamatan Banjir",
+      "sets": [
+        {
+          "id": "flood-1",
+          "title": "Keselamatan Banjir #1",
+          "questions": [
+            {
+              "question": "Tindakan pertama terbaik semasa banjir kilat secara tiba-tiba?",
+              "options": [
+                "Naik ke tempat yang lebih tinggi",
+                "Ambil gambar untuk insurans",
+                "Berjalan dalam air untuk memeriksa kedalaman",
+                "Pandulah perlahan melalui air"
+              ],
+              "answer": "Naik ke tempat yang lebih tinggi",
+              "explanation": "Segera menuju ke tempat tinggi mengurangkan pendedahan kepada air yang meningkat dan bahaya tersembunyi."
+            },
+            {
+              "question": "Kawasan manakah yang harus anda elakkan untuk berjalan?",
+              "options": [
+                "Air melebihi paras buku lali",
+                "Laluan berbumbung",
+                "Jambatan pejalan kaki",
+                "Laluan pejalan kaki yang kering"
+              ],
+              "answer": "Air melebihi paras buku lali",
+              "explanation": "Air cetek yang mengalir boleh menjatuhkan anda dan mungkin menutup longkang terbuka atau serpihan."
+            },
+            {
+              "question": "Semasa memandu, tanda jalan tidak kelihatan kerana air. Apa yang harus anda lakukan?",
+              "options": [
+                "Berpatah balik dan cari laluan lain",
+                "Kekalkan kelajuan untuk elak enjin mati",
+                "Memandu laju di tengah jalan",
+                "Ikut kereta di hadapan rapat-rapat"
+              ],
+              "answer": "Berpatah balik dan cari laluan lain",
+              "explanation": "Jika anda tidak nampak jalan, ia mungkin hakis atau lebih dalam daripada sangkaan. Berpatah balik—jangan ambil risiko."
+            },
+            {
+              "question": "Di manakah anda perlu mendapatkan maklumat banjir yang boleh dipercayai?",
+              "options": [
+                "Amaran rasmi kerajaan",
+                "Hantaran rawak di media sosial",
+                "Sembang kumpulan yang tidak disahkan",
+                "Akaun selebriti"
+              ],
+              "answer": "Amaran rasmi kerajaan",
+              "explanation": "Gunakan sumber yang disahkan supaya tindakan anda berasaskan maklumat yang tepat dan tepat pada masanya."
+            },
+            {
+              "question": "Sebelum keluar dari rumah (jika selamat), anda perlu…",
+              "options": [
+                "Matikan bekalan elektrik utama",
+                "Buka semua tingkap",
+                "Alihkan barang berharga ke ruang bawah tanah",
+                "Biarkan semua peralatan berpalam"
+              ],
+              "answer": "Matikan bekalan elektrik utama",
+              "explanation": "Mematikan kuasa (jika boleh dilakukan dengan selamat) mengurangkan risiko renjatan elektrik dan kebakaran."
+            }
+          ]
+        },
+        {
+          "id": "flood-2",
+          "title": "Keselamatan Banjir #2",
+          "questions": [
+            {
+              "question": "Air banjir biasanya…",
+              "options": [
+                "Tercemar dan berbahaya",
+                "Selamat jika kelihatan jernih",
+                "Baik untuk membasuh luka",
+                "Boleh diminum selepas dididih 1 minit"
+              ],
+              "answer": "Tercemar dan berbahaya",
+              "explanation": "Air banjir boleh mengandungi kumbahan, bahan kimia, dan objek tajam—elakkan sentuhan."
+            },
+            {
+              "question": "Jika kereta anda mati enjin dalam air yang semakin naik, anda harus…",
+              "options": [
+                "Cuba hidupkan semula berkali-kali",
+                "Kekal di dalam dan tunggu",
+                "Keluar dan bergerak ke tempat lebih tinggi jika selamat",
+                "Buka bonet dan periksa bateri"
+              ],
+              "answer": "Keluar dan bergerak ke tempat lebih tinggi jika selamat",
+              "explanation": "Tinggalkan kenderaan jika air semakin naik—keselamatan anda diutamakan."
+            },
+            {
+              "question": "Pemilik rumah boleh mengurangkan impak banjir dengan…",
+              "options": [
+                "Membersihkan longkang daripada sampah",
+                "Menyimpan kotak berat di lantai",
+                "Mematikan penggera asap",
+                "Membiarkan pintu terbuka semasa ribut"
+              ],
+              "answer": "Membersihkan longkang daripada sampah",
+              "explanation": "Longkang yang bersih membantu air mengalir dan mengurangkan takungan di sekitar rumah."
+            },
+            {
+              "question": "Selepas air surut, masuk ke bangunan perlu dilakukan…",
+              "options": [
+                "Hanya selepas keselamatan disahkan",
+                "Segera untuk menyelamatkan barang",
+                "Semasa lantai masih basah",
+                "Pada waktu malam untuk privasi"
+              ],
+              "answer": "Hanya selepas keselamatan disahkan",
+              "explanation": "Banjir boleh merosakkan struktur dan utiliti; masuk semula hanya apabila diisytihar selamat."
+            },
+            {
+              "question": "Berjalan melalui air banjir meningkatkan risiko…",
+              "options": [
+                "Jangkitan dan kecederaan",
+                "Keseimbangan yang lebih baik",
+                "Pemindahan lebih pantas",
+                "Cengkaman lebih baik dengan selipar"
+              ],
+              "answer": "Jangkitan dan kecederaan",
+              "explanation": "Luka, pencemaran, lubang tersembunyi, dan air mengalir menimbulkan bahaya serius."
+            }
+          ]
+        },
+        {
+          "id": "flood-3",
+          "title": "Keselamatan Banjir #3",
+          "questions": [
+            {
+              "question": "Kasut paling selamat dalam keadaan banjir ialah…",
+              "options": [
+                "Kasut bertutup kukuh atau but",
+                "Selipar",
+                "Berkaki ayam",
+                "Kasut tumit tinggi"
+              ],
+              "answer": "Kasut bertutup kukuh atau but",
+              "explanation": "Kasut bertutup melindungi kaki daripada serpihan dan objek tajam."
+            },
+            {
+              "question": "Sebelum hujan lebat, langkah persediaan yang baik ialah…",
+              "options": [
+                "Cas telefon dan bank kuasa",
+                "Keluarkan bateri kereta",
+                "Matikan amaran telefon",
+                "Simpan dokumen di lantai"
+              ],
+              "answer": "Cas telefon dan bank kuasa",
+              "explanation": "Gangguan elektrik adalah biasa semasa banjir; kekal berhubung untuk menerima amaran."
+            },
+            {
+              "question": "Apabila menyeberangi air mengalir dengan berjalan kaki…",
+              "options": [
+                "Gunakan batang untuk uji kedalaman dan kestabilan",
+                "Berlari supaya lebih cepat",
+                "Berkait lengan dengan orang asing",
+                "Bawa beg berat untuk imbangan"
+              ],
+              "answer": "Gunakan batang untuk uji kedalaman dan kestabilan",
+              "explanation": "Batang atau tongkat membantu mengesan lubang dan permukaan tidak stabil."
+            },
+            {
+              "question": "Jika terperangkap di tingkat atas kerana air banjir, anda harus…",
+              "options": [
+                "Beri isyarat minta bantuan dan kekal di tempat yang mudah dilihat penyelamat",
+                "Terjun ke dalam air",
+                "Bersembunyi diam-diam dalam almari",
+                "Tutup semua lampu"
+              ],
+              "answer": "Beri isyarat minta bantuan dan kekal di tempat yang mudah dilihat penyelamat",
+              "explanation": "Keterlihatan mempercepatkan bantuan; jangan masuk ke dalam air berbahaya."
+            },
+            {
+              "question": "Penghadang banjir dan guni pasir paling berkesan apabila…",
+              "options": [
+                "Dipasang awal sebelum air tiba",
+                "Diletakkan selepas bilik sudah banjir",
+                "Disimpan dalam bungkusan",
+                "Disusun secara rawak"
+              ],
+              "answer": "Dipasang awal sebelum air tiba",
+              "explanation": "Pemasangan awal membantu menahan air; pemasangan lewat jauh kurang berkesan."
+            }
+          ]
+        },
+        {
+          "id": "flood-4",
+          "title": "Keselamatan Banjir #4",
+          "questions": [
+            {
+              "question": "Jika terdapat kemungkinan lubang pembetung terbuka tersembunyi di bawah air, anda harus…",
+              "options": [
+                "Elakkan kawasan itu sepenuhnya",
+                "Langkah perlahan untuk menguji",
+                "Pandulah di atasnya dengan cepat",
+                "Melompat merentasi air"
+              ],
+              "answer": "Elakkan kawasan itu sepenuhnya",
+              "explanation": "Bukaan tersembunyi amat berbahaya; pilih laluan lain."
+            },
+            {
+              "question": "Untuk pangsapuri di kawasan mudah banjir, simpan barangan penting…",
+              "options": [
+                "Di rak lebih tinggi atau tingkat atas",
+                "Di bawah katil",
+                "Di lantai balkoni",
+                "Di sebelah longkang"
+              ],
+              "answer": "Di rak lebih tinggi atau tingkat atas",
+              "explanation": "Penyimpanan di tempat tinggi mengurangkan kerosakan akibat kemasukan air."
+            },
+            {
+              "question": "Semasa pemindahan, anda harus membawa…",
+              "options": [
+                "Barang keperluan ringan seperti pengenalan diri dan ubat",
+                "Semua perabot",
+                "Tunai sahaja",
+                "Elektronik berat dahulu"
+              ],
+              "answer": "Barang keperluan ringan seperti pengenalan diri dan ubat",
+              "explanation": "Utamakan keselamatan dan dokumen/ubat penting."
+            },
+            {
+              "question": "Jika lantai basah dan elektrik masih hidup…",
+              "options": [
+                "Jangan sentuh suis elektrik",
+                "Hidupkan kipas untuk cepat kering",
+                "Palamkan beberapa pemanas",
+                "Berdiri dalam air dan uji soket"
+              ],
+              "answer": "Jangan sentuh suis elektrik",
+              "explanation": "Terdapat risiko renjatan—tunggu pihak berkuasa/ profesional."
+            },
+            {
+              "question": "Pelan kecemasan isi rumah perlu merangkumi…",
+              "options": [
+                "Titik pertemuan dan nombor kecemasan",
+                "Menyembunyikan barangan berharga di luar rumah",
+                "Mengabaikan amaran",
+                "Bergantung pada jiran semata-mata"
+              ],
+              "answer": "Titik pertemuan dan nombor kecemasan",
+              "explanation": "Pelan jelas mengurangkan kekeliruan semasa pemindahan."
+            }
+          ]
+        },
+        {
+          "id": "flood-5",
+          "title": "Keselamatan Banjir #5",
+          "questions": [
+            {
+              "question": "Kit kecemasan asas untuk banjir patut mengandungi…",
+              "options": [
+                "Air, makanan, lampu suluh, pertolongan cemas",
+                "Permainan papan sahaja",
+                "Minyak wangi dan lilin",
+                "Barangan kaca yang banyak"
+              ],
+              "answer": "Air, makanan, lampu suluh, pertolongan cemas",
+              "explanation": "Keperluan asas menyokong anda ketika bekalan atau akses terhad."
+            },
+            {
+              "question": "Jika terperangkap dalam kereta dengan air naik di luar, perkara pertama yang perlu…",
+              "options": [
+                "Tanggal tali pinggang, buka kunci pintu, keluar apabila selamat",
+                "Telefon kawan untuk ambil gambar",
+                "Tunggu sehingga air menenggelamkan kereta",
+                "Cuba pandu lebih laju"
+              ],
+              "answer": "Tanggal tali pinggang, buka kunci pintu, keluar apabila selamat",
+              "explanation": "Bersedia untuk keluar segera sebelum tekanan menghalang pintu daripada dibuka."
+            },
+            {
+              "question": "Anda harus elak memandu melalui air yang…",
+              "options": [
+                "Melebihi ketinggian kerb/tebing jalan",
+                "Di bawah paras buku lali",
+                "Sedikit lembap",
+                "Sekadar lopak"
+              ],
+              "answer": "Melebihi ketinggian kerb/tebing jalan",
+              "explanation": "Air sedalam ini boleh mematikan enjin dan menghayutkan kenderaan."
+            },
+            {
+              "question": "Amaran hujan lebat bermaksud anda perlu…",
+              "options": [
+                "Tangguh perjalanan tidak penting",
+                "Rancang sukan air",
+                "Abaikan kemas kini",
+                "Parkir di kawasan rendah"
+              ],
+              "answer": "Tangguh perjalanan tidak penting",
+              "explanation": "Kurangkan pendedahan kepada keadaan berbahaya di jalan raya."
+            },
+            {
+              "question": "Selepas pembersihan, rawat luka kecil akibat serpihan banjir dengan…",
+              "options": [
+                "Basuh, nyahkuman dan balut",
+                "Biarkan sahaja",
+                "Gosok tanah pada luka",
+                "Biarkan terdedah pada udara"
+              ],
+              "answer": "Basuh, nyahkuman dan balut",
+              "explanation": "Air banjir tercemar; bersihkan dan tutup luka untuk mencegah jangkitan."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "Keselamatan Kebakaran",
+      "sets": [
+        {
+          "id": "fire-1",
+          "title": "Keselamatan Kebakaran #1",
+          "questions": [
+            {
+              "question": "Tindakan pertama jika anda menemui kebakaran?",
+              "options": [
+                "Hubungi kecemasan & maklumkan orang lain",
+                "Sembunyi diam-diam",
+                "Gunakan lif untuk melarikan diri",
+                "Buka semua pintu untuk keluarkan asap"
+              ],
+              "answer": "Hubungi kecemasan & maklumkan orang lain",
+              "explanation": "Bunyikan amaran dan hubungi perkhidmatan kecemasan segera."
+            },
+            {
+              "question": "Yang MANAKAH BENAR untuk pemindahan?",
+              "options": [
+                "Gunakan lif",
+                "Gunakan tangga",
+                "Tunggu di lantai",
+                "Jerit minta tolong sahaja"
+              ],
+              "answer": "Gunakan tangga",
+              "explanation": "Jangan gunakan lif semasa kebakaran kerana risiko bekalan kuasa dan asap."
+            },
+            {
+              "question": "Jika terperangkap di dalam bilik, anda harus…",
+              "options": [
+                "Tutup celah pintu bagi halang asap",
+                "Pecahkan tingkap dan jenguk ke luar",
+                "Sembunyi dalam almari",
+                "Nyalakan lilin untuk cahaya"
+              ],
+              "answer": "Tutup celah pintu bagi halang asap",
+              "explanation": "Halang kemasukan asap dan hubungi bantuan dengan lokasi tepat."
+            },
+            {
+              "question": "P.A.S.S. untuk alat pemadam api bermaksud…",
+              "options": [
+                "Pull Aim Squeeze Sweep",
+                "Push Aim Stop Spray",
+                "Press Aim Shoot Sweep",
+                "Pull Ask Spray Slowly"
+              ],
+              "answer": "Pull Aim Squeeze Sweep",
+              "explanation": "Kaedah standard mengendalikan kebanyakan alat pemadam api."
+            },
+            {
+              "question": "Alat pemadam sesuai untuk kebakaran elektrik:",
+              "options": [
+                "CO₂ atau Serbuk Kering",
+                "Air sahaja",
+                "Buih (foam) sahaja",
+                "Campuran pasir dan air"
+              ],
+              "answer": "CO₂ atau Serbuk Kering",
+              "explanation": "Jenis ini selamat untuk peralatan elektrik yang berarus."
+            }
+          ]
+        },
+        {
+          "id": "fire-2",
+          "title": "Keselamatan Kebakaran #2",
+          "questions": [
+            {
+              "question": "Cuba memadam kebakaran hanya apabila…",
+              "options": [
+                "Kebakaran kecil & laluan keluar jelas",
+                "Apa-apa saiz kebakaran",
+                "Anda tiada latihan",
+                "Asap tebal di tangga"
+              ],
+              "answer": "Kebakaran kecil & laluan keluar jelas",
+              "explanation": "Pastikan anda ada jalan keluar yang selamat sebelum cuba memadam api."
+            },
+            {
+              "question": "Sebelum keluar (jika selamat), anda perlu…",
+              "options": [
+                "Tutup bekalan gas utama",
+                "Buka pintu untuk pengudaraan asap",
+                "Kumpul barangan berat",
+                "Naik lif segera"
+              ],
+              "answer": "Tutup bekalan gas utama",
+              "explanation": "Menutup gas boleh mengurangkan bahan api kepada kebakaran."
+            },
+            {
+              "question": "Penggera asap perlu dipasang…",
+              "options": [
+                "Di bilik tidur dan lorong",
+                "Hanya di dapur",
+                "Hanya di bilik mandi",
+                "Hanya di ruang tamu"
+              ],
+              "answer": "Di bilik tidur dan lorong",
+              "explanation": "Pengesanan awal semasa tidur adalah kritikal."
+            },
+            {
+              "question": "Jika tangga dipenuhi asap semasa turun…",
+              "options": [
+                "Berpatah balik dan berlindung di bilik selamat",
+                "Terus turun dengan cepat",
+                "Gunakan lif sebagai ganti",
+                "Tunggu di pelantar tangga"
+              ],
+              "answer": "Berpatah balik dan berlindung di bilik selamat",
+              "explanation": "Elakkan laluan keluar yang dipenuhi asap; berlindung dan beri isyarat bantuan."
+            },
+            {
+              "question": "Pencegahan terbaik semasa memasak:",
+              "options": [
+                "Jangan tinggalkan masakan tanpa pengawasan",
+                "Matikan penggera asap",
+                "Panaskan minyak berlebihan untuk cepat",
+                "Simpan tuala berdekatan dapur"
+              ],
+              "answer": "Jangan tinggalkan masakan tanpa pengawasan",
+              "explanation": "Masakan tanpa pengawasan ialah punca utama kebakaran rumah."
+            }
+          ]
+        },
+        {
+          "id": "fire-3",
+          "title": "Keselamatan Kebakaran #3",
+          "questions": [
+            {
+              "question": "Untuk kebakaran kecil pada kuali minyak, langkah pertama:",
+              "options": [
+                "Matikan api dan tutup dengan penutup",
+                "Curah air",
+                "Bawa kuali ke luar",
+                "Tambah lebih minyak"
+              ],
+              "answer": "Matikan api dan tutup dengan penutup",
+              "explanation": "Lemaskan api dengan menghalang oksigen; jangan sekali-kali tambah air pada minyak."
+            },
+            {
+              "question": "Jika pakaian terbakar:",
+              "options": [
+                "Berhenti, Baring, Berguling (Stop, Drop, Roll)",
+                "Lari keluar",
+                "Kipas api",
+                "Tuang alkohol"
+              ],
+              "answer": "Berhenti, Baring, Berguling (Stop, Drop, Roll)",
+              "explanation": "Tindakan ini melemaskan api dan mengurangkan kesan melecur."
+            },
+            {
+              "question": "Kebakaran bangunan tinggi: lif adalah untuk…",
+              "options": [
+                "Kegunaan bomba sahaja",
+                "Pemindahan awam",
+                "Mengalih haiwan peliharaan",
+                "Bawa bagasi"
+              ],
+              "answer": "Kegunaan bomba sahaja",
+              "explanation": "Lif boleh gagal atau terbuka di aras terjejas; gunakan tangga."
+            },
+            {
+              "question": "Pastikan laluan keluar dan koridor…",
+              "options": [
+                "Bebas daripada halangan",
+                "Dipenuhi storan",
+                "Sebahagiannya disekat",
+                "Dikunci demi keselamatan"
+              ],
+              "answer": "Bebas daripada halangan",
+              "explanation": "Halangan melambatkan pemindahan dan berbahaya dalam keadaan berasap."
+            },
+            {
+              "question": "Lokasi yang baik untuk alat pemadam di rumah:",
+              "options": [
+                "Berhampiran pintu keluar dapur",
+                "Di dalam ketuhar",
+                "Di loteng berkunci",
+                "Di belakang perabot berat"
+              ],
+              "answer": "Berhampiran pintu keluar dapur",
+              "explanation": "Letakkan di tempat yang mudah dicapai sambil mengekalkan laluan keluar."
+            }
+          ]
+        },
+        {
+          "id": "fire-4",
+          "title": "Keselamatan Kebakaran #4",
+          "questions": [
+            {
+              "question": "Label alat pemadam ABC bermaksud ia berkesan untuk…",
+              "options": [
+                "Kebakaran pepejal, cecair dan elektrik",
+                "Elektrik sahaja",
+                "Gas sahaja",
+                "Kebakaran logam sahaja"
+              ],
+              "answer": "Kebakaran pepejal, cecair dan elektrik",
+              "explanation": "ABC merangkumi kelas biasa A, B dan C."
+            },
+            {
+              "question": "Bilik selamat ketika terperangkap perlu ada…",
+              "options": [
+                "Pintu yang boleh ditutup dan tingkap untuk beri isyarat",
+                "Tiada tingkap",
+                "Pintu berkunci sahaja",
+                "Pengudaraan terbuka ke koridor"
+              ],
+              "answer": "Pintu yang boleh ditutup dan tingkap untuk beri isyarat",
+              "explanation": "Kurangkan kemasukan asap dan tingkatkan keterlihatan kepada penyelamat."
+            },
+            {
+              "question": "Anda jumpa gelendong hos kebakaran dihalang barang. Anda harus…",
+              "options": [
+                "Laporkan dan pastikan kawasan lapang",
+                "Abaikan",
+                "Guna barang sebagai tempat duduk",
+                "Kunci bilik itu"
+              ],
+              "answer": "Laporkan dan pastikan kawasan lapang",
+              "explanation": "Peralatan pemadaman mesti mudah dicapai."
+            },
+            {
+              "question": "Suir (power strip) perlu digunakan…",
+              "options": [
+                "Tanpa terlebih beban pada soket",
+                "Disambung berantai (daisy-chain)",
+                "Di bawah permaidani",
+                "Berhampiran sumber air"
+              ],
+              "answer": "Tanpa terlebih beban pada soket",
+              "explanation": "Lebihan beban dan haba boleh menyebabkan kebakaran."
+            },
+            {
+              "question": "Lokasi sesuai alat pemadam di rumah:",
+              "options": [
+                "Dekat pintu keluar dapur",
+                "Di dalam ketuhar",
+                "Di loteng berkunci",
+                "Di belakang perabot berat"
+              ],
+              "answer": "Dekat pintu keluar dapur",
+              "explanation": "Letak di tempat yang mudah dicapai sambil mengekalkan laluan keluar."
+            }
+          ]
+        },
+        {
+          "id": "fire-5",
+          "title": "Keselamatan Kebakaran #5",
+          "questions": [
+            {
+              "question": "Jika sebuah bilik terbakar dan selamat untuk berbuat demikian, anda perlu…",
+              "options": [
+                "Tutup pintu untuk melambatkan penyebaran",
+                "Buka tingkap selebar-lebarnya",
+                "Tanggalkan pintu",
+                "Kipas asap keluar"
+              ],
+              "answer": "Tutup pintu untuk melambatkan penyebaran",
+              "explanation": "Pintu tertutup mengehadkan oksigen dan memperlahankan pembesaran api."
+            },
+            {
+              "question": "Mengecas peranti sepanjang malam…",
+              "options": [
+                "Boleh terlalu panas dan berisiko",
+                "Sentiasa selamat",
+                "Memanjangkan hayat bateri",
+                "Mencegah kebakaran"
+              ],
+              "answer": "Boleh terlalu panas dan berisiko",
+              "explanation": "Gunakan pengecas bertauliah dan elakkan menutup peranti ketika mengecas."
+            },
+            {
+              "question": "Puntung rokok perlu dibuang…",
+              "options": [
+                "Setelah dipadam sepenuhnya dalam tong tidak mudah terbakar",
+                "Ke dalam daun kering",
+                "Di atas karpet",
+                "Ke dalam bakul kertas"
+              ],
+              "answer": "Setelah dipadam sepenuhnya dalam tong tidak mudah terbakar",
+              "explanation": "Puntung yang masih berbara boleh menyebabkan kebakaran selepas beberapa jam."
+            },
+            {
+              "question": "Jika koridor dipenuhi asap…",
+              "options": [
+                "Merangkak rendah",
+                "Berdiri tegak dan berlari",
+                "Tahan nafas dan pecut",
+                "Tunggu sambil berdiri"
+              ],
+              "answer": "Merangkak rendah",
+              "explanation": "Udara lebih bersih berada dekat lantai."
+            },
+            {
+              "question": "Selimut api paling sesuai untuk…",
+              "options": [
+                "Kebakaran kecil pada kuali atau pakaian",
+                "Kebakaran bilik besar",
+                "Kabinet elektrik",
+                "Kebakaran hutan"
+              ],
+              "answer": "Kebakaran kecil pada kuali atau pakaian",
+              "explanation": "Ia melemaskan api kecil dengan memutuskan bekalan oksigen."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dengue",
+      "title": "Denggi",
+      "sets": [
+        {
+          "id": "dengue-1",
+          "title": "Denggi #1",
+          "questions": [
+            {
+              "question": "Gejala biasa denggi ialah…",
+              "options": [
+                "Demam mendadak dengan sakit-sakit badan",
+                "Batuk kronik",
+                "Kaki gatal sahaja",
+                "Hilang pendengaran"
+              ],
+              "answer": "Demam mendadak dengan sakit-sakit badan",
+              "explanation": "Denggi sering hadir dengan demam, sakit kepala, sakit otot/sendi, dan kadangkala ruam."
+            },
+            {
+              "question": "Vektor utama denggi ialah…",
+              "options": ["Nyamuk Aedes", "Lalat", "Kumbang", "Rama-rama"],
+              "answer": "Nyamuk Aedes",
+              "explanation": "Aedes aegypti dan Aedes albopictus menyebarkan virus denggi."
+            },
+            {
+              "question": "Waktu puncak gigitan biasanya…",
+              "options": [
+                "Awal pagi dan petang",
+                "Tengah malam sahaja",
+                "Tengah hari sahaja",
+                "Tidak pernah pada waktu siang"
+              ],
+              "answer": "Awal pagi dan petang",
+              "explanation": "Nyamuk Aedes kerap menggigit pada waktu subuh dan senja."
+            },
+            {
+              "question": "Langkah perlindungan diri yang baik:",
+              "options": [
+                "Sapukan penghalau nyamuk secara berkala",
+                "Biarkan tingkap terbuka tanpa jaring",
+                "Pakai seluar pendek di luar pada waktu senja",
+                "Elakkan penghalau sepenuhnya"
+              ],
+              "answer": "Sapukan penghalau nyamuk secara berkala",
+              "explanation": "Gunakan penghalau berasaskan DEET, picaridin (icaridin), atau IR3535 mengikut arahan."
+            },
+            {
+              "question": "Dapatkan rawatan perubatan segera jika…",
+              "options": [
+                "Sakit perut teruk atau pendarahan berlaku",
+                "Sakit tekak ringan sahaja",
+                "Berasa lapar",
+                "Tidak boleh tidur awal"
+              ],
+              "answer": "Sakit perut teruk atau pendarahan berlaku",
+              "explanation": "Tanda amaran denggi teruk memerlukan penilaian segera."
+            }
+          ]
+        },
+        {
+          "id": "dengue-2",
+          "title": "Denggi #2",
+          "questions": [
+            {
+              "question": "Untuk mencegah pembiakan di rumah, anda harus…",
+              "options": [
+                "Hapuskan air bertakung",
+                "Biarkan air dalam dulang selama berminggu",
+                "Tinggalkan baldi tanpa penutup",
+                "Kumpul air hujan dalam mangkuk terbuka"
+              ],
+              "answer": "Hapuskan air bertakung",
+              "explanation": "Nyamuk membiak dalam sedikit air yang tidak mengalir."
+            },
+            {
+              "question": "Piring pasu bunga hendaklah…",
+              "options": [
+                "Dikosongkan dengan kerap",
+                "Diisi dengan air",
+                "Ditutup dengan tanah",
+                "Hanya dicat"
+              ],
+              "answer": "Dikosongkan dengan kerap",
+              "explanation": "Air yang berkumpul menjadi habitat pembiakan."
+            },
+            {
+              "question": "Pilihan pakaian untuk elak gigitan:",
+              "options": [
+                "Lengan panjang dan seluar panjang",
+                "Tanpa lengan sahaja",
+                "Seluar pendek pada waktu senja",
+                "Sandal terbuka di mana-mana"
+              ],
+              "answer": "Lengan panjang dan seluar panjang",
+              "explanation": "Menutup kulit mengurangkan pendedahan gigitan."
+            },
+            {
+              "question": "Penghalau nyamuk hendaklah disapu…",
+              "options": [
+                "Mengikut arahan dan diulang bila perlu",
+                "Sekali sebulan sahaja",
+                "Pada label pakaian sahaja",
+                "Hanya ketika di dalam rumah"
+              ],
+              "answer": "Mengikut arahan dan diulang bila perlu",
+              "explanation": "Ikuti arahan label untuk perlindungan berkesan."
+            },
+            {
+              "question": "Jumlah air kecil yang boleh membiak nyamuk lebih kurang sebesar…",
+              "options": [
+                "Genangan sebesar syiling",
+                "Tab mandi",
+                "Kolam renang",
+                "Tasik"
+              ],
+              "answer": "Genangan sebesar syiling",
+              "explanation": "Walau sedikit air bersih yang bertakung boleh menjadi tempat pembiakan."
+            }
+          ]
+        },
+        {
+          "id": "dengue-3",
+          "title": "Denggi #3",
+          "questions": [
+            {
+              "question": "Ruam denggi biasa mungkin muncul…",
+              "options": [
+                "Beberapa hari selepas demam bermula",
+                "Sebelum lahir",
+                "Hanya pada musim sejuk",
+                "Tidak pernah berlaku dengan denggi"
+              ],
+              "answer": "Beberapa hari selepas demam bermula",
+              "explanation": "Sesetengah pesakit mendapat ruam semasa fasa demam atau pemulihan."
+            },
+            {
+              "question": "Penghidratan semasa sakit denggi adalah…",
+              "options": [
+                "Penting untuk mencegah dehidrasi",
+                "Tidak diperlukan",
+                "Memudaratkan",
+                "Hanya untuk atlet"
+              ],
+              "answer": "Penting untuk mencegah dehidrasi",
+              "explanation": "Cecair membantu peredaran dan pemulihan; ikut nasihat perubatan."
+            },
+            {
+              "question": "Pendarahan ringan (hidung/gusi) boleh berlaku kerana…",
+              "options": [
+                "Perubahan platelet dalam denggi",
+                "Gigi patah sahaja",
+                "Sentiasa memberus terlalu kuat",
+                "Makanan pedas"
+              ],
+              "answer": "Perubahan platelet dalam denggi",
+              "explanation": "Denggi boleh menurunkan platelet dan meningkatkan kecenderungan pendarahan."
+            },
+            {
+              "question": "Penggunaan kelambu dan jaring tingkap…",
+              "options": [
+                "Membantu mengurangkan gigitan",
+                "Tidak memberi kesan",
+                "Menarik lebih banyak nyamuk",
+                "Memudaratkan di dalam rumah"
+              ],
+              "answer": "Membantu mengurangkan gigitan",
+              "explanation": "Halangan fizikal merupakan langkah pencegahan yang berkesan."
+            },
+            {
+              "question": "Pencegahan komuniti termasuk…",
+              "options": [
+                "Membersihkan longkang dan kawasan bersama",
+                "Mengabaikan kawasan kongsi",
+                "Menyimpan air tanpa penutup",
+                "Meninggalkan sampah di luar"
+              ],
+              "answer": "Membersihkan longkang dan kawasan bersama",
+              "explanation": "Kebersihan komuniti mengurangkan tempat pembiakan."
+            }
+          ]
+        },
+        {
+          "id": "dengue-4",
+          "title": "Denggi #4",
+          "questions": [
+            {
+              "question": "Jika anda syak denggi, anda perlu…",
+              "options": [
+                "Berjumpa penyedia perkhidmatan kesihatan",
+                "Ubat sendiri dengan pil tidak diketahui",
+                "Elakkan semua cecair",
+                "Abaikan demam selama berminggu"
+              ],
+              "answer": "Berjumpa penyedia perkhidmatan kesihatan",
+              "explanation": "Penilaian perubatan membimbing rawatan dan pemantauan tanda amaran."
+            },
+            {
+              "question": "Untuk pengurusan demam dalam denggi, elakkan…",
+              "options": [
+                "Aspirin tanpa nasihat",
+                "Paracetamol/acetaminophen mengikut arahan",
+                "Rehat dan minum air",
+                "Pantau simptom"
+              ],
+              "answer": "Aspirin tanpa nasihat",
+              "explanation": "Sesetengah ubat meningkatkan risiko pendarahan—ikut panduan kesihatan."
+            },
+            {
+              "question": "Nyamuk Aedes biasanya membiak dalam…",
+              "options": [
+                "Bekas berisi air bersih",
+                "Sungai berarus deras",
+                "Ombak laut",
+                "Pasir kering"
+              ],
+              "answer": "Bekas berisi air bersih",
+              "explanation": "Ia gemar bekas buatan manusia yang berisi air bertakung yang bersih."
+            },
+            {
+              "question": "Pengembara ke kawasan denggi harus…",
+              "options": [
+                "Guna penghalau dan pakaian pelindung",
+                "Elak semua aktiviti luar",
+                "Lindungi kaki sahaja",
+                "Abaikan penghalau pada waktu senja"
+              ],
+              "answer": "Guna penghalau dan pakaian pelindung",
+              "explanation": "Perlindungan berlapis mengurangkan risiko."
+            },
+            {
+              "question": "Jika simptom bertambah teruk (muntah, sakit teruk, pendarahan)…",
+              "options": [
+                "Dapatkan rawatan perubatan segera",
+                "Tunggu sahaja di rumah",
+                "Bersenam lebih",
+                "Ambil suplemen rawak"
+              ],
+              "answer": "Dapatkan rawatan perubatan segera",
+              "explanation": "Ini tanda amaran denggi teruk."
+            }
+          ]
+        },
+        {
+          "id": "dengue-5",
+          "title": "Denggi #5",
+          "questions": [
+            {
+              "question": "Pemeriksaan rumah mingguan perlu termasuk…",
+              "options": [
+                "Kosongkan dan gosok bekas air",
+                "Penuhkan pasu hingga brim",
+                "Biarkan baldi tanpa penutup",
+                "Simpan tayar dengan air hujan"
+              ],
+              "answer": "Kosongkan dan gosok bekas air",
+              "explanation": "Ganggu telur/larva dan buang air bertakung."
+            },
+            {
+              "question": "Menyalakan lilin citronella adalah…",
+              "options": [
+                "Bukan perlindungan utama yang boleh dipercayai",
+                "Perlindungan mencukupi",
+                "Lebih baik daripada penghalau",
+                "Pengganti untuk jaring"
+              ],
+              "answer": "Bukan perlindungan utama yang boleh dipercayai",
+              "explanation": "Gunakan penghalau dan halangan yang terbukti; lilin sahaja tidak memadai."
+            },
+            {
+              "question": "Dapatan makmal tipikal dalam denggi boleh termasuk…",
+              "options": [
+                "Platelet rendah",
+                "Kalsium tinggi",
+                "Sentiasa platelet tinggi",
+                "Natrium sangat tinggi"
+              ],
+              "answer": "Platelet rendah",
+              "explanation": "Trombositopenia adalah biasa; doktor memantau tahap untuk menilai tahap keterukan."
+            },
+            {
+              "question": "Nasihat pemulihan selepas sakit termasuk…",
+              "options": [
+                "Kembali beraktiviti secara beransur dan kekal hidrat",
+                "Terus bersenam berat serta-merta",
+                "Tiada cecair",
+                "Rehat di katil secara kekal"
+              ],
+              "answer": "Kembali beraktiviti secara beransur dan kekal hidrat",
+              "explanation": "Berikan masa untuk kekuatan pulih; ikut nasihat perubatan."
+            },
+            {
+              "question": "Tindakan kejiranan yang paling membantu:",
+              "options": [
+                "Gotong-royong berkala untuk hapus tempat pembiakan",
+                "Biarkan sampah berselerak",
+                "Kumpul air dalam tong terbuka",
+                "Abaikan longkang"
+              ],
+              "answer": "Gotong-royong berkala untuk hapus tempat pembiakan",
+              "explanation": "Usaha bersama mengurangkan populasi nyamuk."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "firstaid",
+      "title": "Pertolongan Cemas",
+      "sets": [
+        {
+          "id": "firstaid-1",
+          "title": "Pertolongan Cemas #1",
+          "questions": [
+            {
+              "question": "Kadar mampatan CPR dewasa ialah…",
+              "options": [
+                "100–120 seminit",
+                "40–60 seminit",
+                "160–200 seminit",
+                "Tiada mampatan diperlukan"
+              ],
+              "answer": "100–120 seminit",
+              "explanation": "Lakukan mampatan berkualiti tinggi 100–120/min dengan pelepasan dada penuh."
+            },
+            {
+              "question": "Kedalaman mampatan dada dewasa kira-kira…",
+              "options": [
+                "5–6 cm",
+                "1–2 cm",
+                "10–12 cm",
+                "Tiada panduan kedalaman"
+              ],
+              "answer": "5–6 cm",
+              "explanation": "Tekan kuat dan laju, benarkan dada kembali sepenuhnya."
+            },
+            {
+              "question": "Jika AED tiba, anda perlu…",
+              "options": [
+                "Hidupkan dan ikut arahan",
+                "Tunggu habis kuiz",
+                "Goncang pesakit",
+                "Tanggalkan satu pad sahaja"
+              ],
+              "answer": "Hidupkan dan ikut arahan",
+              "explanation": "AED memberikan arahan suara yang jelas—tampal pad dan ikut arahan."
+            },
+            {
+              "question": "Langkah pertama pendarahan teruk:",
+              "options": [
+                "Tekan langsung dengan kuat",
+                "Bilas perlahan kemudian tunggu",
+                "Keluarkan objek tertanam",
+                "Tidak buat apa-apa hingga bantuan tiba"
+              ],
+              "answer": "Tekan langsung dengan kuat",
+              "explanation": "Tekanan langsung ialah kaedah utama mengawal pendarahan luaran."
+            },
+            {
+              "question": "Untuk anggota yang berdarah teruk, jika terlatih anda boleh…",
+              "options": [
+                "Pasang tourniquet di atas luka",
+                "Letak ais terus",
+                "Tukar balutan selalu",
+                "Ikat tali longgar"
+              ],
+              "answer": "Pasang tourniquet di atas luka",
+              "explanation": "Guna tourniquet yang sesuai 5–7 cm di atas luka (bukan atas sendi) dan catat masa."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-2",
+          "title": "Pertolongan Cemas #2",
+          "questions": [
+            {
+              "question": "Tersedak dewasa: jika teruk dan tidak dapat batuk…",
+              "options": [
+                "Beri 5 hentakan belakang kemudian 5 tolakan abdomen",
+                "Beri air",
+                "Tepuk kepala",
+                "Minta baring"
+              ],
+              "answer": "Beri 5 hentakan belakang kemudian 5 tolakan abdomen",
+              "explanation": "Ulang-alik hentakan belakang dan tolakan abdomen sehingga lega atau pengsan."
+            },
+            {
+              "question": "Untuk melecur, pertolongan cemas yang betul termasuk…",
+              "options": [
+                "Sejukkan di bawah air mengalir selama 20 minit",
+                "Sapukan mentega",
+                "Sapukan ubat gigi",
+                "Gunakan ais terus pada kulit"
+              ],
+              "answer": "Sejukkan di bawah air mengalir selama 20 minit",
+              "explanation": "Penyejukan mengurangkan kerosakan tisu; elak minyak/krim/ais pada luka baru."
+            },
+            {
+              "question": "JANGAN pecahkan lepuh kerana…",
+              "options": [
+                "Ia melindungi luka daripada jangkitan",
+                "Ia serta-merta melegakan sakit",
+                "Ia memperbaiki parut",
+                "Ia mempercepat pemulihan"
+              ],
+              "answer": "Ia melindungi luka daripada jangkitan",
+              "explanation": "Kekalkan lepuh utuh dan tutup dengan balutan bersih tidak melekat."
+            },
+            {
+              "question": "Pertolongan cemas patah tulang termasuk…",
+              "options": [
+                "Imobilisasikan dan elakkan meluruskan",
+                "Betulkan paksa anggota",
+                "Letak pad panas sahaja",
+                "Galak berlari"
+              ],
+              "answer": "Imobilisasikan dan elakkan meluruskan",
+              "explanation": "Imobilisasikan sendi di atas dan bawah; dapatkan rawatan."
+            },
+            {
+              "question": "Untuk terseliuh/tertarik, penjagaan awal ialah…",
+              "options": [
+                "Protect, Rest, Ice, Compress, Elevate (PRICE)",
+                "Lari sahaja",
+                "Haba dan urut serta-merta",
+                "Abaikan bengkak"
+              ],
+              "answer": "Protect, Rest, Ice, Compress, Elevate (PRICE)",
+              "explanation": "Pendekatan PRICE membantu kurangkan sakit dan bengkak pada awal."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-3",
+          "title": "Pertolongan Cemas #3",
+          "questions": [
+            {
+              "question": "Strok haba ialah…",
+              "options": [
+                "Kecemasan yang mengancam nyawa",
+                "Gangguan ringan",
+                "Isu cuaca sejuk",
+                "Diselesaikan dengan minuman panas"
+              ],
+              "answer": "Kecemasan yang mengancam nyawa",
+              "explanation": "Pindahkan ke kawasan sejuk dan sejukkan segera; hubungi perkhidmatan kecemasan."
+            },
+            {
+              "question": "Tanda strok haba boleh termasuk…",
+              "options": [
+                "Suhu badan sangat tinggi dan keliru",
+                "Nadi rendah sahaja",
+                "Kuku biru sahaja",
+                "Sedawa"
+              ],
+              "answer": "Suhu badan sangat tinggi dan keliru",
+              "explanation": "Juga perhatikan kulit panas/kering atau rebah."
+            },
+            {
+              "question": "Kaedah penyejukan untuk penyakit berkaitan haba termasuk…",
+              "options": [
+                "Pek sejuk di leher/ketiak/pangkal paha",
+                "Selimut tebal",
+                "Mandi air panas",
+                "Duduk di bawah matahari"
+              ],
+              "answer": "Pek sejuk di leher/ketiak/pangkal paha",
+              "explanation": "Penyejukan aktif pantas menurunkan suhu teras."
+            },
+            {
+              "question": "Jika sedar dengan keletihan haba, anda boleh…",
+              "options": [
+                "Beri sips air sejuk sedikit demi sedikit",
+                "Beri alkohol",
+                "Hadkan cecair",
+                "Paksa dia berlari"
+              ],
+              "answer": "Beri sips air sejuk sedikit demi sedikit",
+              "explanation": "Hidrasi dan rehat di tempat sejuk menyokong pemulihan."
+            },
+            {
+              "question": "Semasa CPR, gangguan harus…",
+              "options": [
+                "Sesingkat mungkin",
+                "Kerap untuk berehat",
+                "Setiap 5 saat",
+                "Setiap minit selama 20 saat"
+              ],
+              "answer": "Sesingkat mungkin",
+              "explanation": "Minimakan jeda untuk mengekalkan perfusi."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-4",
+          "title": "Pertolongan Cemas #4",
+          "questions": [
+            {
+              "question": "Untuk objek tertanam dalam luka, anda perlu…",
+              "options": [
+                "Jangan keluarkan; alas sekeliling dan ikat kemas",
+                "Tarik keluar segera",
+                "Putar untuk longgarkan",
+                "Abaikan dan terus bergerak"
+              ],
+              "answer": "Jangan keluarkan; alas sekeliling dan ikat kemas",
+              "explanation": "Mengeluarkan boleh memburukkan pendarahan; stabilkan dan dapatkan bantuan perubatan."
+            },
+            {
+              "question": "Pertolongan cemas renjatan (peredarannya) termasuk…",
+              "options": [
+                "Baringkan rata, kekalkan hangat, tenangkan",
+                "Beri makanan dan minuman",
+                "Paksa berdiri",
+                "Balut dada dengan ketat"
+              ],
+              "answer": "Baringkan rata, kekalkan hangat, tenangkan",
+              "explanation": "Sokong peredaran dan keselesaan hingga bantuan tiba."
+            },
+            {
+              "question": "Penempatan pad AED (dewasa) biasanya…",
+              "options": [
+                "Dada kanan atas dan dada kiri bawah",
+                "Kedua-duanya di leher",
+                "Kedua-duanya di belakang",
+                "Pada lengan"
+              ],
+              "answer": "Dada kanan atas dan dada kiri bawah",
+              "explanation": "Letak seperti digambar pada pad; ikut arahan peranti."
+            },
+            {
+              "question": "Jika dada basah/berpeluh sebelum menampal pad AED…",
+              "options": [
+                "Keringkan dada dengan cepat",
+                "Abaikan pengeringan",
+                "Tuang air dahulu",
+                "Guna losen"
+              ],
+              "answer": "Keringkan dada dengan cepat",
+              "explanation": "Sentuhan yang baik meningkatkan keberkesanan kejutan dan lekatan pad."
+            },
+            {
+              "question": "Semasa analisis AED, anda mesti…",
+              "options": [
+                "Berdiri jauh dan jangan sentuh pesakit",
+                "Teruskan mampatan",
+                "Pegang tangan pesakit",
+                "Laraskan pad selalu"
+              ],
+              "answer": "Berdiri jauh dan jangan sentuh pesakit",
+              "explanation": "Pergerakan mengganggu analisis ritma dan berbahaya jika kejutan diberi."
+            }
+          ]
+        },
+        {
+          "id": "firstaid-5",
+          "title": "Pertolongan Cemas #5",
+          "questions": [
+            {
+              "question": "Untuk mimisan, pertolongan cemas ialah…",
+              "options": [
+                "Duduk tunduk ke depan dan picit bahagian lembut hidung",
+                "Baring rata dan dongakkan kepala",
+                "Sumbat tisu dalam-dalam",
+                "Hembus kuat"
+              ],
+              "answer": "Duduk tunduk ke depan dan picit bahagian lembut hidung",
+              "explanation": "Posisi ke depan elak darah tertelan; picit 10–15 minit."
+            },
+            {
+              "question": "Untuk kecederaan tulang belakang yang disyaki, anda perlu…",
+              "options": [
+                "Elak pergerakan dan hubungi kecemasan",
+                "Putar leher untuk luruskan",
+                "Suruh berjalan",
+                "Letak haba pada tulang belakang"
+              ],
+              "answer": "Elak pergerakan dan hubungi kecemasan",
+              "explanation": "Imobilisasikan penjajaran kepala/leher dan tunggu rawatan profesional."
+            },
+            {
+              "question": "Percikan bahan kimia ke mata, pertolongan cemas ialah…",
+              "options": [
+                "Bilas dengan air bersih sekurang-kurangnya 15 minit",
+                "Tutup dan tunggu",
+                "Gosok mata",
+                "Letak titisan mata sahaja"
+              ],
+              "answer": "Bilas dengan air bersih sekurang-kurangnya 15 minit",
+              "explanation": "Pembilasan berpanjangan mencairkan dan menyingkirkan bahan kimia."
+            },
+            {
+              "question": "Selepas melecur ringan disejukkan, tutup dengan…",
+              "options": [
+                "Balutan bersih tidak melekat atau plastik pembalut (cling film)",
+                "Kapas",
+                "Tisu kertas",
+                "Lumpur"
+              ],
+              "answer": "Balutan bersih tidak melekat atau plastik pembalut (cling film)",
+              "explanation": "Melindungi luka dan mengurangkan sakit; elak pelekat pada kulit melecur."
+            },
+            {
+              "question": "Jika orang dewasa tidak responsif dan tidak bernafas normal, anda perlu…",
+              "options": [
+                "Hubungi kecemasan dan mulakan CPR",
+                "Tunggu beberapa minit",
+                "Beri air dahulu",
+                "Goncang kuat berulang kali"
+              ],
+              "answer": "Hubungi kecemasan dan mulakan CPR",
+              "explanation": "CPR segera dan defibrilasi awal menyelamatkan nyawa."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disease",
+      "title": "Penyakit",
+      "sets": [
+        {
+          "id": "disease-1",
+          "title": "Penyakit #1",
+          "questions": [
+            {
+              "question": "Cara harian terbaik untuk mengurangkan penularan virus pernafasan?",
+              "options": [
+                "Pakai cermin mata hitam",
+                "Cuci tangan dengan sabun sekurang-kurangnya 20 saat",
+                "Ambil antibiotik secara berkala",
+                "Keluar hanya pada waktu malam"
+              ],
+              "answer": "Cuci tangan dengan sabun sekurang-kurangnya 20 saat",
+              "explanation": "Basuhan tangan dengan sabun menyingkirkan patogen dengan berkesan; antibiotik tidak mencegah virus."
+            },
+            {
+              "question": "Anda demam dan batuk. Apa patut dibuat tentang kerja/sekolah?",
+              "options": [
+                "Pergi juga tetapi kurang bercakap",
+                "Berehat di rumah",
+                "Berdiri di tepi tingkap terbuka",
+                "Minum kopi dan teruskan"
+              ],
+              "answer": "Berehat di rumah",
+              "explanation": "Berehat di rumah membantu pemulihan dan mengelakkan jangkiti orang lain."
+            },
+            {
+              "question": "Bagaimana mask perlu dipakai untuk berkesan?",
+              "options": [
+                "Di bawah hidung",
+                "Longgar di pipi",
+                "Menutup mulut dan hidung dengan kemas",
+                "Di dagu sahaja"
+              ],
+              "answer": "Menutup mulut dan hidung dengan kemas",
+              "explanation": "Kedap yang baik di mulut dan hidung mengurangkan penyebaran titisan."
+            },
+            {
+              "question": "Selepas bersin ke dalam tisu, langkah seterusnya yang betul ialah?",
+              "options": [
+                "Simpan tisu untuk kemudian",
+                "Buang dan basuh/ sanitasi tangan",
+                "Bersalam untuk menyapa",
+                "Bilas tangan cepat dengan air sahaja"
+              ],
+              "answer": "Buang dan basuh/ sanitasi tangan",
+              "explanation": "Segera buang tisu dan bersihkan tangan untuk mencegah penularan."
+            },
+            {
+              "question": "Antibiotik berkesan terhadap:",
+              "options": [
+                "Virus seperti selsema/flu",
+                "Semua jenis demam",
+                "Jangkitan bakteria",
+                "Alergi"
+              ],
+              "answer": "Jangkitan bakteria",
+              "explanation": "Antibiotik merawat penyakit bakteria, bukan jangkitan virus atau alergi."
+            }
+          ]
+        },
+        {
+          "id": "disease-2",
+          "title": "Penyakit #2",
+          "questions": [
+            {
+              "question": "Kepekatan alkohol minimum yang disyorkan untuk pensanitasi tangan?",
+              "options": ["20%", "40%", "60% atau lebih", "100%"],
+              "answer": "60% atau lebih",
+              "explanation": "Pensanitasi dengan sekurang-kurangnya 60% alkohol disyorkan untuk keberkesanan."
+            },
+            {
+              "question": "Amalan yang membantu mencegah penyakit bawaan makanan?",
+              "options": [
+                "Nyahbeku daging di kaunter",
+                "Masak daging hingga suhu dalaman selamat",
+                "Biarkan lebihan makanan di luar semalaman",
+                "Guna semula perapan tanpa dididihkan"
+              ],
+              "answer": "Masak daging hingga suhu dalaman selamat",
+              "explanation": "Memasak dengan betul membunuh patogen; nyahbeku/ulang guna tidak selamat meningkatkan risiko."
+            },
+            {
+              "question": "Berkongsi cawan atau peralatan dengan orang lain boleh:",
+              "options": [
+                "Meningkatkan imuniti secara selamat",
+                "Meningkatkan risiko penularan penyakit",
+                "Mencegah dehidrasi",
+                "Menyembuhkan sakit tekak"
+              ],
+              "answer": "Meningkatkan risiko penularan penyakit",
+              "explanation": "Berkongsi barangan peribadi boleh menyebarkan patogen melalui air liur."
+            },
+            {
+              "question": "Bagaimana vaksin membantu?",
+              "options": [
+                "Ia membunuh semua kuman serta-merta",
+                "Ia mengajar sistem imun melawan penyakit tertentu",
+                "Ia menggantikan basuh tangan",
+                "Ia menyembuhkan semua penyakit serta-merta"
+              ],
+              "answer": "Ia mengajar sistem imun melawan penyakit tertentu",
+              "explanation": "Vaksin menyediakan pertahanan khusus kepada sistem imun."
+            },
+            {
+              "question": "Bilakah anda perlu dapatkan nasihat perubatan?",
+              "options": [
+                "Demam lebih 3 hari atau sukar bernafas",
+                "Bersin ringan sekali",
+                "Haus biasa selepas bersenam",
+                "Gatal telinga selama 5 minit"
+              ],
+              "answer": "Demam lebih 3 hari atau sukar bernafas",
+              "explanation": "Demam berterusan atau masalah pernafasan memerlukan penilaian segera."
+            }
+          ]
+        },
+        {
+          "id": "disease-3",
+          "title": "Penyakit #3",
+          "questions": [
+            {
+              "question": "Jika anda didapati positif untuk penyakit berjangkit, anda patut:",
+              "options": [
+                "Pergi ke tempat sesak untuk udara segar",
+                "Mengasingkan diri dan ikut panduan tempatan",
+                "Berkongsi minuman untuk ‘menguji’ orang lain",
+                "Berhenti membasuh tangan"
+              ],
+              "answer": "Mengasingkan diri dan ikut panduan tempatan",
+              "explanation": "Pengasingan mengurangkan penularan; ikut arahan kesihatan awam."
+            },
+            {
+              "question": "Permukaan kerap disentuh seperti tombol pintu perlu dibersihkan:",
+              "options": [
+                "Jarang-jarang",
+                "Hanya jika kelihatan kotor",
+                "Secara berkala dengan pembasmi kuman sesuai",
+                "Dengan air kosong sahaja"
+              ],
+              "answer": "Secara berkala dengan pembasmi kuman sesuai",
+              "explanation": "Pembasmian kuman berkala mengurangkan penularan dari permukaan tercemar."
+            },
+            {
+              "question": "Semasa mengendalikan ayam mentah, anda harus:",
+              "options": [
+                "Guna papan pemotong sama untuk salad",
+                "Bilas ayam dalam sinki",
+                "Guna papan berasingan untuk mentah dan sedia dimakan",
+                "Perap di kaunter"
+              ],
+              "answer": "Guna papan berasingan untuk mentah dan sedia dimakan",
+              "explanation": "Pengasingan mencegah pencemaran silang."
+            },
+            {
+              "question": "Jika perlu batuk dan tiada tisu:",
+              "options": [
+                "Ke dalam tangan",
+                "Ke lengan/ siku baju",
+                "Ke arah lantai",
+                "Ke udara"
+              ],
+              "answer": "Ke lengan/ siku baju",
+              "explanation": "Batuk ke lengan mengurangkan penyebaran ke tangan dan orang lain."
+            },
+            {
+              "question": "Probiotik boleh:",
+              "options": [
+                "Menggantikan antibiotik yang dipreskripsi",
+                "Sentiasa menyembuhkan jangkitan",
+                "Kadangkala menyokong kesihatan usus tetapi bukan rawatan jangkitan akut",
+                "Menjadikan basuh tangan tidak perlu"
+              ],
+              "answer": "Kadangkala menyokong kesihatan usus tetapi bukan rawatan jangkitan akut",
+              "explanation": "Ia mungkin membantu keseimbangan usus tetapi bukan rawatan jangkitan."
+            }
+          ]
+        },
+        {
+          "id": "disease-4",
+          "title": "Penyakit #4",
+          "questions": [
+            {
+              "question": "Ambang biasa untuk demam ialah:",
+              "options": [
+                "36.0°C (96.8°F)",
+                "37.0°C (98.6°F)",
+                "38.0°C (100.4°F)",
+                "39.5°C (103.1°F)"
+              ],
+              "answer": "38.0°C (100.4°F)",
+              "explanation": "≥38°C ialah ambang klinikal biasa untuk demam."
+            },
+            {
+              "question": "Untuk kurangkan risiko penyakit bawaan nyamuk anda perlu:",
+              "options": [
+                "Simpan air dalam bekas terbuka",
+                "Guna penghalau dan hapus air bertakung",
+                "Pakai seluar pendek pada waktu senja",
+                "Abaikan gigitan"
+              ],
+              "answer": "Guna penghalau dan hapus air bertakung",
+              "explanation": "Penghalau dan penghapusan tempat pembiakan mengurangkan gigitan dan risiko."
+            },
+            {
+              "question": "Selepas kontak rapat dengan seseorang yang mempunyai penyakit berjangkit anda perlu:",
+              "options": [
+                "Ambil antibiotik lebihan",
+                "Sengaja dijangkiti supaya cepat kebal",
+                "Pantau simptom dan ikut nasihat kesihatan awam",
+                "Tidak buat apa-apa"
+              ],
+              "answer": "Pantau simptom dan ikut nasihat kesihatan awam",
+              "explanation": "Ikut panduan tempatan tentang ujian, pemakaian pelitup, atau pengasingan."
+            },
+            {
+              "question": "Lebihan makanan perlu disejukkan dalam tempoh:",
+              "options": ["30 minit", "2 jam", "6 jam", "Semalaman"],
+              "answer": "2 jam",
+              "explanation": "Peraturan dua jam membantu mencegah pertumbuhan bakteria."
+            },
+            {
+              "question": "Yang manakah tanda dehidrasi?",
+              "options": [
+                "Kerap kencing",
+                "Air kencing pekat dan pening",
+                "Air liur berlebihan",
+                "Tangan sejuk sahaja"
+              ],
+              "answer": "Air kencing pekat dan pening",
+              "explanation": "Ini petunjuk biasa bahawa anda memerlukan cecair."
+            }
+          ]
+        },
+        {
+          "id": "disease-5",
+          "title": "Penyakit #5",
+          "questions": [
+            {
+              "question": "Sumber air minum paling selamat selepas bencana biasanya:",
+              "options": [
+                "Air sungai jernih",
+                "Air kolam berklorin",
+                "Air botol atau air yang dididih sekurang-kurangnya 1 minit",
+                "Apa-apa air paip"
+              ],
+              "answer": "Air botol atau air yang dididih sekurang-kurangnya 1 minit",
+              "explanation": "Didihan membunuh kebanyakan patogen; air botol biasanya selamat."
+            },
+            {
+              "question": "Norovirus biasa merebak melalui:",
+              "options": [
+                "Gigitan nyamuk",
+                "Makanan/tangan tercemar (laluan fekal-oral)",
+                "Penyaman udara",
+                "Muzik kuat"
+              ],
+              "answer": "Makanan/tangan tercemar (laluan fekal-oral)",
+              "explanation": "Kebersihan tangan yang rapi dan pengendalian makanan selamat mengurangkan penularan."
+            },
+            {
+              "question": "Etika batuk terbaik ialah:",
+              "options": [
+                "Batuk ke tangan",
+                "Batuk ke siku/tisu",
+                "Batuk ke dinding",
+                "Tahan nafas"
+              ],
+              "answer": "Batuk ke siku/tisu",
+              "explanation": "Ini membantu menahan titisan dan memastikan tangan lebih bersih."
+            },
+            {
+              "question": "Jika diberi antibiotik, anda perlu:",
+              "options": [
+                "Berhenti bila rasa sihat",
+                "Kongsi baki dengan keluarga",
+                "Habiskan kursus penuh seperti diarahkan",
+                "Gandakan dos untuk cepat habis"
+              ],
+              "answer": "Habiskan kursus penuh seperti diarahkan",
+              "explanation": "Menghabiskan rawatan membantu mencegah berulang dan rintangan."
+            },
+            {
+              "question": "Memakai sarung tangan bermakna anda boleh abaikan basuh tangan:",
+              "options": [
+                "Betul",
+                "Salah",
+                "Hanya hujung minggu",
+                "Hanya dengan sarung tangan nipis"
+              ],
+              "answer": "Salah",
+              "explanation": "Sarung tangan boleh tercemar; kebersihan tangan masih penting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "earthquake",
+      "title": "Gempa Bumi",
+      "sets": [
+        {
+          "id": "earthquake-1",
+          "title": "Gempa Bumi #1",
+          "questions": [
+            {
+              "question": "Semasa gegaran di dalam bangunan, tindakan segera paling selamat ialah:",
+              "options": [
+                "Lari keluar dengan cepat",
+                "Naik lif",
+                "Jatuh, Berlindung dan Pegang (Drop, Cover, Hold On)",
+                "Berdiri di ambang pintu"
+              ],
+              "answer": "Jatuh, Berlindung dan Pegang (Drop, Cover, Hold On)",
+              "explanation": "Merendah, berlindung di bawah perabot kukuh, dan pegang hingga gegaran berhenti."
+            },
+            {
+              "question": "Adakah selamat berlari keluar semasa tanah masih bergegar?",
+              "options": [
+                "Ya, sentiasa",
+                "Tidak, bahaya boleh jatuh di sekitar pintu keluar",
+                "Hanya jika anda laju",
+                "Hanya jika anda menjerit 'Gempa Bumi'"
+              ],
+              "answer": "Tidak, bahaya boleh jatuh di sekitar pintu keluar",
+              "explanation": "Serpihan fasad, kaca, dan papan tanda boleh jatuh; berlindung di tempat sehingga gegaran berhenti."
+            },
+            {
+              "question": "Jika anda berada di katil semasa gempa, anda perlu:",
+              "options": [
+                "Melompat dan berlari",
+                "Kekal di katil dan lindungi kepala dengan bantal",
+                "Berdiri di tingkap",
+                "Ke balkoni"
+              ],
+              "answer": "Kekal di katil dan lindungi kepala dengan bantal",
+              "explanation": "Kekal mengurangkan risiko dari objek jatuh; lindungi kepala/leher."
+            },
+            {
+              "question": "Jika anda berhampiran tingkap ketika gegaran bermula:",
+              "options": [
+                "Jauhkan diri dari tingkap",
+                "Bersandar pada kaca",
+                "Buka tingkap",
+                "Ambil gambar"
+              ],
+              "answer": "Jauhkan diri dari tingkap",
+              "explanation": "Kaca boleh pecah; bergerak ke kawasan dalam yang lebih selamat."
+            },
+            {
+              "question": "Mengenai lif semasa gempa:",
+              "options": [
+                "Ia tempat paling selamat",
+                "Guna untuk keluar dengan cepat",
+                "Elakkan menggunakan lif",
+                "Melompat di dalam untuk kurangkan gegaran"
+              ],
+              "answer": "Elakkan menggunakan lif",
+              "explanation": "Kuasa boleh terputus dan memerangkap penumpang; elak lif semasa dan selepas gegaran."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-2",
+          "title": "Gempa Bumi #2",
+          "questions": [
+            {
+              "question": "Selepas gegaran utama berhenti anda patut menjangka:",
+              "options": [
+                "Tenang serta-merta tanpa risiko",
+                "Gegaran susulan dan bahaya sekunder",
+                "Angin kencang taufan",
+                "Salji turun"
+              ],
+              "answer": "Gegaran susulan dan bahaya sekunder",
+              "explanation": "Aftershock boleh berlaku dalam minit hingga hari; kekal berjaga-jaga."
+            },
+            {
+              "question": "Jika anda di luar berhampiran bangunan semasa gegaran:",
+              "options": [
+                "Bergerak ke kawasan lapang jauh dari bangunan dan kabel",
+                "Berdiri di bawah papan tanda",
+                "Berlindung di sebelah dinding kaca",
+                "Bersembunyi di bawah pokok tepi jalan"
+              ],
+              "answer": "Bergerak ke kawasan lapang jauh dari bangunan dan kabel",
+              "explanation": "Kurangkan risiko daripada serpihan jatuh, kabel, dan fasad."
+            },
+            {
+              "question": "Jika anda memandu ketika gempa bermula:",
+              "options": [
+                "Pecut untuk ‘memintasnya’",
+                "Berhenti di bawah jambatan",
+                "Berhenti di tempat selamat dan tarik brek tangan",
+                "Berhenti di atas landasan kereta api"
+              ],
+              "answer": "Berhenti di tempat selamat dan tarik brek tangan",
+              "explanation": "Elakkan jejambat, jambatan dan talian kuasa; kekal dalam kenderaan."
+            },
+            {
+              "question": "Anda menghidu gas selepas gempa. Apa perlu anda buat?",
+              "options": [
+                "Hidupkan semua lampu untuk lebih jelas",
+                "Nyalakan mancis untuk periksa",
+                "Tutup gas hanya jika syak kebocoran dan tahu caranya; jika tidak, keluar dan hubungi utiliti",
+                "Abaikan sahaja"
+              ],
+              "answer": "Tutup gas hanya jika syak kebocoran dan tahu caranya; jika tidak, keluar dan hubungi utiliti",
+              "explanation": "Kebocoran gas boleh menyala; bertindak dengan berhati-hati dan panggil profesional jika ragu."
+            },
+            {
+              "question": "Adakah ambang pintu tempat paling selamat dalam bangunan moden semasa gempa?",
+              "options": [
+                "Ya, sentiasa",
+                "Tidak, itu mitos untuk bangunan moden",
+                "Hanya dalam bangunan tinggi",
+                "Hanya jika dicat merah"
+              ],
+              "answer": "Tidak, itu mitos untuk bangunan moden",
+              "explanation": "Ambang pintu biasanya tidak lebih kukuh; berlindung di bawah perabot kukuh."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-3",
+          "title": "Gempa Bumi #3",
+          "questions": [
+            {
+              "question": "Selepas gempa kuat berhampiran pantai anda perlu:",
+              "options": [
+                "Pergi ke pantai untuk lihat ombak",
+                "Bergerak ke tempat lebih tinggi kerana risiko tsunami",
+                "Berenang di pelabuhan",
+                "Memandu melalui terowong"
+              ],
+              "answer": "Bergerak ke tempat lebih tinggi kerana risiko tsunami",
+              "explanation": "Gegaran kuat atau lama berhampiran pantai boleh mencetuskan tsunami."
+            },
+            {
+              "question": "Jika anda terperangkap di bawah runtuhan anda perlu:",
+              "options": [
+                "Nyalakan mancis",
+                "Menjerit tanpa henti",
+                "Jimat tenaga, tutup mulut/hidung dan ketuk paip atau dinding",
+                "Alihkan runtuhan dengan cepat"
+              ],
+              "answer": "Jimat tenaga, tutup mulut/hidung dan ketuk paip atau dinding",
+              "explanation": "Mengetuk dan menjimatkan udara/tenaga meningkatkan peluang ditemui."
+            },
+            {
+              "question": "Untuk kurangkan kecederaan di rumah sebelum gempa anda perlu:",
+              "options": [
+                "Letak barang berat di tempat tinggi",
+                "Ikat rak buku dan pemanas air (water heater)",
+                "Gantung bingkai kaca di atas katil",
+                "Biarkan TV tanpa sauh"
+              ],
+              "answer": "Ikat rak buku dan pemanas air (water heater)",
+              "explanation": "Menambat item berat/tinggi mencegah tumbang dan kerosakan gas/air."
+            },
+            {
+              "question": "Barangan berguna untuk kit kecemasan gempa termasuk:",
+              "options": [
+                "Lilin sahaja",
+                "Air, lampu suluh, radio, kit pertolongan cemas",
+                "Konfeti",
+                "Suir sambungan yang banyak"
+              ],
+              "answer": "Air, lampu suluh, radio, kit pertolongan cemas",
+              "explanation": "Bekalan penting menyokong anda jika perkhidmatan terjejas."
+            },
+            {
+              "question": "Selepas memastikan keselamatan diri, langkah baik seterusnya ialah:",
+              "options": [
+                "Abaikan jiran",
+                "Periksa jiran yang mungkin perlukan bantuan",
+                "Memandu berkeliling untuk suka-suka",
+                "Hidupkan semua peralatan gas"
+              ],
+              "answer": "Periksa jiran yang mungkin perlukan bantuan",
+              "explanation": "Bantuan komuniti boleh menyelamatkan nyawa selepas bencana."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-4",
+          "title": "Gempa Bumi #4",
+          "questions": [
+            {
+              "question": "Mengapa latihan Jatuh, Berlindung, Pegang (Drop, Cover, Hold On) di sekolah/tempat kerja penting?",
+              "options": [
+                "Untuk menghafal warna bangunan",
+                "Mengurangkan masa tindak balas & kecederaan semasa gempa sebenar",
+                "Untuk belajar jalan pintas lif",
+                "Untuk markah kehadiran"
+              ],
+              "answer": "Mengurangkan masa tindak balas & kecederaan semasa gempa sebenar",
+              "explanation": "Latihan membina memori otot supaya tindakan selamat dilakukan dengan pantas ketika kecemasan."
+            },
+            {
+              "question": "Petanda biasa kemungkinan kebocoran gas selepas gempa:",
+              "options": [
+                "Dinding terasa sejuk",
+                "Bau telur busuk atau bunyi “mendesir” (hissing)",
+                "Lantai terasa panas",
+                "Lampu penghala (router) berkelip"
+              ],
+              "answer": "Bau telur busuk atau bunyi “mendesir” (hissing)",
+              "explanation": "Ini tanda kebocoran gas; keluar segera dan hubungi pihak utiliti dari luar."
+            },
+            {
+              "question": "Jika anda menggunakan kerusi roda ketika gempa:",
+              "options": [
+                "Segera berdiri",
+                "Kunci roda dan lindungi kepala serta leher",
+                "Pergi ke tingkap",
+                "Masuk lif"
+              ],
+              "answer": "Kunci roda dan lindungi kepala serta leher",
+              "explanation": "Menstabilkan kerusi roda dan melindungi bahagian penting mengurangkan risiko kecederaan."
+            },
+            {
+              "question": "Kaedah komunikasi yang biasanya paling berkesan sejurus selepas gempa:",
+              "options": [
+                "Panggilan telefon suara yang panjang berulang kali",
+                "Mesej teks (SMS)",
+                "Menjerit dari bumbung",
+                "Strim video"
+              ],
+              "answer": "Mesej teks (SMS)",
+              "explanation": "SMS menggunakan jalur lebar rendah dan lebih berpeluang dihantar ketika rangkaian sesak."
+            },
+            {
+              "question": "Jika anda menghidu gas selepas gegaran berhenti, anda perlu:",
+              "options": [
+                "Hidupkan suis untuk lihat dengan jelas",
+                "Guna mancis/lebih ringan untuk periksa",
+                "Keluar dari bangunan dan hubungi utiliti dari luar",
+                "Buka ketuhar untuk pemanas"
+              ],
+              "answer": "Keluar dari bangunan dan hubungi utiliti dari luar",
+              "explanation": "Elakkan sumber nyalaan; laporkan dari tempat yang selamat."
+            }
+          ]
+        },
+        {
+          "id": "earthquake-5",
+          "title": "Gempa Bumi #5",
+          "questions": [
+            {
+              "question": "Sebelum sebarang gempa berlaku anda perlu:",
+              "options": [
+                "Tidak buat apa-apa",
+                "Bina pelan kecemasan dan titik pertemuan",
+                "Hanya bergantung pada jiran",
+                "Sembunyi kunci di luar"
+              ],
+              "answer": "Bina pelan kecemasan dan titik pertemuan",
+              "explanation": "Persediaan meningkatkan koordinasi keluarga dan keselamatan."
+            },
+            {
+              "question": "Langkah mitigasi biasa untuk perkakas ialah:",
+              "options": [
+                "Biarkan pemanas air tanpa ikatan",
+                "Ikat pemanas air dengan tali/strap",
+                "Letak TV di tepi",
+                "Simpan objek berat di rak tinggi"
+              ],
+              "answer": "Ikat pemanas air dengan tali/strap",
+              "explanation": "Tali/strap mencegah terbalik dan kerosakan paip."
+            },
+            {
+              "question": "Di bangunan tinggi semasa gegaran anda perlu:",
+              "options": [
+                "Guna lif untuk keluar",
+                "Jauhkan dari tingkap dan berlindung di bawah perabot kukuh",
+                "Berdiri di ambang pintu",
+                "Lari ke bumbung"
+              ],
+              "answer": "Jauhkan dari tingkap dan berlindung di bawah perabot kukuh",
+              "explanation": "Bahaya kaca adalah ketara; berlindung sehingga gegaran berhenti."
+            },
+            {
+              "question": "Di kedai apabila gegaran bermula, tingkah laku lebih selamat ialah:",
+              "options": [
+                "Lari ke pintu keluar di bawah papan tanda",
+                "Jatuh di sisi peralatan kukuh jauh dari rak tinggi",
+                "Panjat rak pameran",
+                "Berdiri di bawah lampu kaca"
+              ],
+              "answer": "Jatuh di sisi peralatan kukuh jauh dari rak tinggi",
+              "explanation": "Elakkan item yang boleh tumbang; lindungi kepala dan leher."
+            },
+            {
+              "question": "Bilakah selamat untuk masuk semula ke bangunan yang rosak?",
+              "options": [
+                "Sebaik sahaja gegaran berhenti",
+                "Selepas pihak berkuasa mengisytiharkan selamat",
+                "Apabila bateri telefon penuh",
+                "Pada waktu malam untuk elak orang ramai"
+              ],
+              "answer": "Selepas pihak berkuasa mengisytiharkan selamat",
+              "explanation": "Kerosakan struktur mungkin tidak jelas; tunggu pelepasan rasmi."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

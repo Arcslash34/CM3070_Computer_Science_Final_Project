@@ -1,40 +1,80 @@
 {
-  "cancel": "Cancel",
-  "delete": "Delete",
+  "nav": {
+    "home": "Home",
+    "quizzes": "Quizzes",
+    "badges": "Badges",
+    "resource": "Resource",
+    "settings": "Settings",
+    "pastResults": "Past Results",
+    "guide": "Guide"
+  },
 
-  "hero_title": "Always Be Prepared",
-  "hero_desc": "Know what’s happening nearby, learn what to do, and act fast when it matters.",
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
 
-  "section_live_map": "Live Map",
-  "section_articles": "Articles",
-  "section_view_all": "View all",
-  "section_local_conditions": "Local Conditions",
-  "section_emergency_prep": "Emergency Preparedness",
+    "locating": "Locating…",
+    "article_open": "Open article",
 
-  "locating": "Locating…",
+    "hero_title": "Always Be Prepared",
+    "hero_desc": "Know what’s happening nearby, learn what to do, and act fast when it matters.",
 
-  "article_open": "Open article",
+    "section_live_map": "Live Map",
+    "section_articles": "Articles",
+    "section_view_all": "View all",
+    "section_local_conditions": "Local Conditions",
+    "section_emergency_prep": "Emergency Preparedness",
 
-  "stat_rainfall": "Rainfall",
-  "stat_pm25": "PM2.5",
-  "stat_temp": "Temp",
-  "stat_humidity": "Humidity",
-  "stat_wind": "Wind",
-  "stat_nearest_station": "Nearest Station",
-  "stat_nearest_region": "Nearest Region",
-  "stat_nearest": "Nearest",
+    "stat_rainfall": "Rainfall",
+    "stat_pm25": "PM2.5",
+    "stat_temp": "Temp",
+    "stat_humidity": "Humidity",
+    "stat_wind": "Wind",
+    "stat_nearest_station": "Nearest Station",
+    "stat_nearest_region": "Nearest Region",
+    "stat_nearest": "Nearest",
 
-  "feature_resource_hub": "Resource Hub",
-  "feature_checklist": "Checklist",
-  "feature_quiz_game": "Quiz Game",
-  "feature_emergency_contact": "Emergency Contact",
+    "feature_resource_hub": "Resource Hub",
+    "feature_checklist": "Checklist",
+    "feature_quiz_game": "Quiz Game",
+    "feature_emergency_contact": "Emergency Contact",
 
-  "banner_loc_services_off": "Location Services Off",
-  "banner_loc_perm_denied": "Location Permission Denied",
-  "banner_loc_body": "Using demo data near Taman Jurong. Enable location for precise readings.",
-  "banner_enable_location": "Enable Location",
+    "banner_loc_services_off": "Location Services Off",
+    "banner_loc_perm_denied": "Location Permission Denied",
+    "banner_loc_body": "Using demo data near Taman Jurong. Enable location for precise readings.",
+    "banner_enable_location": "Enable Location",
 
-  "alert_flash_flood": "Flash Flood Warning",
-  "alert_moderate_flood": "Moderate Flood Risk",
-  "alert_none": "No Alert"
+    "alert_flash_flood": "Flash Flood Warning",
+    "alert_moderate_flood": "Moderate Flood Risk",
+    "alert_none": "No Flood Risk"
+  },
+
+  "home": {
+    "emergency": {
+      "title": "Emergency Contacts",
+      "call": "Call",
+      "callA11y": "Call %{name}",
+      "callConfirmTitle": "Call %{number}?",
+      "callConfirmBody": "This will open your phone dialer.",
+      "contacts": {
+        "scdf": { "name": "SCDF (Fire / Ambulance)" },
+        "ambulance": { "name": "Non-Emergency Ambulance" },
+        "police": { "name": "Police" }
+      }
+    }
+  },
+
+  "time": {
+    "justNow": "Just now",
+    "minAgo": "%{count} min ago",
+    "hrAgo": "%{count} hr ago",
+    "dayAgo": "%{count} day ago"
+  },
+
+  "map": {
+    "html": {
+      "youAreHere": "You are here"
+    }
+  }
 }

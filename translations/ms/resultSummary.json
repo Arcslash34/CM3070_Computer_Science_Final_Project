@@ -1,0 +1,15 @@
+{
+  "headlineOutstanding": "Hebat!",
+  "headlineGreat": "Kerja yang bagus!",
+  "headlineNice": "Usaha yang baik — teruskan!",
+  "headlineKeepTrying": "Jangan berputus asa — cuba lagi!",
+  "qNumber": "S{{n}}",
+  "incorrect": "Jawapan Salah",
+  "unanswered": "Masa tamat, tiada jawapan dipilih",
+  "correctAnswer": "Jawapan Betul:",
+  "yourAnswer": "Jawapan Anda:",
+  "yourScore": "Markah Anda",
+  "xpEarned": "XP Diperoleh",
+  "answerReview": "Semakan Jawapan",
+  "nothingToShow": "Tiada apa untuk dipaparkan. (Tahap kesukaran tidak diketahui atau senarai kuiz tiada.)"
+}

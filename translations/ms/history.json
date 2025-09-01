@@ -1,0 +1,12 @@
+{
+  "history": {
+    "title": "Sejarah Kuiz",
+    "confirm": "Sahkan",
+    "deleteAllMsg": "Padam semua keputusan kuiz?",
+    "quizFallback": "Kuiz",
+    "scoreLabel": "Markah",
+    "searchPlaceholder": "Cari kuiz…",
+    "emptyTitle": "Tiada sejarah kuiz lagi",
+    "emptyText": "Selesaikan satu kuiz untuk melihatnya di sini."
+  }
+}

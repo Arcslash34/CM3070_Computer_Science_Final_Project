@@ -1,0 +1,22 @@
+{
+  "title": "Senarai Semak Kesiapsiagaan Bencana",
+  "resetCategory": {
+    "a11y": "Tetapkan semula kategori semasa"
+  },
+  "search": {
+    "placeholder": "Cari dalam senarai semak…",
+    "clear": "Padam carian",
+    "noMatches": "Tiada item yang sepadan dengan “{{query}}”."
+  },
+  "categoryProgress": "Kemajuan Kategori",
+  "items": "item",
+  "noCategorySelected": "Tiada kategori dipilih.",
+  "badge": {
+    "critical": "KRITIKAL"
+  },
+  "congrats": {
+    "title": "Semua selesai untuk kategori ini! 🎉",
+    "subtitle": "Anda telah menyiapkan semua item dalam “{{category}}”.",
+    "cta": "Bagus!"
+  }
+}

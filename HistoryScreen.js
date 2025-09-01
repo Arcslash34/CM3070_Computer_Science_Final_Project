@@ -33,24 +33,9 @@ const ICONS = {
 
 const ICON = { size: 14, gap: 6 };
 
-function getThumb({ topic_id, quiz_title }) {
-  // Prefer the saved topic_id if available
+/** Thumbnail strictly from topic_id (fallback to 'daily') */
+function getThumb({ topic_id }) {
   if (topic_id && CATEGORY_IMAGES[topic_id]) return CATEGORY_IMAGES[topic_id];
-
-  // Fallback: keyword detection in multiple languages
-  const s = String(quiz_title || "").toLowerCase();
-  const MATCH = [
-    { id: "flood", rx: [/flood/, /防洪|洪|积水/] },
-    { id: "fire", rx: [/fire/, /火灾|消防/] },
-    { id: "dengue", rx: [/dengue|mosquito/, /登革|蚊/] },
-    { id: "firstaid", rx: [/first.?aid/, /急救/] },
-    { id: "disease", rx: [/disease|respir|virus/, /传染|疾病/] },
-    { id: "earthquake", rx: [/earth|quake|earthquake/, /地震/] },
-    { id: "daily", rx: [/daily/, /每日|每天|天天/] },
-  ];
-  for (const m of MATCH) {
-    if (m.rx.some((r) => r.test(s))) return CATEGORY_IMAGES[m.id];
-  }
   return CATEGORY_IMAGES.daily;
 }
 
@@ -196,9 +181,7 @@ export default function HistoryScreen() {
     const q = query.trim().toLowerCase();
     // Search against the LOCALIZED title so search makes sense in the current UI language
     return results.filter((r) =>
-      String(getLocalizedTitle(r) || "")
-        .toLowerCase()
-        .includes(q)
+      String(getLocalizedTitle(r) || "").toLowerCase().includes(q)
     );
   }, [results, query, i18n.locale]);
 
@@ -218,7 +201,6 @@ export default function HistoryScreen() {
   const renderItem = ({ item, index }) => {
     const thumb = getThumb({
       topic_id: item.topic_id,
-      quiz_title: item.quiz_title,
     });
 
     // LOCALIZED title for display

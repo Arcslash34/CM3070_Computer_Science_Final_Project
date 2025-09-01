@@ -59,17 +59,17 @@ function TabNavigator() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarLabel: t("common.nav.home"), title: t("common.nav.home") }}
+        options={{ tabBarLabel: t("nav.home"), title: t("nav.home") }}
       />
       <Tab.Screen
         name="Quizzes"
         component={QuizzesHome}
-        options={{ tabBarLabel: t("common.nav.quizzes"), title: t("common.nav.quizzes") }}
+        options={{ tabBarLabel: t("nav.quizzes"), title: t("nav.quizzes") }}
       />
       <Tab.Screen
         name="Badges"
         component={BadgesScreen}
-        options={{ tabBarLabel: t("common.nav.badges"), title: t("common.nav.badges") }}
+        options={{ tabBarLabel: t("nav.badges"), title: t("nav.badges") }}
       />
       <Tab.Screen
         name="Resource"
@@ -79,13 +79,13 @@ function TabNavigator() {
           // title: t("resourceHub.title"),
           // or keep a generic nav label:
           title: t("resourceHub.title"),
-          tabBarLabel: t("common.nav.resource"),
+          tabBarLabel: t("nav.resource"),
         }}
       />
       <Tab.Screen
         name="Settings"
         component={Settings}
-        options={{ tabBarLabel: t("common.nav.settings"), title: t("common.nav.settings") }}
+        options={{ tabBarLabel: t("nav.settings"), title: t("nav.settings") }}
       />
     </Tab.Navigator>
   );
@@ -114,7 +114,7 @@ export default function MainNavigator() {
       <Stack.Screen
         name="QuizGame"
         component={QuizGame}
-        options={{ headerShown: true, title: t("common.nav.quizzes") }}
+        options={{ headerShown: true, title: t("nav.quizzes") }}
       />
 
       {/* Results / History */}
@@ -124,7 +124,7 @@ export default function MainNavigator() {
         component={HistoryScreen}
         options={{
           headerShown: true,
-          headerTitle: t("common.nav.pastResults"),
+          headerTitle: t("nav.pastResults"),
           headerTitleAlign: "center",
         }}
       />
@@ -138,7 +138,7 @@ export default function MainNavigator() {
           headerTitleAlign: "center",
           // If you have a dedicated title key for the article screen, use it.
           // Using generic "Guide" from common.nav for now:
-          headerTitle: t("common.nav.guide"),
+          headerTitle: t("nav.guide"),
         }}
       />
       <Stack.Screen name="Checklist" component={Checklist} />

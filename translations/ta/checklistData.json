@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "updated": "2025-08-26",
+  "categories": [
+    {
+      "id": "go-bag",
+      "title": "அவசரப்பை அத்தியாவசியங்கள்",
+      "icon": "bag",
+      "subcategories": [
+        {
+          "id": "go-bag-basics",
+          "title": "அடிப்படை",
+          "items": [
+            { "id": "go-bag-basics-water", "label": "தண்ணீர் (ஒருவருக்கு/நாளுக்கு 3 லிட்டர் × 3 நாள்)", "desc": "ஒவ்வொரு 6 மாதமும் மாற்றவும்; மூடி வைக்கவும்.", "critical": true },
+            { "id": "go-bag-basics-food", "label": "நீடித்த உணவு (3 நாள் இருப்பு)", "desc": "டின் அல்லது உலர் உணவு; டின் திறப்பான் சேர்க்கவும்.", "critical": true },
+            { "id": "go-bag-basics-flashlight", "label": "மின்விளக்கு + கூடுதல் பேட்டரி", "desc": "கைகள் விடுதலையாக இருக்கத் தலைவிளக்கு சிறந்தது.", "critical": true },
+            { "id": "go-bag-basics-first-aid", "label": "முதல் உதவி பெட்டி", "desc": "பேண்டேஜ், காஸ், கிருமிநாசினி, வலி நிவாரணி.", "critical": true },
+            { "id": "go-bag-basics-powerbank", "label": "பவர் பாங்க் + சார்ஜ் கம்பி", "desc": "முழுமையாக சார்ஜ் செய்யவும்; பிளக் எடுத்துச் செல்லவும்.", "critical": true },
+            { "id": "go-bag-basics-whistle", "label": "ஊதுகுழல்", "desc": "அவசரத்தில் 3 முறை ஊதவும்.", "optional": true },
+            { "id": "go-bag-basics-blanket", "label": "வெப்பப் போர்வை", "optional": true },
+            { "id": "go-bag-basics-cash", "label": "பணம் (சிறிய நோட்டுகள்)", "desc": "ATM/இயந்திரங்கள் செயல்படாமல் இருக்கலாம்.", "optional": true },
+            { "id": "go-bag-basics-docs", "label": "அடையாள அட்டைகள் & முக்கிய ஆவணங்கள் நகல்", "desc": "அச்சு + டிஜிட்டல் காப்பு; நீர்ப்புகா பை.", "critical": true }
+          ]
+        },
+        {
+          "id": "go-bag-hygiene",
+          "title": "தூய்மை",
+          "items": [
+            { "id": "go-bag-hygiene-masks", "label": "முககவசம் (கூடுதல்)", "optional": true },
+            { "id": "go-bag-hygiene-sanitizer", "label": "கை சுத்திகரிப்பு / ஈரத்துண்டு", "optional": true },
+            { "id": "go-bag-hygiene-soap", "label": "சோப்பு / கழிவறை பொருட்கள்", "optional": true },
+            { "id": "go-bag-hygiene-bags", "label": "குப்பை பைகள் / ஜிப் பைகள்", "desc": "கழிவு & நீர்ப்புகா பயன்பாட்டிற்கு.", "optional": true }
+          ]
+        },
+        {
+          "id": "go-bag-tools",
+          "title": "கருவிகள் & கூடுதல்",
+          "items": [
+            { "id": "go-bag-tools-multitool", "label": "பல்நோக்கு கருவி அல்லது அடிப்படை கருவிப்பெட்டி", "optional": true },
+            { "id": "go-bag-tools-ducttape", "label": "டக்ட் டேப் (பசைப்பட்டை)", "optional": true },
+            { "id": "go-bag-tools-matches", "label": "நீர்ப்புகா தீப்பெட்டி/லைட்டர்", "optional": true },
+            { "id": "go-bag-tools-poncho", "label": "மழைக்கோட்/பாஞ்சோ", "optional": true },
+            { "id": "go-bag-tools-paracord", "label": "பாரகார்டு/கயிறு", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flood",
+      "title": "வெள்ளம் தயார்ப்பு",
+      "icon": "rainy",
+      "subcategories": [
+        {
+          "id": "flood-before",
+          "title": "வெள்ளத்திற்கு முன்",
+          "items": [
+            { "id": "flood-before-drains", "label": "வடிகால் மற்றும் வாய்க்கால் சுத்தம் செய்யவும்", "desc": "இலை/கழிவுகளை அகற்றவும்." },
+            { "id": "flood-before-sandbags", "label": "மணல்வைத்த பைகள் அல்லது தடுப்புகள் தயாரிக்கவும்", "desc": "கதவு மற்றும் தாழ் வாயில்களை பாதுகாக்கவும்." },
+            { "id": "flood-before-elevate", "label": "மின் சாதனங்கள் & மதிப்புள்ள பொருட்கள் உயர்த்தவும்", "desc": "நீர்மட்டத்திற்கு மேல் மாற்றவும்." },
+            { "id": "flood-before-backflow", "label": "பின்செலுத்தல் தடுப்பு பொருத்தவும்", "desc": "சாக்கடை மீள்ச்சி அபாயம் குறையலாம்.", "optional": true },
+            { "id": "flood-before-photos", "label": "வீடு & ஆவணங்களை படம் எடுக்கவும்", "desc": "காப்பீடு & கோரிக்கைக்காக." }
+          ]
+        },
+        {
+          "id": "flood-during",
+          "title": "வெள்ளத்தின் போது",
+          "items": [
+            { "id": "flood-during-monitor", "label": "அதிகாரப்பூர்வ எச்சரிக்கைகளை பின்பற்றவும்", "desc": "அப் அறிவிப்புகள் மற்றும் ரேடியோ பயன்படுத்தவும்.", "critical": true },
+            { "id": "flood-during-avoidwater", "label": "வெள்ளநீரை தவிர்க்கவும்", "desc": "15 செ.மீ. உங்களை வீழ்த்தும்; 30 செ.மீ. கார் சாய்க்கும்.", "critical": true },
+            { "id": "flood-during-power", "label": "மின்சாரம் அணைக்கவும் (பாதுகாப்பாக இருந்தால்)", "desc": "ஈரமான மின் சாதனங்களை தொட வேண்டாம்.", "critical": true },
+            { "id": "flood-during-evacuate", "label": "உயர் இடத்திற்கு செல்லவும் / வெளியேறும் தயார்ப்பு", "critical": true },
+            { "id": "flood-during-go-bag", "label": "அவசரப்பை & மருந்துகளை எடுத்துச் செல்லவும்", "critical": true }
+          ]
+        },
+        {
+          "id": "flood-after",
+          "title": "வெள்ளத்திற்கு பின்",
+          "items": [
+            { "id": "flood-after-return", "label": "அதிகாரிகள் அனுமதி அளித்தால் மட்டுமே வீடு திரும்பவும்" },
+            { "id": "flood-after-avoidstanding", "label": "நின்ற நீரை தவிர்க்கவும்", "desc": "மின்சாரம் கசியக்கூடும் அல்லது மாசடைந்திருக்கும்." },
+            { "id": "flood-after-photodamage", "label": "சுத்தம் செய்வதற்கு முன் சேதத்தை படம் எடுக்கவும்" },
+            { "id": "flood-after-ventilate", "label": "வீட்டை காற்றோட்டம் செய்து உலர்த்தவும்", "desc": "ஜன்னல்கள் திறந்து, பக்கா/ஈரப்பத நீக்கி பயன்படுத்தவும்." },
+            { "id": "flood-after-disinfect", "label": "மேற்பரப்புகளை கிருமி நீக்கி, துளையுள்ள பொருட்களை அகற்றவும்", "desc": "பூஞ்சை உருவாகாமல் தடுக்கும்." },
+            { "id": "flood-after-food", "label": "கெட்டுப்போன உணவு மற்றும் மாசடைந்த தண்ணீர் எறியவும்" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "தீ பாதுகாப்பு",
+      "icon": "flame",
+      "subcategories": [
+        {
+          "id": "fire-prevent",
+          "title": "தடுப்பு",
+          "items": [
+            { "id": "fire-prevent-smokealarms", "label": "புகை அலாரம் மாதந்தோறும் சோதிக்கவும்", "critical": true },
+            { "id": "fire-prevent-extinguisher", "label": "ABC தீ அணைப்பான் வைத்திருக்கவும்", "desc": "PASS நினைவில் கொள்ளவும்: Pull, Aim, Squeeze, Sweep.", "critical": true },
+            { "id": "fire-prevent-outlets", "label": "அதிக பாயிண்ட் பயன்பாடு & சேதமடைந்த கம்பிகளை தவிர்க்கவும்" },
+            { "id": "fire-prevent-flammables", "label": "எரிபொருட்களை சூட்டில் இருந்து பாதுகாப்பாக வைக்கவும்" },
+            { "id": "fire-prevent-escapeplan", "label": "வீட்டு தப்பிப்பு திட்டத்தை உருவாக்கி பயிற்சி செய்யவும்", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-during",
+          "title": "தீ ஏற்பட்டபோது",
+          "items": [
+            { "id": "fire-during-911", "label": "வெளியே பாதுகாப்பாக சென்றதும் அவசர சேவையை அழைக்கவும்", "critical": true },
+            { "id": "fire-during-low", "label": "புகையின் கீழ் தாழ்ந்து செங்க crawl", "critical": true },
+            { "id": "fire-during-doorheat", "label": "கதவின் வெப்பத்தை கையின் பின்புறத்தால் பரிசோதிக்கவும்" },
+            { "id": "fire-during-closedoors", "label": "பின்புற கதவுகளை மூடவும் தீ பரவலை தாமதிக்க" },
+            { "id": "fire-during-stopdroproll", "label": "உடை எரிந்தால்: நில், விழு, உருள்", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-after",
+          "title": "தீக்கு பின்",
+          "items": [
+            { "id": "fire-after-reenter", "label": "அதிகாரிகள் அனுமதிக்கும்வரை மீண்டும் உள்ளே செல்ல வேண்டாம்", "critical": true },
+            { "id": "fire-after-insurance", "label": "காப்பீடு தொடர்பு கொண்டு சேதத்தை பதிவு செய்யவும்" },
+            { "id": "fire-after-utilities", "label": "சேவைகளை மீண்டும் இயக்குவதற்கு முன் ஆய்வு செய்யவும்" },
+            { "id": "fire-after-detectors", "label": "சேதமடைந்த புகை அலாரங்களை மாற்றவும்" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "health-first-aid",
+      "title": "ஆரோக்கியம் & முதல் உதவி",
+      "icon": "medkit",
+      "subcategories": [
+        {
+          "id": "health-meds",
+          "title": "தனிப்பட்ட மருந்துகள்",
+          "items": [
+            { "id": "health-meds-list", "label": "புதுப்பிக்கப்பட்ட மருந்து பட்டியலை பராமரிக்கவும்", "desc": "அளவுகள் மற்றும் ஒவ்வாமைகள் சேர்க்கவும்.", "critical": true },
+            { "id": "health-meds-7days", "label": "7 நாள் கூடுதல் இருப்பு (இயன்றால்)", "optional": true },
+            { "id": "health-meds-copies", "label": "மருத்துவ பரிந்துரை நகல்கள்", "optional": true }
+          ]
+        },
+        {
+          "id": "health-firstaid-kit",
+          "title": "முதல் உதவி பெட்டி",
+          "items": [
+            { "id": "health-firstaid-bandages", "label": "பிளாஸ்டர் & கிருமி நீக்க காஸ்", "critical": true },
+            { "id": "health-firstaid-antiseptic", "label": "கிருமிநாசினி துடைப்பான்/தீர்வு", "critical": true },
+            { "id": "health-firstaid-tape", "label": "மருத்துவ டேப் & கத்தரிக்கோல்" },
+            { "id": "health-firstaid-gloves", "label": "பயன்பாடு முடிந்த கையுறைகள் & முககவசம்" },
+            { "id": "health-firstaid-pain", "label": "வலி/காய்ச்சல் மருந்து", "optional": true },
+            { "id": "health-firstaid-thermometer", "label": "வெப்பமானி", "optional": true }
+          ]
+        },
+        {
+          "id": "health-hygiene",
+          "title": "தூய்மை",
+          "items": [
+            { "id": "health-hygiene-soap", "label": "சோப்பு, பற்பசை, பற்பசை" },
+            { "id": "health-hygiene-wipes", "label": "கை சுத்திகரிப்பு & துடைப்பான்" },
+            { "id": "health-hygiene-feminine", "label": "பெண்களுக்கான சுகாதார பொருட்கள்", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "family-comm",
+      "title": "குடும்பம் & தொடர்பு",
+      "icon": "people",
+      "subcategories": [
+        {
+          "id": "family-contacts",
+          "title": "தொடர்புகள்",
+          "items": [
+            { "id": "family-contacts-ice", "label": "ICE தொடர்புகளை போன் & அச்சில் சேமிக்கவும்", "desc": "மருத்துவ & குடும்ப தொடர்பு சேர்க்கவும்.", "critical": true },
+            { "id": "family-contacts-outofarea", "label": "பகுதி வெளி தொடர்பு ஒருவரை தேர்வு செய்யவும்", "desc": "உள்ளூர் லைன் பிஸியாக இருந்தால் குடும்பம் அழைக்கலாம்." },
+            { "id": "family-contacts-emergency", "label": "உள்ளூர் அவசர எண்களை சேமிக்கவும்", "desc": "போலீஸ், தீ/அம்புலன்ஸ், சேவை ஹாட்லைன்." }
+          ]
+        },
+        {
+          "id": "family-plan",
+          "title": "குடும்பத் திட்டம்",
+          "items": [
+            { "id": "family-plan-meetpoints", "label": "முதன்மை & மாற்று சந்திப்பு இடங்களை நிர்ணயிக்கவும்", "critical": true },
+            { "id": "family-plan-routes", "label": "வெளியேறும் பாதைகள் ஒப்புக்கொள்ளவும்" },
+            { "id": "family-plan-pets", "label": "செல்லப்பிராணிகளுக்கான திட்டம் (கூண்டு, உணவு, பதிவுகள்)" },
+            { "id": "family-plan-drills", "label": "வழக்கமான பயிற்சிகளை செய்யவும் (காலாண்டு)", "optional": true }
+          ]
+        },
+        {
+          "id": "family-docs",
+          "title": "ஆவணங்கள்",
+          "items": [
+            { "id": "family-docs-backups", "label": "முக்கிய ஆவணங்களின் டிஜிட்டல் நகல்களை பாதுகாப்பாக சேமிக்கவும்", "desc": "கிளவுட் + ஆஃப்லைன் குறியாக்கப்பட்ட நகல்." },
+            { "id": "family-docs-waterproof", "label": "அசல் ஆவணங்களுக்கு நீர்ப்புகா பை", "critical": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

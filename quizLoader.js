@@ -3,6 +3,8 @@ import EN from "./assets/quiz.json"; // your current English base
 import { i18n } from "./translations/translation";
 // Add more locales as you translate them:
 import ZH from "./translations/zh/quiz.json";
+import TA from "./translations/ta/quiz.json";
+import MS from "./translations/ms/quiz.json";
 
 /**
  * Merge a partial locale file into the base quiz by id/index.
@@ -68,6 +70,12 @@ export function getQuiz() {
   const locale = String(i18n.locale || "en").toLowerCase();
   if (locale.startsWith("zh")) {
     return mergeQuiz(EN, ZH);
+  }
+  if (locale.startsWith("ta")) {
+    return mergeQuiz(EN, TA);
+  }
+  if (locale.startsWith("ms") || locale.startsWith("id")) {
+    return mergeQuiz(EN, MS);
   }
   return EN;
 }

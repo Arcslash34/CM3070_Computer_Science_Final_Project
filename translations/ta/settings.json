@@ -1,0 +1,106 @@
+{
+  "title": "அமைப்புகள்",
+  "sections": {
+    "game": "விளையாட்டு அமைப்புகள்",
+    "langCert": "மொழி & சான்றிதழ்கள்",
+    "demo": "டெமோ / Mock",
+    "contactsList": "தொடர்பு பட்டியல்",
+    "account": "கணக்கு அமைப்புகள்"
+  },
+  "labels": {
+    "notifications": "அறிவிப்புகள்",
+    "sound": "ஒலி",
+    "vibration": "அதிர்வு",
+    "language": "மொழி: {{code}}",
+    "region": "பகுதி: ",
+    "tapToDetect": "கண்டறிய தட்டவும்",
+    "certificates": "சான்றிதழ்கள்",
+    "useMockLocation": "போலியான இடம் பயன்படுத்த",
+    "mockDisaster": "போலியான பேரழிவு",
+    "emergencyContacts": "அவசர தொடர்புகள்",
+    "changePassword": "கடவுச்சொல்லை மாற்ற",
+    "logout": "வெளியேறு"
+  },
+  "langModal": {
+    "title": "மொழியைத் தேர்ந்தெடுக்கவும்",
+    "en": "English",
+    "zh": "中文",
+    "ms": "Malay",
+    "ta": "தமிழ்",
+    "close": "மூடு"
+  },
+  "passwordModal": {
+    "title": "கடவுச்சொல்லை மாற்ற",
+    "placeholder": "புதிய கடவுச்சொல்",
+    "update": "புதுப்பி",
+    "cancel": "ரத்து"
+  },
+  "profile": {
+    "editTitle": "சுயவிவரத்தைத் திருத்து",
+    "changePhoto": "புகைப்படத்தை மாற்று",
+    "name": "பெயர்",
+    "username": "பயனர்பெயர்",
+    "save": "சேமி",
+    "cancel": "ரத்து"
+  },
+  "contacts": {
+    "title": "அவசர தொடர்புகள்",
+    "addContactBtn": "தொடர்பைச் சேர் ({{count}}/{{max}})",
+    "close": "மூடு",
+    "addTitle": "தொடர்பைச் சேர்",
+    "editTitle": "தொடர்பைத் திருத்து",
+    "fullName": "முழுப் பெயர்",
+    "relation": "உறவு (எ.கா. துணைவர்)",
+    "phone": "தொலைபேசி எண்",
+    "add": "சேர்",
+    "save": "சேமி",
+    "cancel": "ரத்து",
+    "deleteTitle": "தொடர்பை நீக்கு",
+    "deleteMsg": "இந்த தொடர்பை அகற்றவா?",
+    "limitReachedTitle": "வரம்பை எட்டியது",
+    "limitReachedMsg": "அதிகபட்சம் {{max}} நெருங்கிய தொடர்புகளைச் சேமிக்கலாம்.",
+    "missingInfoTitle": "தகவல் இல்லை",
+    "missingInfoMsg": "பெயர் மற்றும் தொலைபேசி எண் தேவை."
+  },
+  "imageSource": {
+    "title": "சுயவிவரப் படத்தை மாற்று",
+    "gallery": "கேலரி",
+    "camera": "கேமரா",
+    "cancel": "ரத்து"
+  },
+  "alerts": {
+    "notSignedInTitle": "உள்நுழையவில்லை",
+    "notSignedInMsg": "உங்கள் சுயவிவரத்தை புதுப்பிக்க உள்நுழையவும்.",
+    "successTitle": "வெற்றி",
+    "avatarUpdated": "சுயவிவரப் படம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+    "uploadFailed": "பதிவேற்றம் தோல்வியடைந்தது",
+    "failedPickImage": "படத்தைத் தேர்வதில் தோல்வி",
+    "permissionDeniedTitle": "அனுமதி மறுக்கப்பட்டது",
+    "cameraAccessRequired": "புகைப்படம் எடுக்க கேமரா அனுமதி தேவை.",
+    "error": "பிழை",
+    "failedOpenCamera": "கேமராவைத் திறக்க முடியவில்லை",
+    "usernameTakenTitle": "பயனர்பெயர் ஏற்கனவே உள்ளது",
+    "usernameTakenMsg": "மற்றொரு பெயரைத் தேர்ந்தெடுக்கவும்.",
+    "passwordUpdated": "கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது.",
+    "failedUpdatePassword": "கடவுச்சொல்லை மாற்ற முடியவில்லை",
+    "logoutTitle": "வெளியேறு",
+    "logoutConfirm": "உண்மையிலேயே வெளியேற விரும்புகிறீர்களா?",
+    "permissionNeededTitle": "அனுமதி தேவை",
+    "regionPermMsg": "உங்கள் பகுதியை கண்டறிய இடம் அனுமதி தேவை.",
+    "oops": "ஓப்ஸ்",
+    "cannotDetectRegion": "உங்கள் பகுதியை கண்டறிய முடியவில்லை.",
+    "failedDetectRegion": "பகுதியை கண்டறிய தோல்வி"
+  },
+  "generic": {
+    "guest": "விருந்தினர்",
+    "update": "புதுப்பி",
+    "cancel": "ரத்து",
+    "close": "மூடு",
+    "save": "சேமி",
+    "delete": "நீக்கு",
+    "edit": "திருத்து",
+    "call": "அழை",
+    "camera": "கேமரா",
+    "gallery": "கேலரி"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Chatbot",
+  "back": "Kembali",
+  "showSuggestions": "⬆️ Tunjukkan Cadangan",
+  "hideSuggestions": "⬇️ Sembunyikan Cadangan",
+  "sendMessage": "Hantar mesej",
+  "presetQuestions": [
+    "Apa yang perlu saya masukkan dalam kit kecemasan rumah?",
+    "Bagaimana saya boleh bersedia menghadapi banjir di Singapura?",
+    "Apa yang perlu saya lakukan semasa gempa bumi?",
+    "Di mana saya boleh semak kualiti udara masa nyata?"
+  ],
+  "typing": "Bot sedang menaip...",
+  "askQuestion": "Taip soalan anda di sini..."
+}

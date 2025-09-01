@@ -1,0 +1,19 @@
+{
+  "title": "Kuiz",
+  "description": "Bina naluri bersedia menghadapi bencana dengan kuiz ringkas dan menyeronokkan. Cuba Kuiz Harian atau pilih kategori di bawah!",
+  "daily": {
+    "title": "Kuiz Harian",
+    "subtitle": "Belajar & Bermain Setiap Hari",
+    "cta": "Mulakan Kuiz"
+  },
+  "categoriesTitle": "Kategori Kuiz",
+  "pastResults": "Keputusan Terdahulu",
+  "categories": {
+    "flood": { "title": "Banjir" },
+    "fire": { "title": "Kebakaran" },
+    "dengue": { "title": "Denggi" },
+    "firstaid": { "title": "Pertolongan Cemas" },
+    "disease": { "title": "Wabak Penyakit" },
+    "earthquake": { "title": "Gempa Bumi" }
+  }
+}

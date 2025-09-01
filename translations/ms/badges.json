@@ -1,0 +1,46 @@
+{
+  "title": "Lencana Saya",
+  "totalBadges": "Jumlah Lencana",
+  "pointsEarned": "Mata Dikumpul",
+  "tabs": {
+    "all": "Semua",
+    "unlocked": "Dibuka",
+    "locked": "Terkunci"
+  },
+  "empty": {
+    "unlocked": "Belum ada lencana dibuka.",
+    "locked": "Semua lencana telah dibuka 🎉"
+  },
+  "completed": "Selesai",
+  "modal": {
+    "shareCta": "Kongsi",
+    "close": "Tutup",
+    "body": "Anda membuka lencana ini — hebat! Kongsikan dengan rakan dan teruskan rentak. 🚀",
+    "fallbackTitle": "Lencana"
+  },
+  "shareText": "Saya baru sahaja memperoleh lencana \"{{title}}\" dalam LifeShield! 🏅 #LifeShield",
+  "shareFailedTitle": "Gagal dikongsi",
+  "shareFailedBody": "Tidak dapat membuka helaian kongsi.",
+  "groups": {
+    "learning": "Pencapaian Pembelajaran",
+    "specialist": "Pakar Bencana",
+    "streaks": "Konsistensi / Rentak",
+    "other": "Lain-lain"
+  },
+  "catalog": {
+    "first-step": { "title": "Langkah Pertama" },
+    "quiz-explorer": { "title": "Peneroka Kuiz" },
+    "quiz-expert": { "title": "Pakar Kuiz" },
+    "quiz-scholar": { "title": "Sarjana Kuiz" },
+    "earthquake-expert": { "title": "Pakar Gempa Bumi" },
+    "fire-expert": { "title": "Pakar Kebakaran" },
+    "flood-expert": { "title": "Pakar Banjir" },
+    "firstaid-expert": { "title": "Pakar Pertolongan Cemas" },
+    "streak-1": { "title": "Rentak 1-Hari" },
+    "streak-3": { "title": "Rentak 3-Hari" },
+    "streak-5": { "title": "Rentak 5-Hari" },
+    "streak-7": { "title": "Rentak 7-Hari" },
+    "streak-14": { "title": "Rentak 14-Hari" },
+    "streak-21": { "title": "Rentak 21-Hari" }
+  }
+}

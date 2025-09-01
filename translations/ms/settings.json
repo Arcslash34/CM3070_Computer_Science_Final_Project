@@ -1,0 +1,106 @@
+{
+  "title": "Tetapan",
+  "sections": {
+    "game": "Tetapan Permainan",
+    "langCert": "Bahasa & Sijil",
+    "demo": "Demo / Mock",
+    "contactsList": "Senarai Kenalan",
+    "account": "Tetapan Akaun"
+  },
+  "labels": {
+    "notifications": "Notifikasi",
+    "sound": "Bunyi",
+    "vibration": "Getaran",
+    "language": "Bahasa: {{code}}",
+    "region": "Wilayah: ",
+    "tapToDetect": "Tekan untuk kesan",
+    "certificates": "Sijil",
+    "useMockLocation": "Guna Lokasi Palsu",
+    "mockDisaster": "Bencana Palsu",
+    "emergencyContacts": "Kenalan Kecemasan",
+    "changePassword": "Tukar Kata Laluan",
+    "logout": "Log Keluar"
+  },
+  "langModal": {
+    "title": "Pilih Bahasa",
+    "en": "English",
+    "zh": "中文",
+    "ms": "Malay",
+    "ta": "தமிழ்",
+    "close": "Tutup"
+  },
+  "passwordModal": {
+    "title": "Tukar Kata Laluan",
+    "placeholder": "Kata laluan baharu",
+    "update": "Kemaskini",
+    "cancel": "Batal"
+  },
+  "profile": {
+    "editTitle": "Edit Profil",
+    "changePhoto": "Tukar Gambar",
+    "name": "Nama",
+    "username": "Nama pengguna",
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "contacts": {
+    "title": "Kenalan Kecemasan",
+    "addContactBtn": "Tambah Kenalan ({{count}}/{{max}})",
+    "close": "Tutup",
+    "addTitle": "Tambah Kenalan",
+    "editTitle": "Edit Kenalan",
+    "fullName": "Nama penuh",
+    "relation": "Hubungan (cth. Suami/Isteri)",
+    "phone": "Nombor telefon",
+    "add": "Tambah",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "deleteTitle": "Padam kenalan",
+    "deleteMsg": "Buang kenalan ini?",
+    "limitReachedTitle": "Had tercapai",
+    "limitReachedMsg": "Anda boleh simpan sehingga {{max}} kenalan rapat.",
+    "missingInfoTitle": "Maklumat hilang",
+    "missingInfoMsg": "Nama dan nombor telefon diperlukan."
+  },
+  "imageSource": {
+    "title": "Tukar Gambar Profil",
+    "gallery": "Galeri",
+    "camera": "Kamera",
+    "cancel": "Batal"
+  },
+  "alerts": {
+    "notSignedInTitle": "Tidak log masuk",
+    "notSignedInMsg": "Sila log masuk untuk kemaskini profil anda.",
+    "successTitle": "Berjaya",
+    "avatarUpdated": "Gambar profil berjaya dikemaskini",
+    "uploadFailed": "Muat naik gagal",
+    "failedPickImage": "Gagal pilih gambar",
+    "permissionDeniedTitle": "Kebenaran ditolak",
+    "cameraAccessRequired": "Akses kamera diperlukan untuk ambil gambar.",
+    "error": "Ralat",
+    "failedOpenCamera": "Gagal membuka kamera",
+    "usernameTakenTitle": "Nama pengguna sudah digunakan",
+    "usernameTakenMsg": "Sila pilih nama lain.",
+    "passwordUpdated": "Kata laluan berjaya ditukar.",
+    "failedUpdatePassword": "Gagal menukar kata laluan",
+    "logoutTitle": "Log Keluar",
+    "logoutConfirm": "Anda pasti mahu log keluar?",
+    "permissionNeededTitle": "Kebenaran diperlukan",
+    "regionPermMsg": "Kami perlukan kebenaran lokasi untuk kesan wilayah anda.",
+    "oops": "Oops",
+    "cannotDetectRegion": "Tidak dapat mengesan wilayah anda.",
+    "failedDetectRegion": "Gagal mengesan wilayah"
+  },
+  "generic": {
+    "guest": "Tetamu",
+    "update": "Kemaskini",
+    "cancel": "Batal",
+    "close": "Tutup",
+    "save": "Simpan",
+    "delete": "Padam",
+    "edit": "Edit",
+    "call": "Panggil",
+    "camera": "Kamera",
+    "gallery": "Galeri"
+  }
+}

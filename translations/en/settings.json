@@ -25,6 +25,8 @@
     "title": "Choose Language",
     "en": "English",
     "zh": "中文",
+    "ms": "Malay",
+    "ta": "தமிழ்",
     "close": "Close"
   },
   "passwordModal": {

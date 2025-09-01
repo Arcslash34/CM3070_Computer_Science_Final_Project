@@ -753,6 +753,20 @@ export default function Settings() {
               }}
             />
             <ModalButton
+              text={t("settings.langModal.ms")}
+              onPress={() => {
+                setLang("ms");
+                setShowLang(false);
+              }}
+            />
+            <ModalButton
+              text={t("settings.langModal.ta")}
+              onPress={() => {
+                setLang("ta");
+                setShowLang(false);
+              }}
+            />
+            <ModalButton
               text={t("settings.langModal.close")}
               variant="secondary"
               onPress={() => setShowLang(false)}

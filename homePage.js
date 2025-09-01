@@ -147,40 +147,46 @@ function distKm(a, b) {
 }
 
 /* ----------------- Emergency Contacts Modal ----------------- */
-const EMERGENCY_CONTACTS = [
-  {
-    key: "scdf",
-    name: "SCDF (Fire / Ambulance)",
-    number: "995",
-    icon: "flame",
-    color: "#EF4444",
-  },
-  {
-    key: "ambulance",
-    name: "Non-Emergency Ambulance",
-    number: "1777",
-    icon: "medkit",
-    color: "#F59E0B",
-  },
-  {
-    key: "police",
-    name: "Police",
-    number: "999",
-    icon: "shield",
-    color: "#3B82F6",
-  },
-];
 function EmergencyContactsModal({ visible, onClose }) {
-  const onCall = (num) => {
-    Alert.alert(`Call ${num}?`, "This will open your phone dialer.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Call",
-        style: "destructive",
-        onPress: () => Linking.openURL(`tel:${num}`),
-      },
-    ]);
+  const onCall = (num, name) => {
+    Alert.alert(
+      t("home.emergency.callConfirmTitle", { number: num }),
+      t("home.emergency.callConfirmBody"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("home.emergency.call"),
+          style: "destructive",
+          onPress: () => Linking.openURL(`tel:${num}`),
+        },
+      ]
+    );
   };
+
+  const CONTACTS = [
+    {
+      key: "scdf",
+      name: t("home.emergency.contacts.scdf.name"),
+      number: "995",
+      icon: "flame",
+      color: "#EF4444",
+    },
+    {
+      key: "ambulance",
+      name: t("home.emergency.contacts.ambulance.name"),
+      number: "1777",
+      icon: "medkit",
+      color: "#F59E0B",
+    },
+    {
+      key: "police",
+      name: t("home.emergency.contacts.police.name"),
+      number: "999",
+      icon: "shield",
+      color: "#3B82F6",
+    },
+  ];
+
   return (
     <Modal
       visible={visible}
@@ -193,17 +199,16 @@ function EmergencyContactsModal({ visible, onClose }) {
       </TouchableWithoutFeedback>
       <View style={styles.modalSheet}>
         <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>Emergency contacts</Text>
-          <TouchableOpacity onPress={onClose} accessibilityLabel="Close">
+          <Text style={styles.modalTitle}>{t("home.emergency.title")}</Text>
+          <TouchableOpacity onPress={onClose} accessibilityLabel={t("common.close")}>
             <Ionicons name="close" size={20} color="#111827" />
           </TouchableOpacity>
         </View>
-        {EMERGENCY_CONTACTS.map((c) => (
+
+        {CONTACTS.map((c) => (
           <View key={c.key} style={styles.contactRow}>
             <View style={styles.contactLeft}>
-              <View
-                style={[styles.contactIconWrap, { backgroundColor: c.color }]}
-              >
+              <View style={[styles.contactIconWrap, { backgroundColor: c.color }]}>
                 <Ionicons name={c.icon} size={16} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
@@ -212,12 +217,12 @@ function EmergencyContactsModal({ visible, onClose }) {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => onCall(c.number)}
+              onPress={() => onCall(c.number, c.name)}
               style={styles.callBtn}
-              accessibilityLabel={`Call ${c.name}`}
+              accessibilityLabel={t("home.emergency.callA11y", { name: c.name })}
             >
               <Ionicons name="call" size={16} color="#fff" />
-              <Text style={styles.callBtnText}>Call</Text>
+              <Text style={styles.callBtnText}>{t("home.emergency.call")}</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -301,21 +306,45 @@ const MONTHS = [
 ];
 function formatFancyDate(dt) {
   if (!dt) return "—";
-  return `${DAYS[dt.getDay()]}, ${dt.getDate()} ${
-    MONTHS[dt.getMonth()]
-  } ${dt.getFullYear()}`;
+  try {
+    return new Intl.DateTimeFormat(i18n.locale || undefined, {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(dt);
+  } catch {
+    return dt.toDateString();
+  }
 }
+
 function formatAgo(dt) {
   if (!dt) return "";
-  const ms = Date.now() - dt.getTime();
-  if (ms < 60_000) return "Just Now";
-  const mins = Math.floor(ms / 60_000);
-  if (mins < 60) return `${mins} min ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs} hr${hrs > 1 ? "s" : ""} ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days} day${days > 1 ? "s" : ""} ago`;
+  const diffMs = Date.now() - dt.getTime();
+  const sec = Math.max(1, Math.floor(diffMs / 1000));
+
+  // Prefer Intl.RelativeTimeFormat when available
+  try {
+    const rtf = new Intl.RelativeTimeFormat(i18n.locale || undefined, { numeric: "auto" });
+    if (sec < 60) return t("time.justNow");
+    const min = Math.floor(sec / 60);
+    if (min < 60) return rtf.format(-min, "minute");
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return rtf.format(-hr, "hour");
+    const day = Math.floor(hr / 24);
+    return rtf.format(-day, "day");
+  } catch {
+    // Fallback to simple localized strings
+    if (sec < 60) return t("time.justNow");
+    const min = Math.floor(sec / 60);
+    if (min < 60) return t("time.minAgo", { count: min });
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return t("time.hrAgo", { count: hr });
+    const day = Math.floor(hr / 24);
+    return t("time.dayAgo", { count: day });
+  }
 }
+
 
 /* =========================================================================
     Alert card UI (new design only; logic below stays the same)

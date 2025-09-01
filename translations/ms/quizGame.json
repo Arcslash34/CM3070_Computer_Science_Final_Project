@@ -1,0 +1,24 @@
+{
+  "dailyTitle": "Kuiz Harian",
+  "back": "Kembali",
+  "hint": "Guna petunjuk",
+  "qOfTotal": "Soalan %{n} daripada %{total}",
+  "submit": "Hantar",
+  "next": "Soalan Seterusnya",
+  "finish": "Tamat",
+  "viewExplanation": "Lihat Penjelasan",
+  "loading": "Memuatkan…",
+  "saving": "Menyimpan keputusan…",
+  "timesUp": "Masa tamat!",
+  "niceTry": "Cubaan yang baik — teruskan!",
+  "plusXp": "+%{xp} XP",
+  "modal": {
+    "timeUp": "⌛ Masa Tamat ⌛",
+    "correct": "🥳 Betul 🥳",
+    "incorrect": "😓 Salah 😓"
+  },
+  "leaveTitle": "Keluar dari kuiz?",
+  "leaveMsg": "Kemajuan semasa anda tidak akan disimpan.",
+  "stay": "Kekal",
+  "leave": "Keluar"
+}

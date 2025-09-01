@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "updated": "2025-08-26",
+  "categories": [
+    {
+      "id": "go-bag",
+      "title": "Keperluan Beg Kecemasan",
+      "icon": "bag",
+      "subcategories": [
+        {
+          "id": "go-bag-basics",
+          "title": "Asas",
+          "items": [
+            { "id": "go-bag-basics-water", "label": "Air (3L seorang/hari untuk 3 hari)", "desc": "Tukar setiap 6 bulan; simpan tertutup.", "critical": true },
+            { "id": "go-bag-basics-food", "label": "Makanan tahan lama (bekalan 3 hari)", "desc": "Makanan tin atau kering; sertakan pembuka tin.", "critical": true },
+            { "id": "go-bag-basics-flashlight", "label": "Lampu suluh + bateri ganti", "desc": "Lampu kepala lebih baik untuk tangan bebas.", "critical": true },
+            { "id": "go-bag-basics-first-aid", "label": "Kit pertolongan cemas", "desc": "Balutan, kain kasa, antiseptik, ubat tahan sakit.", "critical": true },
+            { "id": "go-bag-basics-powerbank", "label": "Power bank + kabel pengecas", "desc": "Pastikan dicas penuh; bawa palam dinding.", "critical": true },
+            { "id": "go-bag-basics-whistle", "label": "Wisil", "desc": "3 tiupan untuk kecemasan.", "optional": true },
+            { "id": "go-bag-basics-blanket", "label": "Selimut haba", "optional": true },
+            { "id": "go-bag-basics-cash", "label": "Tunai (wang kecil)", "desc": "ATM/terminal mungkin tidak berfungsi.", "optional": true },
+            { "id": "go-bag-basics-docs", "label": "Salinan IC & dokumen penting", "desc": "Cetakan + salinan digital; sarung kalis air.", "critical": true }
+          ]
+        },
+        {
+          "id": "go-bag-hygiene",
+          "title": "Kebersihan",
+          "items": [
+            { "id": "go-bag-hygiene-masks", "label": "Pelitup muka (simpanan)", "optional": true },
+            { "id": "go-bag-hygiene-sanitizer", "label": "Pembersih tangan / tisu basah", "optional": true },
+            { "id": "go-bag-hygiene-soap", "label": "Sabun / kelengkapan tandas", "optional": true },
+            { "id": "go-bag-hygiene-bags", "label": "Beg sampah / beg zip", "desc": "Untuk sisa dan kalis air.", "optional": true }
+          ]
+        },
+        {
+          "id": "go-bag-tools",
+          "title": "Alatan & Tambahan",
+          "items": [
+            { "id": "go-bag-tools-multitool", "label": "Alat pelbagai guna atau set asas", "optional": true },
+            { "id": "go-bag-tools-ducttape", "label": "Pita pelekat (duct tape)", "optional": true },
+            { "id": "go-bag-tools-matches", "label": "Mancis kalis air/pemetik api", "optional": true },
+            { "id": "go-bag-tools-poncho", "label": "Ponco hujan", "optional": true },
+            { "id": "go-bag-tools-paracord", "label": "Tali paracord/tali biasa", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flood",
+      "title": "Kesiapsiagaan Banjir",
+      "icon": "rainy",
+      "subcategories": [
+        {
+          "id": "flood-before",
+          "title": "Sebelum Banjir",
+          "items": [
+            { "id": "flood-before-drains", "label": "Bersihkan longkang dan saluran", "desc": "Buang daun/sisa untuk aliran lebih lancar." },
+            { "id": "flood-before-sandbags", "label": "Sediakan karung pasir atau penghadang banjir", "desc": "Lindungi pintu dan saluran rendah." },
+            { "id": "flood-before-elevate", "label": "Naikkan peralatan & barangan berharga", "desc": "Alihkan ke atas paras air yang dijangka." },
+            { "id": "flood-before-backflow", "label": "Periksa/pasang palam anti-alir balik", "desc": "Kurangkan risiko najis melimpah.", "optional": true },
+            { "id": "flood-before-photos", "label": "Ambil gambar rumah & dokumen", "desc": "Untuk insurans dan tuntutan." }
+          ]
+        },
+        {
+          "id": "flood-during",
+          "title": "Semasa Banjir",
+          "items": [
+            { "id": "flood-during-monitor", "label": "Pantau amaran rasmi", "desc": "Gunakan notifikasi aplikasi dan radio.", "critical": true },
+            { "id": "flood-during-avoidwater", "label": "Elakkan air banjir", "desc": "15 cm boleh menjatuhkan anda; 30 cm boleh menghanyutkan kereta.", "critical": true },
+            { "id": "flood-during-power", "label": "Matikan elektrik (jika selamat)", "desc": "Jangan sentuh peralatan elektrik basah.", "critical": true },
+            { "id": "flood-during-evacuate", "label": "Naik ke tempat tinggi / bersedia untuk pindah", "critical": true },
+            { "id": "flood-during-go-bag", "label": "Bawa beg kecemasan & ubat-ubatan", "critical": true }
+          ]
+        },
+        {
+          "id": "flood-after",
+          "title": "Selepas Banjir",
+          "items": [
+            { "id": "flood-after-return", "label": "Pulang hanya bila pihak berkuasa kata selamat" },
+            { "id": "flood-after-avoidstanding", "label": "Elakkan air bertakung", "desc": "Mungkin berarus elektrik atau tercemar." },
+            { "id": "flood-after-photodamage", "label": "Ambil gambar kerosakan sebelum pembersihan" },
+            { "id": "flood-after-ventilate", "label": "Pengudaraan & keringkan rumah", "desc": "Buka tingkap, gunakan kipas/penyah-lembap." },
+            { "id": "flood-after-disinfect", "label": "Nyahkuman permukaan & buang bahan berliang", "desc": "Untuk elak pertumbuhan kulat." },
+            { "id": "flood-after-food", "label": "Buang makanan rosak & air tercemar" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "title": "Keselamatan Kebakaran",
+      "icon": "flame",
+      "subcategories": [
+        {
+          "id": "fire-prevent",
+          "title": "Pencegahan",
+          "items": [
+            { "id": "fire-prevent-smokealarms", "label": "Uji penggera asap setiap bulan", "critical": true },
+            { "id": "fire-prevent-extinguisher", "label": "Simpan alat pemadam api ABC", "desc": "Ingat PASS: Pull, Aim, Squeeze, Sweep.", "critical": true },
+            { "id": "fire-prevent-outlets", "label": "Elakkan soket berlebihan & kabel rosak" },
+            { "id": "fire-prevent-flammables", "label": "Simpan bahan mudah terbakar jauh dari haba" },
+            { "id": "fire-prevent-escapeplan", "label": "Buat & latih pelan keluar rumah", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-during",
+          "title": "Semasa Kebakaran",
+          "items": [
+            { "id": "fire-during-911", "label": "Hubungi kecemasan selepas selamat di luar", "critical": true },
+            { "id": "fire-during-low", "label": "Merangkak rendah di bawah asap", "critical": true },
+            { "id": "fire-during-doorheat", "label": "Periksa suhu pintu dengan belakang tangan" },
+            { "id": "fire-during-closedoors", "label": "Tutup pintu di belakang untuk perlahan api" },
+            { "id": "fire-during-stopdroproll", "label": "Jika pakaian terbakar: Berhenti, Jatuh, Guling", "critical": true }
+          ]
+        },
+        {
+          "id": "fire-after",
+          "title": "Selepas Kebakaran",
+          "items": [
+            { "id": "fire-after-reenter", "label": "Jangan masuk semula hingga disahkan selamat", "critical": true },
+            { "id": "fire-after-insurance", "label": "Hubungi insurans & dokumentasi kerosakan" },
+            { "id": "fire-after-utilities", "label": "Periksa utiliti sebelum dihidupkan" },
+            { "id": "fire-after-detectors", "label": "Ganti penggera asap yang rosak" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "health-first-aid",
+      "title": "Kesihatan & Pertolongan Cemas",
+      "icon": "medkit",
+      "subcategories": [
+        {
+          "id": "health-meds",
+          "title": "Ubat Peribadi",
+          "items": [
+            { "id": "health-meds-list", "label": "Kekalkan senarai ubat yang dikemas kini", "desc": "Sertakan dos dan alahan.", "critical": true },
+            { "id": "health-meds-7days", "label": "Bekalan tambahan 7 hari (jika boleh)", "optional": true },
+            { "id": "health-meds-copies", "label": "Salinan preskripsi", "optional": true }
+          ]
+        },
+        {
+          "id": "health-firstaid-kit",
+          "title": "Kit Pertolongan Cemas",
+          "items": [
+            { "id": "health-firstaid-bandages", "label": "Plaster pelekat & kain kasa steril", "critical": true },
+            { "id": "health-firstaid-antiseptic", "label": "Tisu/larutan antiseptik", "critical": true },
+            { "id": "health-firstaid-tape", "label": "Pita perubatan & gunting" },
+            { "id": "health-firstaid-gloves", "label": "Sarung tangan pakai buang & pelitup muka" },
+            { "id": "health-firstaid-pain", "label": "Ubat tahan sakit/demam", "optional": true },
+            { "id": "health-firstaid-thermometer", "label": "Termometer", "optional": true }
+          ]
+        },
+        {
+          "id": "health-hygiene",
+          "title": "Kebersihan",
+          "items": [
+            { "id": "health-hygiene-soap", "label": "Sabun, berus gigi, ubat gigi" },
+            { "id": "health-hygiene-wipes", "label": "Pembersih tangan & tisu" },
+            { "id": "health-hygiene-feminine", "label": "Keperluan kebersihan wanita", "optional": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "family-comm",
+      "title": "Keluarga & Komunikasi",
+      "icon": "people",
+      "subcategories": [
+        {
+          "id": "family-contacts",
+          "title": "Kenalan",
+          "items": [
+            { "id": "family-contacts-ice", "label": "Simpan senarai kenalan ICE di telefon & bercetak", "desc": "Sertakan maklumat perubatan & waris terdekat.", "critical": true },
+            { "id": "family-contacts-outofarea", "label": "Pilih seorang kenalan luar kawasan", "desc": "Keluarga hubungi jika talian tempatan sibuk." },
+            { "id": "family-contacts-emergency", "label": "Simpan nombor kecemasan tempatan", "desc": "Polis, Bomba/Ambulans, talian utiliti." }
+          ]
+        },
+        {
+          "id": "family-plan",
+          "title": "Pelan Keluarga",
+          "items": [
+            { "id": "family-plan-meetpoints", "label": "Tetapkan lokasi pertemuan utama & sandaran", "critical": true },
+            { "id": "family-plan-routes", "label": "Sepakati laluan pemindahan" },
+            { "id": "family-plan-pets", "label": "Rancang untuk haiwan peliharaan (sangkar, makanan, rekod)" },
+            { "id": "family-plan-drills", "label": "Lakukan latihan berkala (setiap suku tahun)", "optional": true }
+          ]
+        },
+        {
+          "id": "family-docs",
+          "title": "Dokumen",
+          "items": [
+            { "id": "family-docs-backups", "label": "Simpan salinan digital dokumen penting dengan selamat", "desc": "Awan bercapai + salinan luar talian yang disulitkan." },
+            { "id": "family-docs-waterproof", "label": "Bekas kalis air untuk dokumen asal", "critical": true }
+          ]
+        }
+      ]
+    }
+  ]
+}
