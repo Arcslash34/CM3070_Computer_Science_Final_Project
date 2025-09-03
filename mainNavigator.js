@@ -12,7 +12,7 @@ import QuizGame from "./QuizGame";
 import HistoryScreen from "./HistoryScreen";
 import ResultSummary from "./resultSummary";
 import { LogoHeader } from "./drawerapp";
-import Settings from "./settings";
+import SettingsContainer from "./containers/SettingsContainer";
 import ResourceHub from "./resourceHub";
 import ResourceArticle from "./resourceArticle";
 import CertificatesScreen from "./CertificatesScreen";
@@ -84,7 +84,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Settings"
-        component={Settings}
+        component={SettingsContainer}
         options={{ tabBarLabel: t("nav.settings"), title: t("nav.settings") }}
       />
     </Tab.Navigator>
