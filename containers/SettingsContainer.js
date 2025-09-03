@@ -24,7 +24,7 @@ import {
   setNotificationsEnabled,
   setSoundEnabled,
   setVibrationEnabled,
-} from "../appPrefs";
+} from "../utils/appPrefs";
 import { t } from "../translations/translation";
 
 // Presentational screen

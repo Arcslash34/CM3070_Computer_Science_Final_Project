@@ -1,8 +1,8 @@
 // authWrapper.js
-import React, { useEffect, useState } from 'react';
-import { supabase } from './supabase';
-import AuthScreen from './authscreen';
-import DrawerApp from './drawerapp';
+import React, { useEffect, useState } from "react";
+import { supabase } from "./supabase";
+import AuthContainer from "./auth/AuthContainer";
+import DrawerApp from "./navigation/drawerapp";
 
 export default function AuthWrapper() {
   const [session, setSession] = useState(null);
@@ -23,5 +23,5 @@ export default function AuthWrapper() {
   if (loading) return null;
 
   // Just render one of these — the stack will be at the ROOT now
-  return session ? <DrawerApp /> : <AuthScreen />;
+  return session ? <DrawerApp /> : <AuthContainer />;
 }

@@ -1,7 +1,7 @@
 // supabase.js
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-if (typeof globalThis.structuredClone !== 'function') {
+if (typeof globalThis.structuredClone !== "function") {
   globalThis.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
 }
 

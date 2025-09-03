@@ -1,6 +1,7 @@
+// SplashView.js
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, StatusBar, TouchableWithoutFeedback } from 'react-native';
-import { Audio } from 'expo-av'; // 👈 import Expo Audio
+import { Audio } from 'expo-av';
 
 export default function SplashView({ onDone }) {
   const scale = useRef(new Animated.Value(0.6)).current;

@@ -9,18 +9,18 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashView from './SplashView';
 import AuthWrapper from './authWrapper';
-import SirenScreen from './SirenScreen';
-import EmergencyTapOverlay from './EmergencyTapOverlay';
-import { navigationRef } from './navigationRef';
-import { preloadSiren } from './sirenAudio';
-import { init as initPrefs } from './appPrefs';
+import SirenContainer from './containers/SirenContainer';
+import EmergencyTapOverlay from './components/EmergencyTapOverlay';
+import { navigationRef } from './navigation/navigationRef';
+import { preloadSiren } from './utils/sirenAudio';
+import { init as initPrefs } from './utils/appPrefs';
 import { LanguageProvider, LanguageContext } from './translations/language';
 
 const Stack = createNativeStackNavigator();
 
 /** Inner navigator – can read LanguageContext */
 function AppNav({ showSplash, onDone, onSiren }) {
-  const { lang } = useContext(LanguageContext); // <- current language
+  const { lang } = useContext(LanguageContext);
 
   return (
     <NavigationContainer key={lang} ref={navigationRef}>
@@ -36,7 +36,7 @@ function AppNav({ showSplash, onDone, onSiren }) {
         </Stack.Screen>
         <Stack.Screen
           name="Siren"
-          component={SirenScreen}
+          component={SirenContainer}
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />
       </Stack.Navigator>
