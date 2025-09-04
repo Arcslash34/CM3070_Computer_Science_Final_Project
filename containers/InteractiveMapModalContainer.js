@@ -1,6 +1,5 @@
 // containers/InteractiveMapModalContainer.js
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import InteractiveMapModalScreen from "../screens/InteractiveMapModalScreen";
 import { LanguageContext } from "../translations/language";
@@ -50,7 +49,6 @@ export default function InteractiveMapModalContainer({ visible, onClose, userCoo
         station: t("map.html.popup.station"),
         region: t("map.html.popup.region"),
         rainfall: t("map.html.popup.rainfall"),
-        last1h: t("map.html.popup.last1h"),
         floodRisk: t("map.html.popup.floodRisk"),
         pm25: t("map.html.popup.pm25"),
         windSpeed: t("map.html.popup.windSpeed"),

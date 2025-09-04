@@ -15,7 +15,6 @@ import * as IntentLauncher from "expo-intent-launcher";
 import { useNavigation } from "@react-navigation/native";
 import { LanguageContext } from "../translations/language";
 import HomeScreen from "../screens/HomeScreen";
-import { t } from "../translations/translation";
 
 import {
   estimateFloodRisk,
@@ -279,7 +278,7 @@ export default function HomeContainer() {
           setRainNearest(nearest || null);
 
           if (nearest) {
-            const risk = estimateFloodRisk(nearest.rainfall, nearest.lastHour);
+            const risk = estimateFloodRisk(nearest.rainfall);
             setUiRiskLevel(risk || null);
 
             if (risk === "High" || risk === "Moderate") {

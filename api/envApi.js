@@ -142,46 +142,6 @@ async function fetchJSON_RL(
 }
 
 /* =========================================================================
-   Rolling rainfall buffer (for last-60-min when API only returns 1 slot)
-   ========================================================================= */
-// Map<stationId, Array<{ts:number, value:number}>>
-const _rollingRain = new Map();
-
-function _pushRollingRain(stationId, tsMs, value) {
-  if (!Number.isFinite(value)) return;
-  const arr = _rollingRain.get(stationId) || [];
-  arr.push({ ts: tsMs, value: Math.max(0, value) });
-  // keep only last ~65 minutes
-  const cutoff = tsMs - 65 * 60 * 1000;
-  const pruned = arr.filter((x) => x.ts >= cutoff);
-  _rollingRain.set(stationId, pruned);
-}
-
-function _sumLastHourFromRolling(stationId, refTsMs) {
-  const arr = _rollingRain.get(stationId) || [];
-  const cutoff = refTsMs - 60 * 60 * 1000;
-  let sum = 0;
-  let found = false;
-  for (const x of arr) {
-    if (x.ts >= cutoff && x.ts <= refTsMs && Number.isFinite(x.value)) {
-      sum += x.value;
-      found = true;
-    }
-  }
-  return found ? sum : null;
-}
-
-function _coverageLastHourFromRolling(stationId, refTsMs) {
-  const arr = _rollingRain.get(stationId) || [];
-  const cutoff = refTsMs - 60 * 60 * 1000;
-  const within = arr.filter((x) => x.ts >= cutoff && x.ts <= refTsMs);
-  if (!within.length) return 0;
-  const earliest = within.reduce((m, x) => Math.min(m, x.ts), within[0].ts);
-  const mins = Math.max(0, Math.round((refTsMs - earliest) / 60000));
-  return Math.min(60, mins);
-}
-
-/* =========================================================================
    Snapshot (bundled-only)
    ========================================================================= */
 let _lastSnapshotSource = null; // 'assets' | null
@@ -212,33 +172,15 @@ export async function loadEnvDatasetsFromFile() {
 /* =========================================================================
    Domain helpers
    ========================================================================= */
-export const estimateFloodRisk = (rainfall, lastHour, opts = {}) => {
-  const {
-    allowNull = false,
-    minCoverageMin = 0,
-    coverageMin = undefined,
-    nowHigh = 10,
-    hourHigh = 30,
-    nowMod = 5,
-    hourMod = 15,
-  } = opts;
+export const estimateFloodRisk = (rainfall, opts = {}) => {
+  const { nowHigh = 10, nowMod = 5 } = opts;
+  const r = Number.isFinite(rainfall) ? rainfall : 0;
 
-  const hasR = Number.isFinite(rainfall);
-  const hasH = Number.isFinite(lastHour);
-
-  if (typeof coverageMin === "number" && coverageMin < minCoverageMin) {
-    return allowNull ? null : "Low";
-  }
-
-  const r = hasR ? rainfall : 0;
-  const h = hasH ? lastHour : 0;
-
-  if (r > nowHigh || h > hourHigh) return "High";
-  if (r > nowMod || h > hourMod) return "Moderate";
-
-  if (allowNull && !hasR && !hasH) return null;
+  if (r > nowHigh) return "High";
+  if (r > nowMod) return "Moderate";
   return "Low";
 };
+
 
 export const getNearestForecastArea = (userCoords, metadata) => {
   let closest = null;
@@ -339,7 +281,7 @@ export const fetchWeatherForecast = async () => {
 };
 
 /* =========================================================================
-   NEA: Real-time rainfall (ALL STATIONS + per-station last-hour accumulation)
+   NEA: Real-time rainfall (ALL STATIONS, 5-min only)
    TTL 60s
    ========================================================================= */
 export const fetchRainfallData = async (userCoords) => {
@@ -364,90 +306,35 @@ export const fetchRainfallData = async (userCoords) => {
           name: s.name,
           location: s.location,
           rainfall: null,
-          lastHour: null,
-          lastHourCoverageMin: 0,
           distanceKm: null,
         })),
         timestamp: null,
       };
     }
 
-    const newestTs = _ts(windowSlots[0]?.timestamp);
-
-    // Seed rolling buffer (helps when API returns only 1 bucket intermittently)
-    for (const s of windowSlots) {
-      const tsMs = _ts(s?.timestamp);
-      for (const d of s.data || []) {
-        const val =
-          typeof d.value === "number" &&
-          Number.isFinite(d.value) &&
-          d.value >= 0
-            ? d.value
-            : 0;
-        _pushRollingRain(d.stationId, tsMs, val);
-      }
-    }
-
-    // Latest 5-min readings (“now”)
     const currentReadings = windowSlots[0]?.data ?? [];
-
-    // Strict accumulation across the normalized window
-    const accByStation = new Map(); // id -> sum(mm)
-    for (const s of windowSlots) {
-      for (const d of s.data || []) {
-        const val =
-          typeof d.value === "number" &&
-          Number.isFinite(d.value) &&
-          d.value >= 0
-            ? d.value
-            : 0;
-        accByStation.set(
-          d.stationId,
-          (accByStation.get(d.stationId) || 0) + val
-        );
-      }
-    }
-
-    const hasMultiSlots = windowSlots.length > 1;
-    const coverageMinStrict = Math.min(60, windowSlots.length * 5);
-
     const all = stations.map((stn) => {
-      const rainfallNow =
-        currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
+    const rainfallNow =
+      currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
 
-      // Preferred: strict sum from normalized window
-      let lastHour = hasMultiSlots ? accByStation.get(stn.id) : null;
-      let lastHourCoverageMin = hasMultiSlots ? coverageMinStrict : 0;
+    const distanceKm =
+      userCoords && stn?.location
+        ? getDistanceFromLatLonInKm(
+            userCoords.latitude,
+            userCoords.longitude,
+            stn.location.latitude,
+            stn.location.longitude
+          )
+        : null;
 
-      // Fallback: rolling buffer when only 1 slot is available
-      if (!hasMultiSlots) {
-        lastHour = _sumLastHourFromRolling(stn.id, newestTs);
-        lastHourCoverageMin = _coverageLastHourFromRolling(stn.id, newestTs);
-      }
-
-      // Sanity: clamp negatives and NaNs
-      if (!Number.isFinite(lastHour) || lastHour < 0) lastHour = null;
-
-      const distanceKm =
-        userCoords && stn?.location
-          ? getDistanceFromLatLonInKm(
-              userCoords.latitude,
-              userCoords.longitude,
-              stn.location.latitude,
-              stn.location.longitude
-            )
-          : null;
-
-      return {
-        id: stn.id,
-        name: stn.name,
-        location: stn.location, // { latitude, longitude }
-        rainfall: rainfallNow, // latest 5-min (mm)
-        lastHour, // true last 60-min total (mm)
-        lastHourCoverageMin, // minutes of data considered (0..60)
-        distanceKm, // for nearest logic in UI
-      };
-    });
+    return {
+      id: stn.id,
+      name: stn.name,
+      location: stn.location,
+      rainfall: rainfallNow,       // latest 5-min (mm)
+      distanceKm,
+    };
+  });
 
     return { stations: all, timestamp: windowSlots[0]?.timestamp || null };
   } catch (err) {
@@ -456,14 +343,14 @@ export const fetchRainfallData = async (userCoords) => {
       `fetchRainfallData -> fallback to bundled: ${err?.message || err}`
     );
 
-    // Fallback attempts to normalize snapshot into the same { stations: [], timestamp } shape
+    // Fallback attempts to normalize snapshot...
     const norm = await snapOr((snap) => {
       const r = snap?.rain;
       if (!r) return null;
 
       // Case 1: already normalized
       if (Array.isArray(r?.stations)) {
-        return { stations: r.stations, timestamp: r.timestamp ?? null };
+        return { stations: r.stations.map(({ lastHour, lastHourCoverageMin, ...s }) => s), timestamp: r.timestamp ?? null };
       }
 
       // Case 2: legacy arrays
@@ -475,8 +362,6 @@ export const fetchRainfallData = async (userCoords) => {
         name: s.name,
         location: s.location,
         rainfall: s.rainfall ?? s.value ?? s.readings?.[0]?.value ?? null,
-        lastHour: s.lastHour ?? 0,
-        lastHourCoverageMin: 0,
         distanceKm: null,
       }));
 

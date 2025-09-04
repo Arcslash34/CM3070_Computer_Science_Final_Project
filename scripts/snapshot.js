@@ -143,10 +143,9 @@ function normalizeRainSlots(readingSets) {
 }
 
 /**
- * Rainfall snapshot:
+ * Rainfall snapshot (5-min only):
  *  - Keep latest 5-min `rainfall`
- *  - Strictly accumulate across normalized window for `lastHour`
- *  - Include `lastHourCoverageMin` = 5 * number_of_buckets (<= 60)
+ *  - No 1-hour accumulation, no coverage fields
  */
 async function getRainAll() {
   const json = await fetchWithTimeout(NEA.rainfall);
@@ -162,8 +161,6 @@ async function getRainAll() {
         name: stn.name,
         location: stn.location,
         rainfall: null,
-        lastHour: null,
-        lastHourCoverageMin: 0,
       })),
       timestamp: null,
     };
@@ -173,33 +170,17 @@ async function getRainAll() {
   const latestData = latest?.data ?? [];
   const timestamp = latest?.timestamp ?? null;
 
-  // strict accumulation across buckets
-  const accByStation = new Map(); // id -> sum(mm)
-  for (const s of windowSlots) {
-    for (const d of (s?.data || [])) {
-      const v = (typeof d.value === 'number' && Number.isFinite(d.value) && d.value >= 0) ? d.value : 0;
-      accByStation.set(d.stationId, (accByStation.get(d.stationId) || 0) + v);
-    }
-  }
-
-  const coverageMin = Math.min(60, windowSlots.length * 5);
   const round2 = (x) => (isFiniteNumber(x) ? Math.round(x * 100) / 100 : x);
 
   const stationsOut = stations.map((stn) => {
     const nowVal = latestData.find((r) => r.stationId === stn.id)?.value;
     const rainfall = isFiniteNumber(nowVal) ? round2(nowVal) : null;
 
-    let lastHour = accByStation.get(stn.id);
-    if (!isFiniteNumber(lastHour)) lastHour = null;
-    else lastHour = round2(lastHour);
-
     return {
       id: stn.id,
       name: stn.name,
       location: stn.location,
       rainfall,                 // latest 5-min (mm)
-      lastHour,                 // strict sum across buckets
-      lastHourCoverageMin: coverageMin, // 0..60
     };
   });
 
@@ -219,7 +200,7 @@ async function main() {
   ]);
 
   const snapshot = {
-    rain,       // { timestamp, stations: [...] with lastHourCoverageMin }
+    rain,       // { timestamp, stations: [...] }
     pm25,       // array
     wind,       // array
     temp,       // array

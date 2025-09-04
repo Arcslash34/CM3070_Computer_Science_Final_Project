@@ -7,9 +7,7 @@ export function buildLeafletHtml({ userCoords, datasets, labels, startLayer = "r
       lat: s?.location?.latitude,
       lng: s?.location?.longitude,
       name: s?.name,
-      rainfall: s?.rainfall,
-      lastHour: s?.lastHour,
-      coverageMin: s?.lastHourCoverageMin,
+      rainfall: s?.rainfall, // 5-min only
     })),
     pm25: (datasets?.pm25 || []).map((x) => ({
       lat: x?.location?.latitude,
@@ -71,9 +69,9 @@ export function buildLeafletHtml({ userCoords, datasets, labels, startLayer = "r
     updateLayer(APP_DATA.activeLayer);
   }
 
-  function estimateFloodRisk(rainfall,lastHour){
-    if((rainfall??0)>10||(lastHour??0)>30)return 'High';
-    if((rainfall??0)>5||(lastHour??0)>15)return 'Moderate';
+  function estimateFloodRisk(rainfall){
+    if((rainfall??0)>10) return 'High';
+    if((rainfall??0)>5)  return 'Moderate';
     return 'Low';
   }
   function riskColor(risk){ if(risk==='High')return '#EF4444'; if(risk==='Moderate')return '#F59E0B'; return '#10B981'; }
@@ -109,23 +107,30 @@ export function buildLeafletHtml({ userCoords, datasets, labels, startLayer = "r
   function updateLayer(layerName){
     if(!map)return;
     clearMarkers(); updateLegend(layerName);
-    if(layerName==='rain'){
-      (APP_DATA.rain||[]).forEach(p=>{
-        if(!(p&&p.lat&&p.lng))return;
-        const risk=estimateFloodRisk(p.rainfall,p.lastHour);
-        const color=riskColor(risk);
-        const nowVal=(p.rainfall!=null)?(Math.round(p.rainfall)+' '+LABELS.units.mm):'-';
-        const hourVal=(p.lastHour!=null)?(p.lastHour+' '+LABELS.units.mm):LABELS.popup.na;
-        const m=addChip({lat:p.lat,lng:p.lng,label:nowVal,klass:'rain',inlineBg:color,
-          popupTitle:(p.name||LABELS.popup.station),
-          popupLines:[
-            (p.rainfall!=null?(LABELS.popup.rainfall+': '+p.rainfall+' '+LABELS.units.mm):(LABELS.popup.rainfall+': '+LABELS.popup.na)),
-            (LABELS.popup.last1h+': '+hourVal),
-            (LABELS.popup.floodRisk+': '+risk),
-          ],
-        }); if(m)currentMarkers.push(m);
+    if (layerName === 'rain') {
+    (APP_DATA.rain || []).forEach(p => {
+      if (!(p && p.lat && p.lng)) return;
+      const risk  = estimateFloodRisk(p.rainfall);
+      const color = riskColor(risk);
+      const nowVal = (p.rainfall != null) ? (Math.round(p.rainfall) + ' ' + LABELS.units.mm) : '-';
+
+      const m = addChip({
+        lat: p.lat,
+        lng: p.lng,
+        label: nowVal,
+        klass: 'rain',
+        inlineBg: color,
+        popupTitle: (p.name || LABELS.popup.station),
+        popupLines: [
+          (p.rainfall != null
+            ? (LABELS.popup.rainfall + ': ' + p.rainfall + ' ' + LABELS.units.mm)
+            : (LABELS.popup.rainfall + ': ' + LABELS.popup.na)),
+          (LABELS.popup.floodRisk + ': ' + risk),
+        ],
       });
-    } else if(layerName==='pm25'){
+      if (m) currentMarkers.push(m);
+    });
+  } else if(layerName==='pm25'){
       (APP_DATA.pm25||[]).forEach(p=>{
         const v=(p.value!=null)?Math.round(p.value):null;
         const m=addChip({lat:p.lat,lng:p.lng,klass:'pm25',label:(v!=null?(v+' µg'):'-'),

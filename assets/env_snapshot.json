@@ -8,9 +8,7 @@
           "latitude": 1.37999,
           "longitude": 103.87643
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S216",
@@ -19,9 +17,7 @@
           "latitude": 1.36019,
           "longitude": 103.85335
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S217",
@@ -30,9 +26,7 @@
           "latitude": 1.35041,
           "longitude": 103.85526
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S214",
@@ -41,9 +35,7 @@
           "latitude": 1.29911,
           "longitude": 103.88289
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S215",
@@ -52,9 +44,7 @@
           "latitude": 1.32785,
           "longitude": 103.88899
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S213",
@@ -63,9 +53,7 @@
           "latitude": 1.32427,
           "longitude": 103.8097
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S81",
@@ -74,9 +62,7 @@
           "latitude": 1.4029,
           "longitude": 103.9092
         },
-        "rainfall": 0.8,
-        "lastHour": 0.8,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S40",
@@ -85,9 +71,7 @@
           "latitude": 1.4044,
           "longitude": 103.78962
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S84",
@@ -96,9 +80,7 @@
           "latitude": 1.3437,
           "longitude": 103.9444
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S44",
@@ -107,9 +89,7 @@
           "latitude": 1.34583,
           "longitude": 103.68166
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S88",
@@ -118,9 +98,7 @@
           "latitude": 1.3427,
           "longitude": 103.8482
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S43",
@@ -129,9 +107,7 @@
           "latitude": 1.3399,
           "longitude": 103.8878
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S221",
@@ -140,9 +116,7 @@
           "latitude": 1.35691,
           "longitude": 103.89088
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S222",
@@ -151,9 +125,7 @@
           "latitude": 1.28987,
           "longitude": 103.82364
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S08",
@@ -162,9 +134,7 @@
           "latitude": 1.3701,
           "longitude": 103.8271
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S07",
@@ -173,9 +143,7 @@
           "latitude": 1.3415,
           "longitude": 103.8334
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S220",
@@ -184,9 +152,7 @@
           "latitude": 1.38666,
           "longitude": 103.89797
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S208",
@@ -195,9 +161,7 @@
           "latitude": 1.3136,
           "longitude": 104.00317
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S203",
@@ -206,9 +170,7 @@
           "latitude": 1.29164,
           "longitude": 103.7702
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 5.2
       },
       {
         "id": "S201",
@@ -217,9 +179,7 @@
           "latitude": 1.32311,
           "longitude": 103.76714
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 1.4
       },
       {
         "id": "S90",
@@ -228,9 +188,7 @@
           "latitude": 1.3191,
           "longitude": 103.8191
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S92",
@@ -239,9 +197,7 @@
           "latitude": 1.2841,
           "longitude": 103.7886
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 3
       },
       {
         "id": "S209",
@@ -250,9 +206,7 @@
           "latitude": 1.42111,
           "longitude": 103.84472
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S50",
@@ -261,9 +215,7 @@
           "latitude": 1.3337,
           "longitude": 103.7768
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0.8
       },
       {
         "id": "S94",
@@ -272,9 +224,7 @@
           "latitude": 1.3662,
           "longitude": 103.9528
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S210",
@@ -283,9 +233,7 @@
           "latitude": 1.44003,
           "longitude": 103.76904
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S211",
@@ -294,9 +242,7 @@
           "latitude": 1.42918,
           "longitude": 103.75711
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S119",
@@ -305,9 +251,7 @@
           "latitude": 1.30105,
           "longitude": 103.8666
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S117",
@@ -316,9 +260,7 @@
           "latitude": 1.256,
           "longitude": 103.679
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S115",
@@ -327,9 +269,7 @@
           "latitude": 1.29377,
           "longitude": 103.61843
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S113",
@@ -338,9 +278,7 @@
           "latitude": 1.30648,
           "longitude": 103.9104
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S60",
@@ -349,9 +287,7 @@
           "latitude": 1.25,
           "longitude": 103.8279
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S64",
@@ -360,9 +296,7 @@
           "latitude": 1.3824,
           "longitude": 103.7603
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S66",
@@ -371,9 +305,7 @@
           "latitude": 1.4387,
           "longitude": 103.7363
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S24",
@@ -382,9 +314,7 @@
           "latitude": 1.3678,
           "longitude": 103.9826
         },
-        "rainfall": 0.6,
-        "lastHour": 0.6,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S69",
@@ -393,9 +323,7 @@
           "latitude": 1.37,
           "longitude": 103.805
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S123",
@@ -404,9 +332,7 @@
           "latitude": 1.3214,
           "longitude": 103.8577
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S108",
@@ -415,9 +341,7 @@
           "latitude": 1.2799,
           "longitude": 103.8703
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S229",
@@ -426,9 +350,7 @@
           "latitude": 1.35167,
           "longitude": 103.72195
         },
-        "rainfall": 20,
-        "lastHour": 30,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S900",
@@ -437,9 +359,7 @@
           "latitude": 1.41284,
           "longitude": 103.86922
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S109",
@@ -448,9 +368,7 @@
           "latitude": 1.3764,
           "longitude": 103.8492
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S106",
@@ -459,9 +377,7 @@
           "latitude": 1.4168,
           "longitude": 103.9673
         },
-        "rainfall": 0.6,
-        "lastHour": 0.6,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S227",
@@ -470,9 +386,7 @@
           "latitude": 1.43944,
           "longitude": 103.80389
         },
-        "rainfall": 0.4,
-        "lastHour": 0.4,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S107",
@@ -481,9 +395,7 @@
           "latitude": 1.3135,
           "longitude": 103.9625
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S228",
@@ -492,9 +404,7 @@
           "latitude": 1.34703,
           "longitude": 103.70073
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S104",
@@ -503,9 +413,7 @@
           "latitude": 1.44387,
           "longitude": 103.78538
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S226",
@@ -514,9 +422,7 @@
           "latitude": 1.27472,
           "longitude": 103.80389
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S102",
@@ -525,9 +431,7 @@
           "latitude": 1.189,
           "longitude": 103.768
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0.6
       },
       {
         "id": "S223",
@@ -536,9 +440,7 @@
           "latitude": 1.29984,
           "longitude": 103.80264
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S224",
@@ -547,9 +449,7 @@
           "latitude": 1.34392,
           "longitude": 103.98409
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S71",
@@ -558,9 +458,7 @@
           "latitude": 1.2923,
           "longitude": 103.7815
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 6.2
       },
       {
         "id": "S33",
@@ -569,9 +467,7 @@
           "latitude": 1.3081,
           "longitude": 103.71
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S77",
@@ -580,9 +476,7 @@
           "latitude": 1.2937,
           "longitude": 103.8125
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S79",
@@ -591,9 +485,7 @@
           "latitude": 1.3004,
           "longitude": 103.8372
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S78",
@@ -602,9 +494,7 @@
           "latitude": 1.30703,
           "longitude": 103.89067
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S111",
@@ -613,9 +503,7 @@
           "latitude": 1.31055,
           "longitude": 103.8365
         },
-        "rainfall": 0,
-        "lastHour": 0,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S112",
@@ -624,9 +512,7 @@
           "latitude": 1.43854,
           "longitude": 103.70131
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 0
       },
       {
         "id": "S230",
@@ -635,12 +521,10 @@
           "latitude": 1.30167,
           "longitude": 103.76444
         },
-        "rainfall": 0.2,
-        "lastHour": 0.2,
-        "lastHourCoverageMin": 5
+        "rainfall": 5.8
       }
     ],
-    "timestamp": "2025-09-01T10:15:00+08:00"
+    "timestamp": "2025-09-04T09:25:00+08:00"
   },
   "pm25": [
     {
@@ -649,7 +533,7 @@
         "latitude": 1.35735,
         "longitude": 103.7
       },
-      "value": 7
+      "value": 20
     },
     {
       "name": "east",
@@ -657,7 +541,7 @@
         "latitude": 1.35735,
         "longitude": 103.94
       },
-      "value": 6
+      "value": 15
     },
     {
       "name": "central",
@@ -665,7 +549,7 @@
         "latitude": 1.35735,
         "longitude": 103.82
       },
-      "value": 5
+      "value": 21
     },
     {
       "name": "south",
@@ -673,7 +557,7 @@
         "latitude": 1.29587,
         "longitude": 103.82
       },
-      "value": 6
+      "value": 5
     },
     {
       "name": "north",
@@ -681,7 +565,7 @@
         "latitude": 1.41803,
         "longitude": 103.82
       },
-      "value": 3
+      "value": 19
     }
   ],
   "wind": [
@@ -692,8 +576,8 @@
         "latitude": 1.2799,
         "longitude": 103.8703
       },
-      "speed": 4.3,
-      "direction": 223
+      "speed": 4.4,
+      "direction": 179
     },
     {
       "id": "S109",
@@ -702,8 +586,8 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "speed": 8.4,
-      "direction": 252
+      "speed": 6.8,
+      "direction": 251
     },
     {
       "id": "S106",
@@ -712,8 +596,8 @@
         "latitude": 1.4168,
         "longitude": 103.9673
       },
-      "speed": 2.5,
-      "direction": 236
+      "speed": 1.3,
+      "direction": 200
     },
     {
       "id": "S117",
@@ -722,8 +606,8 @@
         "latitude": 1.256,
         "longitude": 103.679
       },
-      "speed": 4.2,
-      "direction": 241
+      "speed": 7.4,
+      "direction": 158
     },
     {
       "id": "S107",
@@ -732,8 +616,8 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "speed": 7.5,
-      "direction": 270
+      "speed": 7.8,
+      "direction": 208
     },
     {
       "id": "S104",
@@ -742,8 +626,8 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "speed": 4.2,
-      "direction": 206
+      "speed": 7.3,
+      "direction": 214
     },
     {
       "id": "S115",
@@ -752,8 +636,8 @@
         "latitude": 1.29377,
         "longitude": 103.61843
       },
-      "speed": 2.3,
-      "direction": 151
+      "speed": 4.4,
+      "direction": 166
     },
     {
       "id": "S60",
@@ -762,8 +646,8 @@
         "latitude": 1.25,
         "longitude": 103.8279
       },
-      "speed": 7.4,
-      "direction": 189
+      "speed": 6.8,
+      "direction": 194
     },
     {
       "id": "S50",
@@ -772,8 +656,8 @@
         "latitude": 1.3337,
         "longitude": 103.7768
       },
-      "speed": 4.1,
-      "direction": 223
+      "speed": 3.4,
+      "direction": 230
     },
     {
       "id": "S44",
@@ -782,8 +666,8 @@
         "latitude": 1.34583,
         "longitude": 103.68166
       },
-      "speed": 8.2,
-      "direction": 257
+      "speed": 3,
+      "direction": 238
     },
     {
       "id": "S43",
@@ -792,8 +676,8 @@
         "latitude": 1.3399,
         "longitude": 103.8878
       },
-      "speed": 5.5,
-      "direction": 222
+      "speed": 5.9,
+      "direction": 189
     },
     {
       "id": "S111",
@@ -802,8 +686,8 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "speed": 2.9,
-      "direction": 174
+      "speed": 4,
+      "direction": 165
     },
     {
       "id": "S121",
@@ -812,8 +696,8 @@
         "latitude": 1.37288,
         "longitude": 103.72244
       },
-      "speed": 4.2,
-      "direction": 193
+      "speed": 3.1,
+      "direction": 217
     }
   ],
   "temp": [
@@ -824,7 +708,7 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "value": 23.5
+      "value": 27.6
     },
     {
       "id": "S106",
@@ -833,7 +717,7 @@
         "latitude": 1.4168,
         "longitude": 103.9673
       },
-      "value": 22.5
+      "value": 29
     },
     {
       "id": "S117",
@@ -842,7 +726,7 @@
         "latitude": 1.256,
         "longitude": 103.679
       },
-      "value": 23.5
+      "value": 26.4
     },
     {
       "id": "S107",
@@ -851,7 +735,7 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "value": 23.2
+      "value": 28.3
     },
     {
       "id": "S104",
@@ -860,7 +744,7 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "value": 23.4
+      "value": 27.8
     },
     {
       "id": "S115",
@@ -869,7 +753,7 @@
         "latitude": 1.29377,
         "longitude": 103.61843
       },
-      "value": 24.2
+      "value": 26.4
     },
     {
       "id": "S102",
@@ -878,7 +762,7 @@
         "latitude": 1.189,
         "longitude": 103.768
       },
-      "value": 24.9
+      "value": 25.8
     },
     {
       "id": "S60",
@@ -887,7 +771,7 @@
         "latitude": 1.25,
         "longitude": 103.8279
       },
-      "value": 23.2
+      "value": 27.1
     },
     {
       "id": "S50",
@@ -896,7 +780,7 @@
         "latitude": 1.3337,
         "longitude": 103.7768
       },
-      "value": 22.8
+      "value": 25.4
     },
     {
       "id": "S44",
@@ -905,7 +789,7 @@
         "latitude": 1.34583,
         "longitude": 103.68166
       },
-      "value": 23
+      "value": 26.3
     },
     {
       "id": "S43",
@@ -914,7 +798,7 @@
         "latitude": 1.3399,
         "longitude": 103.8878
       },
-      "value": 23.1
+      "value": 29.6
     },
     {
       "id": "S24",
@@ -923,7 +807,7 @@
         "latitude": 1.3678,
         "longitude": 103.9826
       },
-      "value": 22.6
+      "value": 29.2
     },
     {
       "id": "S111",
@@ -932,7 +816,7 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "value": 22.7
+      "value": 28.2
     }
   ],
   "humidity": [
@@ -943,16 +827,25 @@
         "latitude": 1.3764,
         "longitude": 103.8492
       },
-      "value": 93
+      "value": 85.5
     },
     {
-      "id": "S43",
-      "name": "Kim Chuan Road",
+      "id": "S106",
+      "name": "Pulau Ubin",
       "location": {
-        "latitude": 1.3399,
-        "longitude": 103.8878
+        "latitude": 1.4168,
+        "longitude": 103.9673
       },
-      "value": 99
+      "value": 87.6
+    },
+    {
+      "id": "S117",
+      "name": "Banyan Road",
+      "location": {
+        "latitude": 1.256,
+        "longitude": 103.679
+      },
+      "value": 90.4
     },
     {
       "id": "S107",
@@ -961,16 +854,7 @@
         "latitude": 1.3135,
         "longitude": 103.9625
       },
-      "value": 96.3
-    },
-    {
-      "id": "S24",
-      "name": "Upper Changi Road North",
-      "location": {
-        "latitude": 1.3678,
-        "longitude": 103.9826
-      },
-      "value": 93.1
+      "value": 82.4
     },
     {
       "id": "S104",
@@ -979,7 +863,7 @@
         "latitude": 1.44387,
         "longitude": 103.78538
       },
-      "value": 99.7
+      "value": 99.4
     },
     {
       "id": "S115",
@@ -988,7 +872,7 @@
         "latitude": 1.29377,
         "longitude": 103.61843
       },
-      "value": 95.6
+      "value": 93.5
     },
     {
       "id": "S102",
@@ -997,7 +881,52 @@
         "latitude": 1.189,
         "longitude": 103.768
       },
-      "value": 94.4
+      "value": 92.5
+    },
+    {
+      "id": "S60",
+      "name": "Sentosa",
+      "location": {
+        "latitude": 1.25,
+        "longitude": 103.8279
+      },
+      "value": 87.4
+    },
+    {
+      "id": "S50",
+      "name": "Clementi Road",
+      "location": {
+        "latitude": 1.3337,
+        "longitude": 103.7768
+      },
+      "value": 96.9
+    },
+    {
+      "id": "S44",
+      "name": "Nanyang Avenue",
+      "location": {
+        "latitude": 1.34583,
+        "longitude": 103.68166
+      },
+      "value": 88.1
+    },
+    {
+      "id": "S43",
+      "name": "Kim Chuan Road",
+      "location": {
+        "latitude": 1.3399,
+        "longitude": 103.8878
+      },
+      "value": 75.3
+    },
+    {
+      "id": "S24",
+      "name": "Upper Changi Road North",
+      "location": {
+        "latitude": 1.3678,
+        "longitude": 103.9826
+      },
+      "value": 76.2
     },
     {
       "id": "S111",
@@ -1006,8 +935,8 @@
         "latitude": 1.31055,
         "longitude": 103.8365
       },
-      "value": 99.2
+      "value": 79.9
     }
   ],
-  "_savedAt": 1756693339077
+  "_savedAt": 1756949560577
 }
