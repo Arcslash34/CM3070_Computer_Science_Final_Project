@@ -1,28 +1,51 @@
 // screens/QuizGameScreen.js
 import React, { useEffect } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, ActivityIndicator, Animated
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Modal,
+  ActivityIndicator,
+  Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function QuizGameScreen({ vm }) {
   const {
-    t, insets,
-    isDaily, dailyTitle, topicTitle,
+    t,
+    insets,
+    isDaily,
+    dailyTitle,
+    topicTitle,
 
-    current, questionCount, index,
+    current,
+    questionCount,
+    index,
 
-    selectedIndex, setSelectedIndex,
-    submitted, onSubmit,
+    selectedIndex,
+    setSelectedIndex,
+    submitted,
+    onSubmit,
 
-    eliminatedOption, usedHint, handleHint,
+    eliminatedOption,
+    usedHint,
+    handleHint,
 
-    remainingTime, progressAnim, flashAnim, isLowTime, barColor,
+    remainingTime,
+    progressAnim,
+    flashAnim,
+    isLowTime,
+    barColor,
 
-    feedback, showExplanation, setShowExplanation,
+    feedback,
+    showExplanation,
+    setShowExplanation,
 
-    confirmExit, goNext,
+    confirmExit,
+    goNext,
 
     uploading,
   } = vm;
@@ -35,8 +58,16 @@ export default function QuizGameScreen({ vm }) {
     }
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(flashAnim, { toValue: 0.2, duration: 300, useNativeDriver: false }),
-        Animated.timing(flashAnim, { toValue: 1, duration: 300, useNativeDriver: false }),
+        Animated.timing(flashAnim, {
+          toValue: 0.2,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(flashAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
       ])
     );
     loop.start();
@@ -91,7 +122,10 @@ export default function QuizGameScreen({ vm }) {
       </SafeAreaView>
 
       <ScrollView
-        contentContainerStyle={[g.container, { paddingBottom: 160 + insets.bottom }]}
+        contentContainerStyle={[
+          g.container,
+          { paddingBottom: 160 + insets.bottom },
+        ]}
       >
         {/* Question */}
         <View style={g.questionCard}>
@@ -105,13 +139,21 @@ export default function QuizGameScreen({ vm }) {
 
         {/* Timer */}
         <View style={g.timerRow}>
-          <Ionicons name="time-outline" size={18} color="#111827" style={{ marginRight: 8 }} />
+          <Ionicons
+            name="time-outline"
+            size={18}
+            color="#111827"
+            style={{ marginRight: 8 }}
+          />
           <View style={g.timerContainer}>
             <Animated.View
               style={[
                 g.timerBar,
                 {
-                  width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] }),
+                  width: progressAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["0%", "100%"],
+                  }),
                   backgroundColor: barColor,
                   opacity: isLowTime && !submitted ? flashAnim : 1,
                 },
@@ -121,7 +163,11 @@ export default function QuizGameScreen({ vm }) {
           <Animated.Text
             style={[
               g.timerText,
-              { marginLeft: 10, color: barColor, opacity: isLowTime && !submitted ? flashAnim : 1 },
+              {
+                marginLeft: 10,
+                color: barColor,
+                opacity: isLowTime && !submitted ? flashAnim : 1,
+              },
             ]}
           >
             {remainingTime}
@@ -138,12 +184,24 @@ export default function QuizGameScreen({ vm }) {
             const isWrong = submitted && isSelected && !isCorrect;
 
             const iconName = !submitted
-              ? isSelected ? "radio-button-on" : "ellipse-outline"
-              : isCorrect ? "checkmark-circle" : isWrong ? "close-circle" : "ellipse-outline";
+              ? isSelected
+                ? "radio-button-on"
+                : "ellipse-outline"
+              : isCorrect
+              ? "checkmark-circle"
+              : isWrong
+              ? "close-circle"
+              : "ellipse-outline";
 
             const iconColor = !submitted
-              ? isSelected ? "#4F46E5" : "#9CA3AF"
-              : isCorrect ? "#10B981" : isWrong ? "#EF4444" : "#9CA3AF";
+              ? isSelected
+                ? "#4F46E5"
+                : "#9CA3AF"
+              : isCorrect
+              ? "#10B981"
+              : isWrong
+              ? "#EF4444"
+              : "#9CA3AF";
 
             return (
               <TouchableOpacity
@@ -154,7 +212,12 @@ export default function QuizGameScreen({ vm }) {
                 activeOpacity={0.9}
               >
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name={iconName} size={20} color={iconColor} style={{ marginRight: 10 }} />
+                  <Ionicons
+                    name={iconName}
+                    size={20}
+                    color={iconColor}
+                    style={{ marginRight: 10 }}
+                  />
                   <Text style={g.optionText}>{opt}</Text>
                 </View>
               </TouchableOpacity>
@@ -188,7 +251,9 @@ export default function QuizGameScreen({ vm }) {
               onPress={() => setShowExplanation(true)}
               activeOpacity={0.9}
             >
-              <Text style={g.secondaryBtnText}>{t("quizGame.viewExplanation")}</Text>
+              <Text style={g.secondaryBtnText}>
+                {t("quizGame.viewExplanation")}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -197,7 +262,9 @@ export default function QuizGameScreen({ vm }) {
               activeOpacity={0.9}
             >
               <Text style={g.submitText}>
-                {index + 1 < questionCount ? t("quizGame.next") : t("quizGame.finish")}
+                {index + 1 < questionCount
+                  ? t("quizGame.next")
+                  : t("quizGame.finish")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -227,7 +294,9 @@ export default function QuizGameScreen({ vm }) {
             <Text style={g.modalExplanation}>{current.explanation}</Text>
             <TouchableOpacity onPress={goNext} style={g.modalButton}>
               <Text style={g.modalButtonText}>
-                {index + 1 < questionCount ? t("quizGame.next") : t("quizGame.finish")}
+                {index + 1 < questionCount
+                  ? t("quizGame.next")
+                  : t("quizGame.finish")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -249,67 +318,196 @@ const g = StyleSheet.create({
 
   topSafe: { backgroundColor: "#FFFFFF" },
   topBar: {
-    height: 60, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    paddingHorizontal: 12, borderBottomWidth: 1, borderColor: "#E5E7EB", backgroundColor: "#FFFFFF",
+    height: 60,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
   },
-  topBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  topTitle: { fontSize: 16, fontWeight: "800", color: "#111827", maxWidth: "65%", textAlign: "center" },
+  topBtn: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  topTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#111827",
+    maxWidth: "65%",
+    textAlign: "center",
+  },
 
   questionCard: {
-    position: "relative", backgroundColor: "#FFFFFF", borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12,
-    height: 200, marginBottom: 12, borderWidth: 1, borderColor: "#E5E7EB",
-    shadowColor: "#000", shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 1,
+    position: "relative",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    height: 200,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
   },
-  qNumber: { position: "absolute", top: 10, left: 0, right: 0, textAlign: "center", color: "#6B7280", fontWeight: "600", fontSize: 13 },
-  qCenterWrap: { flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 6 },
-  questionText: { color: "#111827", fontSize: 20, fontWeight: "700", textAlign: "center" },
+  qNumber: {
+    position: "absolute",
+    top: 10,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    color: "#6B7280",
+    fontWeight: "600",
+    fontSize: 13,
+  },
+  qCenterWrap: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 6,
+  },
+  questionText: {
+    color: "#111827",
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+  },
 
-  timerRow: { flexDirection: "row", alignItems: "center", marginBottom: 14, paddingHorizontal: 8 },
-  timerContainer: { flex: 1, height: 8, backgroundColor: "#F3F4F6", borderRadius: 999, overflow: "hidden", marginRight: 10 },
+  timerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 14,
+    paddingHorizontal: 8,
+  },
+  timerContainer: {
+    flex: 1,
+    height: 8,
+    backgroundColor: "#F3F4F6",
+    borderRadius: 999,
+    overflow: "hidden",
+    marginRight: 10,
+  },
   timerBar: { height: "100%", borderRadius: 999 },
   timerText: { fontSize: 12, fontWeight: "800" },
 
   option: {
-    backgroundColor: "#FFFFFF", borderColor: "#E5E7EB", borderWidth: 1, padding: 14, borderRadius: 12, marginBottom: 10,
-    shadowColor: "#000", shadowOpacity: 0.03, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 1,
+    backgroundColor: "#FFFFFF",
+    borderColor: "#E5E7EB",
+    borderWidth: 1,
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
   },
   optionSelected: { borderColor: "#6366F1", backgroundColor: "#EEF2FF" },
   optionCorrect: { backgroundColor: "#ECFDF5", borderColor: "#10B981" },
   optionWrong: { backgroundColor: "#FEF2F2", borderColor: "#EF4444" },
   optionText: { color: "#111827", fontSize: 15, flex: 1 },
 
-  bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: "transparent", paddingHorizontal: 16 },
+  bottomBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "transparent",
+    paddingHorizontal: 16,
+  },
   submitButton: {
-    backgroundColor: "#4F46E5", paddingVertical: 14, borderRadius: 12, alignItems: "center",
-    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 6 }, elevation: 2,
+    backgroundColor: "#4F46E5",
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
   submitDisabled: { backgroundColor: "#9CA3AF" },
   submitText: { color: "#FFFFFF", fontWeight: "800", fontSize: 16 },
   actionRow: { flexDirection: "row", gap: 10, alignItems: "center" },
   primaryGrow: { flex: 1 },
   secondaryBtn: {
-    height: 48, borderRadius: 12, borderWidth: 1, borderColor: "#4F46E5",
-    alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", paddingHorizontal: 16,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#4F46E5",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
   },
   secondaryBtnText: { color: "#4F46E5", fontWeight: "800", fontSize: 16 },
-  feedbackBottomWrap: { alignItems: "center", justifyContent: "center", marginBottom: 15 },
+  feedbackBottomWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 15,
+  },
   feedbackBottomText: { fontSize: 18, fontWeight: "600", textAlign: "center" },
 
-  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.25)", justifyContent: "center", alignItems: "center", padding: 24 },
-  modalBox: {
-    width: "92%", maxWidth: 420, backgroundColor: "#FFFFFF", borderRadius: 16, padding: 18,
-    borderWidth: 1, borderColor: "#E5E7EB", alignItems: "center",
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
-  modalTitle: { fontSize: 22, fontWeight: "800", marginBottom: 8, color: "#111827", textAlign: "center" },
-  modalExplanation: { fontSize: 16, color: "#374151", marginBottom: 15, textAlign: "center" },
-  modalButton: { backgroundColor: "#4F46E5", paddingVertical: 12, borderRadius: 10, alignItems: "center", alignSelf: "stretch" },
+  modalBox: {
+    width: "92%",
+    maxWidth: 420,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 8,
+    color: "#111827",
+    textAlign: "center",
+  },
+  modalExplanation: {
+    fontSize: 16,
+    color: "#374151",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#4F46E5",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    alignSelf: "stretch",
+  },
   modalButtonText: { color: "#fff", fontWeight: "800", textAlign: "center" },
 });
 
 const c = StyleSheet.create({
   uploadOverlay: {
-    ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.92)", padding: 24,
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    padding: 24,
   },
-  uploadText: { fontSize: 16, color: "#374151", marginBottom: 12, fontWeight: "600" },
+  uploadText: {
+    fontSize: 16,
+    color: "#374151",
+    marginBottom: 12,
+    fontWeight: "600",
+  },
 });

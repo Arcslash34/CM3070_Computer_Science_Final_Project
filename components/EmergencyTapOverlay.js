@@ -1,4 +1,4 @@
-// EmergencyTapOverlay.js
+// components/EmergencyTapOverlay.js
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
