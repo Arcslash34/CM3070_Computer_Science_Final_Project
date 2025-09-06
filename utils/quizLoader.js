@@ -1,5 +1,5 @@
 // utils/quizLoader.js
-import EN from "../assets/quiz.json"; // your current English base
+import EN from "../assets/quiz.json";
 import { i18n } from "../translations/translation";
 // Add more locales as you translate them:
 import ZH from "../translations/zh/quiz.json";

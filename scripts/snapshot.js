@@ -1,9 +1,5 @@
 // scripts/snapshot.js
 // Fetch live data and write ./assets/env_snapshot.json (for bundling)
-//
-// Runtime: Node 18+ (native fetch & AbortController).
-// For Node <18, uncomment below and add node-fetch@3:
-// const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 
 'use strict';
 

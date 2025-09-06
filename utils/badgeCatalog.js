@@ -53,7 +53,7 @@ export function BADGE_CATALOG() {
       id: "firstaid-expert",
       title: t("badges.catalog.firstaid-expert.title"),
       group: t("badges.groups.specialist"),
-      icon: require("../assets/badges/badge8.png"),
+      icon: require("../assets/badges/badge7.png"),
     },
 
     // Streaks
@@ -61,37 +61,37 @@ export function BADGE_CATALOG() {
       id: "streak-1",
       title: t("badges.catalog.streak-1.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge9.png"),
+      icon: require("../assets/badges/badge8.png"),
     },
     {
       id: "streak-3",
       title: t("badges.catalog.streak-3.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge10.png"),
+      icon: require("../assets/badges/badge9.png"),
     },
     {
       id: "streak-5",
       title: t("badges.catalog.streak-5.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge11.png"),
+      icon: require("../assets/badges/badge10.png"),
     },
     {
       id: "streak-7",
       title: t("badges.catalog.streak-7.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge12.png"),
+      icon: require("../assets/badges/badge11.png"),
     },
     {
       id: "streak-14",
       title: t("badges.catalog.streak-14.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge13.png"),
+      icon: require("../assets/badges/badge12.png"),
     },
     {
       id: "streak-21",
       title: t("badges.catalog.streak-21.title"),
       group: t("badges.groups.streaks"),
-      icon: require("../assets/badges/badge14.png"),
+      icon: require("../assets/badges/badge13.png"),
     },
   ];
 }
