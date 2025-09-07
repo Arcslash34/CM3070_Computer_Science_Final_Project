@@ -274,12 +274,17 @@ export default function SettingsContainer() {
           text: t("settings.labels.logout"),
           style: "destructive",
           onPress: async () => {
-            await supabase.auth.signOut();
+            try {
+              await supabase.auth.signOut();
+              await AsyncStorage.clear();
+            } catch (e) {
+              Alert.alert(t("settings.alerts.error"), e.message || "Logout failed");
+            }
           },
         },
       ]
     );
-  }, []);
+  }, [t]);
 
   const onChangePassword = useCallback(async () => {
     if (!newPassword) return;

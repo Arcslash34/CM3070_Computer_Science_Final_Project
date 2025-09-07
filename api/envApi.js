@@ -181,7 +181,6 @@ export const estimateFloodRisk = (rainfall, opts = {}) => {
   return "Low";
 };
 
-
 export const getNearestForecastArea = (userCoords, metadata) => {
   let closest = null;
   let minDist = Infinity;
@@ -314,27 +313,27 @@ export const fetchRainfallData = async (userCoords) => {
 
     const currentReadings = windowSlots[0]?.data ?? [];
     const all = stations.map((stn) => {
-    const rainfallNow =
-      currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
+      const rainfallNow =
+        currentReadings.find((r) => r.stationId === stn.id)?.value ?? null;
 
-    const distanceKm =
-      userCoords && stn?.location
-        ? getDistanceFromLatLonInKm(
-            userCoords.latitude,
-            userCoords.longitude,
-            stn.location.latitude,
-            stn.location.longitude
-          )
-        : null;
+      const distanceKm =
+        userCoords && stn?.location
+          ? getDistanceFromLatLonInKm(
+              userCoords.latitude,
+              userCoords.longitude,
+              stn.location.latitude,
+              stn.location.longitude
+            )
+          : null;
 
-    return {
-      id: stn.id,
-      name: stn.name,
-      location: stn.location,
-      rainfall: rainfallNow,       // latest 5-min (mm)
-      distanceKm,
-    };
-  });
+      return {
+        id: stn.id,
+        name: stn.name,
+        location: stn.location,
+        rainfall: rainfallNow, // latest 5-min (mm)
+        distanceKm,
+      };
+    });
 
     return { stations: all, timestamp: windowSlots[0]?.timestamp || null };
   } catch (err) {
@@ -350,7 +349,12 @@ export const fetchRainfallData = async (userCoords) => {
 
       // Case 1: already normalized
       if (Array.isArray(r?.stations)) {
-        return { stations: r.stations.map(({ lastHour, lastHourCoverageMin, ...s }) => s), timestamp: r.timestamp ?? null };
+        return {
+          stations: r.stations.map(
+            ({ lastHour, lastHourCoverageMin, ...s }) => s
+          ),
+          timestamp: r.timestamp ?? null,
+        };
       }
 
       // Case 2: legacy arrays
