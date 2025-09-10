@@ -1,4 +1,22 @@
-// containers/HomeContainer.js
+/**
+ * containers/HomeContainer.js — Home dashboard controller (location + env data)
+ *
+ * Purpose
+ * - Drive the Home screen: permissions, location, data fetches, mock/demo flags, and alerts.
+ * - Aggregate NEA datasets (rainfall, forecast, PM2.5, wind, humidity, temperature) and pick nearest.
+ * - Manage geofence advisory and flood-risk alerts with cooldown + queued native alerts.
+ *
+ * Key Behaviours
+ * - Mock switches (AsyncStorage): settings:mock-location, settings:mock-disaster.
+ * - Geofence: 2 km around `mockDefault` (Taman Jurong demo); advisory triggers when entering.
+ * - Alerts: queued popups; device notifications via AppPrefs; cooldown per alert type.
+ * - Permissions: location (Expo Location), notifications (AppPrefs.ensurePermissions()).
+ * - Data: falls back to bundled snapshot when online fetches are incomplete.
+ *
+ * Exports
+ * - Default React component <HomeContainer/> which renders <HomeScreen vm={...}/> .
+ */
+
 import React, {
   useEffect,
   useState,
@@ -29,7 +47,9 @@ import {
   loadEnvDatasetsFromFile,
 } from "../api/envApi";
 
-/* ===================== constants / helpers ===================== */
+// ---------------------------------------------------------------------------
+// Constants / helpers
+// ---------------------------------------------------------------------------
 const ALERT_COOLDOWN_MS = 10 * 60 * 1000;
 const GEOFENCE_KM = 2;
 const mockDefault = { latitude: 1.3405, longitude: 103.72 };
@@ -99,7 +119,7 @@ async function triggerAlert({
       await AppPrefs.presentNotification({ title, body, data: { type } });
       delivered = true;
     } catch (_e) {
-      /* noop in dev */
+      /* dev: ignore */
     }
   }
   if (delivered) lastAlertByTypeRef.current[type] = now;
@@ -114,7 +134,9 @@ function distKm(a, b) {
   );
 }
 
-/* ===================== container ===================== */
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function HomeContainer() {
   const { lang } = useContext(LanguageContext);
   const navigation = useNavigation();
@@ -123,7 +145,7 @@ export default function HomeContainer() {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
 
-  // UI states used by the view
+  // UI state
   const [coords, setCoords] = useState(null);
   const [mapExpanded, setMapExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -159,7 +181,9 @@ export default function HomeContainer() {
   const lastFetchTsRef = useRef(0);
   const mockBootstrappedRef = useRef(false);
 
-  /* -------- demo toggles -------- */
+  // -------------------------------------------------------------------------
+  // Demo toggles
+  // -------------------------------------------------------------------------
   const loadDemoToggles = useCallback(async () => {
     try {
       const [ml, md] = await Promise.all([
@@ -185,7 +209,6 @@ export default function HomeContainer() {
     geofenceInsideRef.current = inside;
     if (!inside) return;
 
-    // Only notify for geofence when MOCK DISASTER is ON
     if (!mockDisasterOn) return;
 
     const firstEntry = prev === null || prev === false;
@@ -241,6 +264,9 @@ export default function HomeContainer() {
     );
   }, []);
 
+  // -------------------------------------------------------------------------
+  // Fetch all datasets (and trigger advisories)
+  // -------------------------------------------------------------------------
   const fetchAll = useCallback(
     async (pos, opts = {}) => {
       const { allowGeofence = true } = opts;
@@ -377,7 +403,9 @@ export default function HomeContainer() {
     [coords, pickNearestFrom, mockDisasterOn, mockLocationOn]
   );
 
-  /* ------ apply mock flags ------ */
+  // -------------------------------------------------------------------------
+  // Apply mock flags
+  // -------------------------------------------------------------------------
   const applyMockFlags = useCallback(async () => {
     if (mockLocationOn) {
       if (mockBootstrappedRef.current) return;
@@ -391,7 +419,9 @@ export default function HomeContainer() {
     }
   }, [mockLocationOn, fetchAll]);
 
-  /* ------ initial boot / resume ------ */
+  // -------------------------------------------------------------------------
+  // Initial boot / resume
+  // -------------------------------------------------------------------------
   useEffect(() => {
     if (initRanRef.current) return;
     initRanRef.current = true;
@@ -584,7 +614,9 @@ export default function HomeContainer() {
     };
   }, [locPermission, servicesEnabled, fetchAll, mockLocationOn]);
 
-  /* ------- handlers exposed to view ------- */
+  // -------------------------------------------------------------------------
+  // Handlers exposed to view
+  // -------------------------------------------------------------------------
   const onEnableLocationPress = useCallback(async () => {
     if (Platform.OS === "web") return;
     try {
@@ -641,7 +673,9 @@ export default function HomeContainer() {
     }
   }, [fetchAll, locPermission, servicesEnabled, mockLocationOn]);
 
-  /* ------- VM (view-model) ------- */
+  // -------------------------------------------------------------------------
+  // View-model
+  // -------------------------------------------------------------------------
   const vm = {
     // nav
     navigation,

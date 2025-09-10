@@ -1,4 +1,38 @@
-// screens/HomeScreen.js
+/**
+ * screens/HomeScreen.js — Dashboard: live map, risk banner, stats, news & shortcuts
+ *
+ * Purpose
+ * - Present the main landing view with a hero, local risk status, mini map, news, and feature shortcuts.
+ * - Surface current local conditions (rain, PM2.5, temp, humidity, wind) and quick navigation.
+ * - Provide modals for emergency contacts and an expanded interactive map.
+ *
+ * ViewModel (vm) contract
+ * - nav/state: navigation, mapExpanded, setMapExpanded, emergencyOpen, setEmergencyOpen
+ * - location/env: coords, envDatasets, nearestAreaName, rainNearest, pm25Nearest, tempNearest, humidityNearest, windNearest
+ * - risk: uiRiskLevel, areaAdvisoryActive, mockDisasterOn, mockLocationOn, updatedAt
+ * - UI: lang, refreshing, onRefresh, locDeniedBanner, onEnableLocationPress
+ *
+ * Key Behaviours
+ * - Risk banner resolves from mock flags first, then real UI risk level for user location (High/Moderate/None).
+ * - Mini-map opens the full-screen interactive map modal on tap.
+ * - “View all” in Articles navigates to the localized curated list.
+ * - FAB opens the Chatbot screen.
+ *
+ * UX / Accessibility
+ * - Large hero, clear section titles, and high-contrast alert banners.
+ * - Cards use big touch targets; icons have accessible labels.
+ * - Confirmation dialog before dialing emergency numbers.
+ *
+ * Performance Notes
+ * - Uses Flat/Scroll containers only on the screen (no heavy lists here).
+ * - Local hero image dimensions precomputed to avoid layout jank.
+ * - Mini-map is lazy-tapped (no heavy work until opened).
+ *
+ * Fail-safes
+ * - Missing station values render as “—”.
+ * - If location permission is denied, show an actionable banner to enable it.
+ */
+
 import React from "react";
 import {
   View,
@@ -62,6 +96,7 @@ export default function HomeScreen({ vm }) {
     refreshing,
   } = vm;
 
+  // Compute the most relevant risk banner (mock > real risk > none)
   const riskBanner = (() => {
     if (mockDisasterOn && (mockLocationOn || areaAdvisoryActive)) {
       return (
@@ -107,6 +142,8 @@ export default function HomeScreen({ vm }) {
   })();
 
   const onOpenArticle = (url) => Linking.openURL(url);
+
+  // Confirm before dialing from Emergency Contacts
   const onCallConfirm = (num, name) => {
     Alert.alert(
       t("home.emergency.callConfirmTitle", { number: num }),
@@ -294,7 +331,7 @@ export default function HomeScreen({ vm }) {
         <View style={{ height: 10 }} />
       </ScrollView>
 
-      {/* Chatbot FAB */}
+      {/* Chatbot floating action button */}
       <TouchableOpacity
         style={styles.chatBubble}
         activeOpacity={0.9}

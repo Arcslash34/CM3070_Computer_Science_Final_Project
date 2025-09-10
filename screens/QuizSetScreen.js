@@ -1,4 +1,41 @@
-// screens/QuizSetScreen.js
+/**
+ * screens/QuizSetScreen.js — Topic → quiz sets chooser (presentational)
+ *
+ * Purpose
+ * - Show a localized list of available quiz sets for a given topic.
+ * - Keep the view “dumb”: all navigation/actions are passed in via the VM.
+ *
+ * ViewModel (vm) contract
+ * - i18n: t
+ * - nav: onBack()
+ * - data: topicTitle (string), sets: Array<{
+ *     id: string|number,
+ *     title: string,
+ *     questions: number,
+ *     img: ImageSource,
+ *     start?: () => void,   // preferred handler
+ *     onPress?: () => void  // legacy/fallback
+ *   }>
+ *
+ * Key Behaviours
+ * - Static header with back button + centered title.
+ * - Empty state card when there are no sets.
+ * - Each row triggers `set.start ?? set.onPress`.
+ *
+ * UX / Accessibility
+ * - Large touch targets; chevron affordance on each row.
+ * - Header back button has an a11y label from `t("quizSet.back")`.
+ * - Text truncates with `numberOfLines` for long titles.
+ *
+ * Performance Notes
+ * - Simple ScrollView list; fine for small/medium set counts.
+ * - Pure presentational — no fetching here.
+ *
+ * Fail-safes
+ * - If `sets` is empty, renders a clear empty state.
+ * - Row onPress safely falls back to `onPress` if `start` is absent.
+ */
+
 import React from "react";
 import {
   View,
@@ -47,9 +84,7 @@ export default function QuizSetScreen({ vm }) {
             <Text style={s.emptyText}>{t("quizSet.noSets")}</Text>
           </View>
         ) : (
-          sets.map((set) => (
-            <SetRow key={set.id} set={set} t={t} />
-          ))
+          sets.map((set) => <SetRow key={set.id} set={set} t={t} />)
         )}
 
         <View style={{ height: 14 }} />
@@ -59,8 +94,6 @@ export default function QuizSetScreen({ vm }) {
 }
 
 function SetRow({ set, t }) {
-  // The screen remains "dumb": navigate action is encapsulated via onPress passed in
-  // To keep it simple, we use a tiny indirection: attach onPress to set.start
   return (
     <TouchableOpacity
       style={s.setCard}

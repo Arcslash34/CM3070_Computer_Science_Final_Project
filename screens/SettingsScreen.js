@@ -1,4 +1,45 @@
-// screens/SettingsScreen.js
+/**
+ * screens/SettingsScreen.js — App settings hub (presentational)
+ *
+ * Purpose
+ * - Show profile, language, certificates, demo toggles, region detect, contacts, and account actions.
+ * - Host modals for language, password change, edit profile, contacts list, contact form, and image source.
+ *
+ * ViewModel (vm) contract
+ * - i18n: t, lang, setLang
+ * - layout/assets: insets, Logo1, DefaultProfileImage
+ * - profile: userDisplay, email, avatarUrl, openEditProfile, saveProfile, pickImage
+ * - toggles: notifications, setNotifications; sound, setSound; vibration, setVibration; mockLocation, setMockLocation; mockDisaster, setMockDisaster
+ * - region: region, loadingRegion, detectRegion, spinAnim
+ * - language modal: showLang, setShowLang
+ * - password modal: showPassword, setShowPassword, newPassword, setNewPassword, onChangePassword
+ * - edit profile modal: showEditProfile, setShowEditProfile, editName, setEditName, editUsername, setEditUsername
+ * - image source modal: showImageSource, setShowImageSource, chooseFromGallery, chooseFromCamera
+ * - contacts: contacts[], showContacts, setShowContacts, showContactForm, setShowContactForm, editingId,
+ *             cName, setCName, cRelation, setCRelation, cPhone, setCPhone,
+ *             openAddContact, openEditContact, deleteContact, saveContact, onCall
+ * - account: onLogout
+ * - nav: goToCertificates
+ *
+ * Key Behaviours
+ * - Gradient background, safe-area aware brand header.
+ * - Profile header opens edit modal; switches update live.
+ * - Region detect shows spinner/refresh icon with continuous spin animation.
+ * - Contacts list supports add/edit/delete with a hard cap (5).
+ *
+ * UX / Accessibility
+ * - Buttons and switches have clear labels; large tap targets.
+ * - Modals provide clear primary/secondary actions.
+ *
+ * Performance Notes
+ * - Pure presentational; all side effects live in the container.
+ * - Flat lists are small; no virtualization needed.
+ *
+ * Fail-safes
+ * - Falls back to default avatar; disables region/tap while loading.
+ * - Disables “Add Contact” at limit; greys out button.
+ */
+
 import React from "react";
 import {
   View,

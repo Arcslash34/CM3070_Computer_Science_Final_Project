@@ -1,10 +1,32 @@
-// containers/QuizzesContainer.js
+/**
+ * containers/QuizzesContainer.js — Quizzes hub & routing
+ *
+ * Purpose
+ * - Display the localized list of quiz topics in a fixed order with hero images.
+ * - Provide entry points to the Daily Quiz and History screens.
+ * - Keep native header hidden for a clean, app-wide look.
+ *
+ * Key Behaviours
+ * - Topics are derived from the i18n-aware quiz DB and rendered in TOPIC_ORDER.
+ * - Uses SafeAreaView for top/side insets; background set to light gray.
+ * - Navigation:
+ *   • Daily → QuizGame (isDaily=true)
+ *   • Topic → QuizSet (per-category sets)
+ *   • History → HistoryContainer
+ *
+ * Exports
+ * - Default React component <QuizzesContainer/> that renders <QuizzesScreen vm={...} />.
+ */
+
 import React, { useLayoutEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { i18n, t } from "../translations/translation";
 import { getQuiz } from "../utils/quizLoader";
 
+// ---------------------------------------------------------------------------
+// Assets & ordering
+// ---------------------------------------------------------------------------
 const CATEGORY_IMAGES = {
   flood: require("../assets/flood.jpg"),
   fire: require("../assets/fire.jpg"),
@@ -13,8 +35,18 @@ const CATEGORY_IMAGES = {
   disease: require("../assets/disease.jpg"),
   earthquake: require("../assets/earthquake.jpg"),
 };
-const TOPIC_ORDER = ["flood", "fire", "dengue", "firstaid", "disease", "earthquake"];
+const TOPIC_ORDER = [
+  "flood",
+  "fire",
+  "dengue",
+  "firstaid",
+  "disease",
+  "earthquake",
+];
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function QuizzesContainer() {
   const navigation = useNavigation();
 
@@ -32,13 +64,17 @@ export default function QuizzesContainer() {
       const cat = QUIZ?.categories?.find?.((c) => c.id === id);
       return {
         id,
-        title: t(`quizzes.categories.${id}.title`, { defaultValue: cat?.title ?? id }),
+        title: t(`quizzes.categories.${id}.title`, {
+          defaultValue: cat?.title ?? id,
+        }),
         img: CATEGORY_IMAGES[id],
       };
     });
   }, [QUIZ, i18n.locale]);
 
-  // Actions passed to screen
+  // -------------------------------------------------------------------------
+  // Navigation handlers
+  // -------------------------------------------------------------------------
   const onOpenDaily = () =>
     navigation.navigate("QuizGame", {
       topicId: "daily",
@@ -54,6 +90,9 @@ export default function QuizzesContainer() {
       topicTitle: topic.title, // localized
     });
 
+  // -------------------------------------------------------------------------
+  // View-model for the presentational screen
+  // -------------------------------------------------------------------------
   const vm = {
     t,
     topics,
@@ -64,7 +103,10 @@ export default function QuizzesContainer() {
 
   const QuizzesScreen = require("../screens/QuizzesScreen").default;
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F3F4F6" }} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#F3F4F6" }}
+      edges={["top", "left", "right"]}
+    >
       <QuizzesScreen vm={vm} />
     </SafeAreaView>
   );

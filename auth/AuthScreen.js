@@ -1,4 +1,20 @@
-// auth/AuthScreen.js
+/**
+ * auth/AuthScreen.js — Authentication UI screen (React Native)
+ *
+ * Purpose
+ * - Present the three auth subviews: Login, Signup, Forgot Password.
+ * - Consume a simple view-model (`vm`) from AuthContainer and render controlled inputs/actions.
+ * - Keep UI-only concerns here (layout, styles, icons, gradients, safe area, keyboard handling).
+ *
+ * Key Behaviours
+ * - Single source of truth comes from `vm` (screen, fields, errors, actions).
+ * - KeyboardAvoidingView for iOS, safe-area padding, and scrollable content for small screens.
+ * - Visual consistency via a shared card layout and submit button across flows.
+ *
+ * Exports
+ * - Default React component <AuthScreen vm={...}/> that renders subviews based on vm.screen.
+ */
+
 import React from "react";
 import {
   View,
@@ -14,8 +30,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-/* --------------------------- Small subviews --------------------------- */
-
+// ---------------------------------------------------------------------------
+// Small subviews
+// ---------------------------------------------------------------------------
 function LoginView({
   emailOrUsername,
   setEmailOrUsername,
@@ -46,7 +63,12 @@ function LoginView({
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={20} color="#888" style={styles.icon} />
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="#888"
+          style={styles.icon}
+        />
         <TextInput
           placeholder="Password"
           placeholderTextColor="#666"
@@ -119,7 +141,12 @@ function SignupView({
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={20} color="#888" style={styles.icon} />
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="#888"
+          style={styles.icon}
+        />
         <TextInput
           placeholder="Password"
           style={styles.input}
@@ -133,7 +160,12 @@ function SignupView({
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={20} color="#888" style={styles.icon} />
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="#888"
+          style={styles.icon}
+        />
         <TextInput
           placeholder="Confirm Password"
           style={styles.input}
@@ -191,7 +223,10 @@ function ForgotView({
         />
       </View>
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleForgotPassword}>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={handleForgotPassword}
+      >
         <Ionicons name="arrow-forward" size={24} color="#fff" />
       </TouchableOpacity>
 
@@ -209,8 +244,9 @@ function ForgotView({
   );
 }
 
-/* --------------------------------- Screen --------------------------------- */
-
+// ---------------------------------------------------------------------------
+// Screen
+// ---------------------------------------------------------------------------
 export default function AuthScreen({ vm }) {
   const {
     screen,
@@ -238,7 +274,10 @@ export default function AuthScreen({ vm }) {
         >
           <ScrollView
             style={styles.fill}
-            contentContainerStyle={[styles.scrollContent, { justifyContent: "center" }]}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { justifyContent: "center" },
+            ]}
             keyboardShouldPersistTaps="always"
           >
             {screen === "login" && (
@@ -286,8 +325,9 @@ export default function AuthScreen({ vm }) {
   );
 }
 
-/* --------------------------------- Styles --------------------------------- */
-
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   fill: { flex: 1, width: "100%" },
   scrollContent: { flexGrow: 1, padding: 20, alignItems: "center" },
@@ -329,8 +369,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   submitText: { color: "#fff", fontWeight: "700" },
-  error: { color: "red", textAlign: "center", marginVertical: 10, paddingHorizontal: 20 },
-  success: { color: "green", textAlign: "center", marginVertical: 10, paddingHorizontal: 20 },
+  error: {
+    color: "red",
+    textAlign: "center",
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
+  success: {
+    color: "green",
+    textAlign: "center",
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
   switch: { textAlign: "center", marginTop: 10, color: "#6c63ff" },
   forgot: { textAlign: "right", color: "#6c63ff", marginBottom: 10 },
 });

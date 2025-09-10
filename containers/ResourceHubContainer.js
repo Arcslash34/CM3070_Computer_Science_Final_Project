@@ -1,4 +1,22 @@
-// containers/ResourceHubContainer.js
+/**
+ * containers/ResourceHubContainer.js — Browse & filter emergency guides
+ *
+ * Purpose
+ * - Load localized “Resources” (guides) from i18n and present them as a browsable hub.
+ * - Provide category chips (incl. a localized “All”), free-text search, and optional A→Z sorting.
+ * - Derive a dynamic header summary (count + scope or count + “matching …” when searching).
+ *
+ * Key Behaviours
+ * - Recomputes lists whenever the UI language changes (via LanguageContext).
+ * - Category accent colour is inferred from a small id→domain map (for a subtle visual cue).
+ * - Navigation:
+ *   • Tapping a guide → ResourceArticle (article payload passed via params).
+ * - Defensive defaults: empty arrays/objects to avoid crashes if translations are incomplete.
+ *
+ * Exports
+ * - Default React component <ResourceHubContainer/> that renders <ResourceHubScreen vm={...} />.
+ */
+
 import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,13 +25,13 @@ import { t } from "../translations/translation";
 
 // Accent map used only to compute the header accent color
 const CATEGORY_BY_ID = {
-  "flooding": "Flooding",
+  flooding: "Flooding",
   "fire-safety": "Fire",
   "mosquito-dengue": "Infectious",
   "cpr-aed-adult": "Cardiac",
   "choking-adult": "Airway",
   "severe-bleeding": "Trauma",
-  "burns": "Burns",
+  burns: "Burns",
   "heat-stroke": "Environmental",
   "fracture-sprain": "Trauma",
 };
@@ -61,7 +79,8 @@ export default function ResourceHubContainer() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return RESOURCES.filter((r) => {
-      const inCategory = category === t("resourceHub.all") || r.category === category;
+      const inCategory =
+        category === t("resourceHub.all") || r.category === category;
       const inText =
         !q ||
         r.title?.toLowerCase?.().includes(q) ||
@@ -80,7 +99,8 @@ export default function ResourceHubContainer() {
   const countLabel = `${filtered.length} ${
     filtered.length === 1 ? t("resourceHub.guide") : t("resourceHub.guides")
   }`;
-  const scopeLabel = category === t("resourceHub.all") ? t("resourceHub.allTopics") : category;
+  const scopeLabel =
+    category === t("resourceHub.all") ? t("resourceHub.allTopics") : category;
   const headerText =
     query.trim().length > 0
       ? `${countLabel} • ${t("resourceHub.matching", { q: query.trim() })}`
@@ -94,7 +114,8 @@ export default function ResourceHubContainer() {
   }, [category, RESOURCES, lang]);
 
   // Nav
-  const openArticle = (item) => navigation.navigate("ResourceArticle", { article: item });
+  const openArticle = (item) =>
+    navigation.navigate("ResourceArticle", { article: item });
 
   // View model for the presentational screen
   const vm = {

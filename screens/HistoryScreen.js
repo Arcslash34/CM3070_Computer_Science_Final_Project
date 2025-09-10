@@ -1,8 +1,51 @@
-// screens/HistoryScreen.js
+/**
+ * screens/HistoryScreen.js — Past quiz results list (presentational)
+ *
+ * Purpose
+ * - Render a searchable, localized list of prior quiz attempts.
+ * - Show per-item meta (title, date, time, score, XP) with topic thumbnails.
+ * - Provide quick actions in the header: search toggle + delete-all.
+ *
+ * ViewModel (vm) contract
+ * - i18n: t, i18n
+ * - data: results (raw), filtered (after query), query, setQuery
+ * - ui: showSearch, setShowSearch
+ * - helpers: getLocalizedTitle(item), fmtDateOnly(ts), fmtTimeOnly(ts)
+ * - nav/actions: openSummary(item), handleDeleteAll()
+ * - (optional) navigation: vm.navigation for header options
+ *
+ * Key Behaviours
+ * - Header buttons appear only when there are results.
+ * - Search bar is toggleable; query filters the list into `filtered`.
+ * - Tapping a row opens the localized result summary screen.
+ *
+ * UX / Accessibility
+ * - Clear empty-state card when no results (or no matches).
+ * - Large touch targets and recognizable icons.
+ * - Text truncates gracefully; numbers use bold for quick scan.
+ *
+ * Performance Notes
+ * - FlatList for efficient rendering; keyExtractor uses item.id.
+ * - Thumbnail/images pulled from a local map to avoid network cost.
+ *
+ * Fail-safes
+ * - Missing score renders as "—"; non-finite XP coerced to 0.
+ * - Unknown topic falls back to the "daily" image.
+ */
+
 import React, { useLayoutEffect } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+// Local asset maps (topic thumbnails + small stat icons)
 const CATEGORY_IMAGES = {
   flood: require("../assets/flood.jpg"),
   fire: require("../assets/fire.jpg"),
@@ -21,6 +64,7 @@ const ICONS = {
 
 const ICON = { size: 14, gap: 6 };
 
+// Helpers: topic → thumbnail, and a tiny stat row (icon + text)
 function getThumb({ topic_id }) {
   if (topic_id && CATEGORY_IMAGES[topic_id]) return CATEGORY_IMAGES[topic_id];
   return CATEGORY_IMAGES.daily;
@@ -32,7 +76,12 @@ function StatRow({ src, text, tint = "#6B7280" }) {
       <Image
         source={src}
         resizeMode="contain"
-        style={{ width: ICON.size, height: ICON.size, tintColor: tint, marginRight: ICON.gap }}
+        style={{
+          width: ICON.size,
+          height: ICON.size,
+          tintColor: tint,
+          marginRight: ICON.gap,
+        }}
       />
       <Text style={[styles.statText, { color: tint }]} numberOfLines={1}>
         {text}
@@ -41,15 +90,27 @@ function StatRow({ src, text, tint = "#6B7280" }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function HistoryScreen({ vm }) {
   const {
-    t, i18n,
-    filtered, results,
-    query, setQuery, showSearch, setShowSearch,
-    handleDeleteAll, openSummary,
-    getLocalizedTitle, fmtDateOnly, fmtTimeOnly,
+    t,
+    i18n,
+    filtered,
+    results,
+    query,
+    setQuery,
+    showSearch,
+    setShowSearch,
+    handleDeleteAll,
+    openSummary,
+    getLocalizedTitle,
+    fmtDateOnly,
+    fmtTimeOnly,
   } = vm;
 
+  // Configure header (title + conditional actions) on mount/update
   useLayoutEffect(() => {
     vm.navigation?.setOptions?.({
       headerTitle: t("history.history.title"),
@@ -79,6 +140,7 @@ export default function HistoryScreen({ vm }) {
     });
   }, [results.length, i18n?.locale]);
 
+  // Render a single history card (thumbnail, title, score/xp, date/time, chevron)
   const renderItem = ({ item }) => {
     const thumb = getThumb({ topic_id: item.topic_id });
     const title = getLocalizedTitle(item);
@@ -86,10 +148,16 @@ export default function HistoryScreen({ vm }) {
     const xpVal = Number.isFinite(item.xp) ? item.xp : 0;
 
     return (
-      <TouchableOpacity onPress={() => openSummary(item)} activeOpacity={0.9} style={styles.card}>
+      <TouchableOpacity
+        onPress={() => openSummary(item)}
+        activeOpacity={0.9}
+        style={styles.card}
+      >
         <Image source={thumb} style={styles.thumb} />
         <View style={styles.cardBody}>
-          <Text style={styles.title} numberOfLines={1}>{title}</Text>
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
 
           <View style={styles.twoCol}>
             <View style={styles.col}>
@@ -100,10 +168,19 @@ export default function HistoryScreen({ vm }) {
             </View>
             <View style={styles.col}>
               <View style={styles.xpRow}>
-                <Image source={ICONS.xp} resizeMode="contain"
-                  style={{ width: ICON.size, height: ICON.size, tintColor: "#111827", marginRight: ICON.gap }}
+                <Image
+                  source={ICONS.xp}
+                  resizeMode="contain"
+                  style={{
+                    width: ICON.size,
+                    height: ICON.size,
+                    tintColor: "#111827",
+                    marginRight: ICON.gap,
+                  }}
                 />
-                <Text style={styles.scoreText} numberOfLines={1}>{xpVal} XP</Text>
+                <Text style={styles.scoreText} numberOfLines={1}>
+                  {xpVal} XP
+                </Text>
               </View>
               <StatRow src={ICONS.time} text={fmtTimeOnly(item.created_at)} />
             </View>
@@ -114,6 +191,7 @@ export default function HistoryScreen({ vm }) {
     );
   };
 
+  // Screen layout: optional search bar, empty state, or FlatList of results
   return (
     <View style={{ flex: 1, backgroundColor: "#F5F7FB" }}>
       <View style={styles.container}>
@@ -139,8 +217,12 @@ export default function HistoryScreen({ vm }) {
         {filtered.length === 0 ? (
           <View style={styles.emptyBox}>
             <Ionicons name="alert-circle-outline" size={20} color="#9CA3AF" />
-            <Text style={styles.emptyTitle}>{t("history.history.emptyTitle")}</Text>
-            <Text style={styles.emptyText}>{t("history.history.emptyText")}</Text>
+            <Text style={styles.emptyTitle}>
+              {t("history.history.emptyTitle")}
+            </Text>
+            <Text style={styles.emptyText}>
+              {t("history.history.emptyText")}
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -157,18 +239,42 @@ export default function HistoryScreen({ vm }) {
 
 const CARD_RADIUS = 16;
 
+/* ---------- Styles ---------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 14, paddingTop: 10, backgroundColor: "#F5F7FB" },
+  container: {
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    backgroundColor: "#F5F7FB",
+  },
   searchWrap: {
-    flexDirection: "row", alignItems: "center", gap: 8,
-    backgroundColor: "#FFFFFF", borderRadius: 12, borderWidth: 1, borderColor: "#E5E7EB",
-    paddingHorizontal: 10, paddingVertical: 8, marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 10,
   },
   searchInput: { flex: 1, color: "#111827", fontSize: 14, paddingVertical: 0 },
   card: {
-    flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#FFFFFF",
-    borderRadius: CARD_RADIUS, borderWidth: 1, borderColor: "#E5E7EB", padding: 12, marginBottom: 10,
-    shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 6 }, elevation: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#FFFFFF",
+    borderRadius: CARD_RADIUS,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    padding: 12,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
   thumb: { width: 72, height: 72, borderRadius: 12, resizeMode: "cover" },
   cardBody: { flex: 1 },
@@ -180,10 +286,20 @@ const styles = StyleSheet.create({
   statRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   statText: { fontWeight: "700", fontSize: 13 },
   emptyBox: {
-    alignItems: "center", justifyContent: "center",
-    backgroundColor: "#FFFFFF", borderColor: "#E5E7EB", borderWidth: 1,
-    borderRadius: CARD_RADIUS, paddingVertical: 28, marginTop: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    borderColor: "#E5E7EB",
+    borderWidth: 1,
+    borderRadius: CARD_RADIUS,
+    paddingVertical: 28,
+    marginTop: 12,
   },
-  emptyTitle: { color: "#111827", fontWeight: "800", marginTop: 6, fontSize: 16 },
+  emptyTitle: {
+    color: "#111827",
+    fontWeight: "800",
+    marginTop: 6,
+    fontSize: 16,
+  },
   emptyText: { color: "#6B7280", fontWeight: "600", marginTop: 2 },
 });

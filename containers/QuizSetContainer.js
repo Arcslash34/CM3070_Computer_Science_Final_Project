@@ -1,9 +1,28 @@
-// containers/QuizSetContainer.js
+/**
+ * containers/QuizSetContainer.js — Build & launch quiz sets
+ *
+ * Purpose
+ * - Prepare the list of available quiz sets for a topic, or a single “Daily” set.
+ * - Provide stable titles/images via i18n and a small mapping.
+ * - Navigate into the QuizGame flow with the correct params (topic, set index, etc.).
+ *
+ * Key Behaviours
+ * - Daily mode: single set with a fixed question count (8).
+ * - Topic mode: derive sets from quiz DB; attach `onPress`/`start` handlers for the screen.
+ * - Titles prefer route param → i18n daily key → category title → fallback.
+ *
+ * Exports
+ * - Default React component <QuizSetContainer/> that renders <QuizSetScreen vm={...} />.
+ */
+
 import React, { useMemo, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getQuiz } from "../utils/quizLoader";
 import { i18n, t } from "../translations/translation";
 
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 const DAILY_QUESTION_COUNT = 8;
 
 const CATEGORY_IMAGES = {
@@ -16,11 +35,17 @@ const CATEGORY_IMAGES = {
   daily: require("../assets/daily.jpg"),
 };
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function QuizSetContainer() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const quizData = React.useMemo(() => getQuiz(), [i18n.locale]);
 
+  // -------------------------------------------------------------------------
+  // Route params / topic selection
+  // -------------------------------------------------------------------------
   const topicId = params?.topicId ?? "daily";
   const topicNameParam = params?.topicTitle;
   const isDaily = !!params?.isDaily;
@@ -31,19 +56,24 @@ export default function QuizSetContainer() {
       )
     : null;
 
-  // Title priority: param → daily key → category title → fallback
+  // -------------------------------------------------------------------------
+  // Title & imagery
+  // -------------------------------------------------------------------------
   const topicTitle = useMemo(() => {
     if (topicNameParam) return topicNameParam;
     if (isDaily) return t("quizzes.daily.title");
     return (
-      t(`quizzes.categories.${topicId}.title`, { defaultValue: category?.title }) ||
-      t("quizSet.quiz")
+      t(`quizzes.categories.${topicId}.title`, {
+        defaultValue: category?.title,
+      }) || t("quizSet.quiz")
     );
   }, [topicNameParam, isDaily, category?.title, topicId]);
 
   const topicImage = CATEGORY_IMAGES[topicId] || CATEGORY_IMAGES.daily;
 
-  // define startSet BEFORE sets memo so we can attach handlers
+  // -------------------------------------------------------------------------
+  // Navigation handler injected into set items
+  // -------------------------------------------------------------------------
   const startSet = useCallback(
     (set) => {
       navigation.navigate("QuizGame", {
@@ -59,7 +89,9 @@ export default function QuizSetContainer() {
     [navigation, topicId, topicTitle, isDaily]
   );
 
-  // Build sets list and attach onPress/start for the screen to call
+  // -------------------------------------------------------------------------
+  // Build list of sets exposed to the screen
+  // -------------------------------------------------------------------------
   const sets = useMemo(() => {
     if (isDaily) {
       const built = {
@@ -71,7 +103,7 @@ export default function QuizSetContainer() {
       };
       built.onPress = () =>
         startSet({ index: 1, questions: DAILY_QUESTION_COUNT });
-      built.start = built.onPress; // screen fallback
+      built.start = built.onPress;
       return [built];
     }
 
@@ -85,13 +117,15 @@ export default function QuizSetContainer() {
         questions: Array.isArray(s.questions) ? s.questions.length : 0,
         img: topicImage,
       };
-      // attach handler so the presentational screen can stay dumb
       built.onPress = () => startSet(built);
-      built.start = built.onPress; // screen fallback
+      built.start = built.onPress;
       return built;
     });
   }, [isDaily, category, topicId, topicImage, startSet]);
 
+  // -------------------------------------------------------------------------
+  // View-model
+  // -------------------------------------------------------------------------
   const vm = {
     t,
     onBack: () => navigation.goBack(),

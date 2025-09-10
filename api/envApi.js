@@ -1,13 +1,41 @@
-// api/envApi.js
-// NOTE: Local SG app. Primary data from data.gov.sg; OpenWeather used to augment/fallback.
+/**
+ * api/envApi.js — Environmental data access layer (Singapore)
+ *
+ * Purpose
+ * - Provide network-aware access to NEA real-time datasets with:
+ *   • timeout + abort
+ *   • single-flight (in-flight) dedupe
+ *   • short TTL in-memory cache
+ *   • polite retry on HTTP 429 (honours Retry-After)
+ * - Fallback to a read-only bundled snapshot (/assets/env_snapshot.json) when offline/errors.
+ * - No runtime persistence; snapshot is bundled and never written at runtime.
+ *
+ * Primary Sources
+ * - data.gov.sg (NEA real-time APIs): 2-hr forecast, rainfall, PM2.5, wind, humidity, temperature.
+ * - OpenWeather may be used elsewhere to augment (not in this module).
+ *
+ * Key Behaviours
+ * - TTLs: forecast/pm25=5m, wind=60s, humidity/temp=2m, rainfall=60s.
+ * - Rainfall normalization keeps only the newest record per 5-minute bucket,
+ *   trims to the last 60 minutes (max 12 buckets).
+ * - Warnings are de-duplicated via warnOnce().
+ *
+ * Exports
+ * - Data loaders: fetchWeatherForecast, fetchRainfallData, fetchPm25Data,
+ *   fetchWindData, fetchHumidityData, fetchTemperatureData.
+ * - Snapshot: loadEnvDatasetsFromFile, getSnapshotDebugInfo.
+ * - Domain helpers: estimateFloodRisk, getNearestForecastArea,
+ *   getDistanceFromLatLonInKm.
+ */
+
 // Offline fallback ONLY uses the bundled /assets/env_snapshot.json. No runtime saving.
 
 import NetInfo from "@react-native-community/netinfo";
 import bundledSnapshot from "../assets/env_snapshot.json";
 
-/* =========================================================================
-   Connectivity + fetch utils
-   ========================================================================= */
+// ---------------------------------------------------------------------------
+// Connectivity + fetch utils
+// ---------------------------------------------------------------------------
 const isConnected = async () => {
   const state = await NetInfo.fetch();
   return !!(state.isConnected && state.isInternetReachable);
@@ -21,16 +49,16 @@ const fetchWithTimeout = (url, opts = {}, ms = 8000) => {
   );
 };
 
-// throw on non-2xx
+// Throw on non-2xx
 const requireOk = (res, label = "request") => {
   if (!res.ok) throw new Error(`${label} HTTP ${res.status}`);
 };
 
-// minimal truthy/empty check
+// Truthy / non-empty check
 const nonEmpty = (arrOrObj) =>
   Array.isArray(arrOrObj) ? arrOrObj.length > 0 : !!arrOrObj;
 
-// helper: read from bundled snapshot or return fallback
+// Read from bundled snapshot via selector, else fallback
 const snapOr = async (selector, fallback) => {
   const snap = await loadBundledSnapshot();
   const val = selector(snap);
@@ -57,7 +85,7 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
    ========================================================================= */
 const _cache = new Map(); // key -> { data, exp }
 const _inflight = new Map(); // url -> Promise
-const _lastWarnAt = new Map(); // label -> timestamp (to de-dup warnings)
+const _lastWarnAt = new Map(); // label -> timestamp (dedupe warnings)
 
 const getCache = (k) => {
   const v = _cache.get(k);
@@ -80,23 +108,15 @@ function warnOnce(label, msg, everyMs = 60000) {
   }
 }
 
-/**
- * Rate-limit aware JSON fetcher:
- * - Dedupes concurrent calls to same URL
- * - Uses short TTL cache
- * - Retries once on 429 honoring Retry-After (max 2000ms)
- * - Falls back to cached (if fresh) or lets caller fallback
- */
+// Rate-limit aware JSON fetcher with single-flight + TTL cache + 429 retry
 async function fetchJSON_RL(
   url,
   label,
   { ttlMs = 60000, timeoutMs = 8000 } = {}
 ) {
-  // 1) Return cache if fresh
   const cached = getCache(url);
   if (cached) return cached;
 
-  // 2) Deduplicate in-flight for same URL
   if (_inflight.has(url)) return _inflight.get(url);
 
   const run = async () => {
@@ -104,7 +124,6 @@ async function fetchJSON_RL(
     let res = await fetchWithTimeout(url, {}, timeoutMs);
 
     if (res.status === 429) {
-      // honor Retry-After header up to 2s; else backoff 800-1200ms
       const ra = res.headers.get("Retry-After");
       let waitMs = 0;
       if (ra) {
@@ -113,7 +132,6 @@ async function fetchJSON_RL(
       }
       if (!waitMs) waitMs = 800 + Math.floor(Math.random() * 400);
       await new Promise((r) => setTimeout(r, waitMs));
-      // retry once
       res = await fetchWithTimeout(url, {}, timeoutMs);
     }
 
@@ -209,17 +227,10 @@ function _ts(msOrISO) {
   return Number.isFinite(n) ? n : 0;
 }
 
-/**
- * NEA sometimes returns multiple reading sets for the same (or very close) time.
- * This function:
- *  - sorts newest → oldest
- *  - keeps only the newest item per 5-min bucket
- *  - trims to the last 60 minutes (max 12 buckets)
- */
+// Normalize rainfall: newest→oldest, dedupe per 5-min bucket, keep last 60 min (max 12)
 function normalizeRainSlots(readingSets) {
   if (!Array.isArray(readingSets) || !readingSets.length) return [];
 
-  // 1) Sort newest → oldest by timestamp
   const sorted = [...readingSets].sort(
     (a, b) => _ts(b.timestamp) - _ts(a.timestamp)
   );
@@ -228,17 +239,17 @@ function normalizeRainSlots(readingSets) {
   if (!newestTs) return [];
 
   const cutoff = newestTs - 60 * 60 * 1000;
-  // 2) Bucket by 5-min window key to dedupe jittered timestamps
+
   const seenBuckets = new Set();
   const windowSlots = [];
   for (const s of sorted) {
     const ts = _ts(s?.timestamp);
-    if (!ts || ts < cutoff) break; // stop once we go past 60 min from newest
-    const bucketKey = Math.floor(ts / (5 * 60 * 1000)); // 5-min bucket
-    if (seenBuckets.has(bucketKey)) continue; // keep the newest one only
+    if (!ts || ts < cutoff) break;
+    const bucketKey = Math.floor(ts / (5 * 60 * 1000));
+    if (seenBuckets.has(bucketKey)) continue;
     seenBuckets.add(bucketKey);
     windowSlots.push(s);
-    if (windowSlots.length >= 12) break; // cap to 12 buckets (~60 min)
+    if (windowSlots.length >= 12) break;
   }
 
   return windowSlots;
@@ -279,10 +290,9 @@ export const fetchWeatherForecast = async () => {
   }
 };
 
-/* =========================================================================
-   NEA: Real-time rainfall (ALL STATIONS, 5-min only)
-   TTL 60s
-   ========================================================================= */
+// ---------------------------------------------------------------------------
+// NEA: Real-time rainfall (ALL STATIONS, 5-min only) — TTL 60s
+// ---------------------------------------------------------------------------
 export const fetchRainfallData = async (userCoords) => {
   try {
     const url = "https://api-open.data.gov.sg/v2/real-time/api/rainfall";
@@ -296,7 +306,6 @@ export const fetchRainfallData = async (userCoords) => {
     if (!stations.length || !readingSets.length)
       throw new Error("NEA rainfall payload empty");
 
-    // Normalize slots to last 60 min, dedup 5-min buckets, cap to 12
     const windowSlots = normalizeRainSlots(readingSets);
     if (!windowSlots.length) {
       return {
@@ -330,7 +339,7 @@ export const fetchRainfallData = async (userCoords) => {
         id: stn.id,
         name: stn.name,
         location: stn.location,
-        rainfall: rainfallNow, // latest 5-min (mm)
+        rainfall: rainfallNow,
         distanceKm,
       };
     });
@@ -342,12 +351,10 @@ export const fetchRainfallData = async (userCoords) => {
       `fetchRainfallData -> fallback to bundled: ${err?.message || err}`
     );
 
-    // Fallback attempts to normalize snapshot...
     const norm = await snapOr((snap) => {
       const r = snap?.rain;
       if (!r) return null;
 
-      // Case 1: already normalized
       if (Array.isArray(r?.stations)) {
         return {
           stations: r.stations.map(
@@ -357,7 +364,6 @@ export const fetchRainfallData = async (userCoords) => {
         };
       }
 
-      // Case 2: legacy arrays
       const list = r?.stations || r?.readings || [];
       if (!Array.isArray(list) || !list.length) return null;
 

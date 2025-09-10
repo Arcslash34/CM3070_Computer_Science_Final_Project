@@ -1,7 +1,27 @@
-// components/CenterModal.js
+/**
+ * components/CenterModal.js — Centered modal component
+ *
+ * Purpose
+ * - Display a modal dialog centered on the screen with a dimmed backdrop.
+ * - Wrap arbitrary children content inside a styled card container.
+ * - Dismiss modal when the backdrop is pressed or when `onRequestClose` is triggered.
+ *
+ * Key Behaviours
+ * - `visible` controls whether the modal is shown.
+ * - `onClose` is called when backdrop is pressed or system close request occurs.
+ * - Uses React Native `Modal` with `fade` animation and transparent background.
+ * - Card has a max width of 380px and centers itself in the viewport.
+ *
+ * Exports
+ * - Default React component <CenterModal/>.
+ */
+
 import React from "react";
 import { Modal, Pressable, View, StyleSheet } from "react-native";
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function CenterModal({ visible, onClose, children, cardStyle }) {
   return (
     <Modal
@@ -18,6 +38,10 @@ export default function CenterModal({ visible, onClose, children, cardStyle }) {
     </Modal>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,

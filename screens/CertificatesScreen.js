@@ -1,4 +1,42 @@
-// screens/CertificatesScreen.js
+/**
+ * screens/CertificatesScreen.js — Presentational certificates UI (download gating)
+ *
+ * Purpose
+ * - Display a localized list of available certificates (visual-only items).
+ * - Show First Aid mastery progress and gate downloads until requirements are met.
+ * - Let users toggle demo mode (bypass gate) and choose name vs. username for printing.
+ *
+ * Data Sources
+ * - ViewModel (vm) props supplied by CertificatesContainer:
+ *   • Eligibility/progress: count of perfect First Aid quizzes (#1–#5) from Supabase `quiz_results`.
+ *   • Identity: display name / username (profiles table + AsyncStorage fallback).
+ *   • Actions: `onDownload(cert)` uses expo-print + expo-sharing to generate/share PDF.
+ * - i18n: all labels via `t(...)`.
+ *
+ * Key Behaviours
+ * - Header: simple back navigation.
+ * - Toggles:
+ *   • Demo mode (unlocks all downloads for testing).
+ *   • “Show username on certificate” (affects printed name).
+ * - Progress box:
+ *   • Shows perfect-count out of required sets with a progress bar.
+ *   • Shows contextual hint (unlock hint vs. demo-enabled note).
+ * - Certificates list:
+ *   • Each card shows title + status; Download button disabled when ineligible (unless demo).
+ *
+ * UX / Accessibility
+ * - High-contrast progress bar and clear counts.
+ * - Disabled state for locked downloads; descriptive helper text.
+ * - Uses platform-safe touch targets and readable sizes.
+ *
+ * Performance Notes
+ * - Pure presentational: no internal data fetching; re-renders only when vm props change.
+ * - ScrollView with lightweight rows; icons are vector.
+ *
+ * Fail-safes
+ * - If progress is loading, shows ActivityIndicator + loading label.
+ * - All text falls back to sane defaults if a translation key is missing.
+ */
 import React from "react";
 import {
   View,
@@ -31,21 +69,27 @@ function HeaderBar({ title, onBack }) {
 export default function CertificatesScreen({ vm }) {
   const {
     // i18n + layout
-    t, insets,
+    t,
+    insets,
 
     // nav
     onBack,
 
     // identity
-    displayName, useUsername, setUseUsername,
+    displayName,
+    useUsername,
+    setUseUsername,
 
     // demo/progress
-    demoMode, toggleDemoMode,
-    faPerfectCount, FIRST_AID_REQUIRED,
+    demoMode,
+    toggleDemoMode,
+    faPerfectCount,
+    FIRST_AID_REQUIRED,
     loadingProgress,
 
     // list + rules
-    CERTS, isEligible,
+    CERTS,
+    isEligible,
 
     // actions
     onDownload,
@@ -67,7 +111,12 @@ export default function CertificatesScreen({ vm }) {
       <View style={[styles.screen, { paddingBottom: insets.bottom + 12 }]}>
         {/* Demo mode */}
         <View style={styles.nameBar}>
-          <Ionicons name="construct" size={18} color="#111827" style={{ marginRight: 8 }} />
+          <Ionicons
+            name="construct"
+            size={18}
+            color="#111827"
+            style={{ marginRight: 8 }}
+          />
           <Text style={styles.nameText}>
             {t("certificates.demoMode") !== "certificates.demoMode"
               ? t("certificates.demoMode")
@@ -79,7 +128,12 @@ export default function CertificatesScreen({ vm }) {
 
         {/* Username toggle */}
         <View style={styles.nameBar}>
-          <Ionicons name="person" size={18} color="#111827" style={{ marginRight: 8 }} />
+          <Ionicons
+            name="person"
+            size={18}
+            color="#111827"
+            style={{ marginRight: 8 }}
+          />
           <Text style={styles.nameText}>
             {t("certificates.showUsername") !== "certificates.showUsername"
               ? t("certificates.showUsername")
@@ -89,16 +143,21 @@ export default function CertificatesScreen({ vm }) {
           <Switch value={useUsername} onValueChange={setUseUsername} />
         </View>
         <Text style={styles.nameHint}>
-          {(t("certificates.printingAs") !== "certificates.printingAs"
+          {t("certificates.printingAs") !== "certificates.printingAs"
             ? t("certificates.printingAs")
-            : "Printing as:")}{" "}
+            : "Printing as:"}{" "}
           <Text style={{ fontWeight: "800" }}>{displayName}</Text>
         </Text>
 
         {/* Requirement / Progress box */}
         <View style={styles.requireBox}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons name="medkit" size={18} color="#111827" style={{ marginRight: 8 }} />
+            <Ionicons
+              name="medkit"
+              size={18}
+              color="#111827"
+              style={{ marginRight: 8 }}
+            />
             <Text style={styles.requireTitle}>
               {t("certificates.masteryTitle") !== "certificates.masteryTitle"
                 ? t("certificates.masteryTitle")
@@ -150,7 +209,12 @@ export default function CertificatesScreen({ vm }) {
 
         {/* Disclaimer */}
         <View style={styles.disclaimer}>
-          <Ionicons name="alert-circle" size={16} color="#6b7280" style={{ marginRight: 6 }} />
+          <Ionicons
+            name="alert-circle"
+            size={16}
+            color="#6b7280"
+            style={{ marginRight: 6 }}
+          />
           <Text style={styles.disclaimerText}>
             {t("certificates.disclaimer") !== "certificates.disclaimer"
               ? t("certificates.disclaimer")
@@ -159,13 +223,19 @@ export default function CertificatesScreen({ vm }) {
         </View>
 
         {/* Certificates list */}
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}>
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8 }}
+        >
           {CERTS.map((c) => {
             const locked = !isEligible;
-            const title = t(c.titleKey) !== c.titleKey ? t(c.titleKey) : c.fallback;
+            const title =
+              t(c.titleKey) !== c.titleKey ? t(c.titleKey) : c.fallback;
 
             return (
-              <View key={c.id} style={[styles.card, { borderColor: "#e5e7eb" }]}>
+              <View
+                key={c.id}
+                style={[styles.card, { borderColor: "#e5e7eb" }]}
+              >
                 <View style={styles.cardLeft}>
                   <View style={[styles.iconWrap, { backgroundColor: c.theme }]}>
                     <Ionicons name="document-text" size={18} color="#fff" />
@@ -174,21 +244,26 @@ export default function CertificatesScreen({ vm }) {
                     <Text style={styles.cardTitle}>{title}</Text>
                     <Text style={styles.cardSub}>
                       {demoMode
-                        ? (t("certificates.demoUnlocked") !== "certificates.demoUnlocked"
-                            ? t("certificates.demoUnlocked")
-                            : "Demo unlocked")
-                        : (t("certificates.completed") !== "certificates.completed"
-                            ? t("certificates.completed", {
-                                count: faPerfectCount,
-                                total: FIRST_AID_REQUIRED,
-                              })
-                            : `Completed: ${faPerfectCount}/${FIRST_AID_REQUIRED}`)}
+                        ? t("certificates.demoUnlocked") !==
+                          "certificates.demoUnlocked"
+                          ? t("certificates.demoUnlocked")
+                          : "Demo unlocked"
+                        : t("certificates.completed") !==
+                          "certificates.completed"
+                        ? t("certificates.completed", {
+                            count: faPerfectCount,
+                            total: FIRST_AID_REQUIRED,
+                          })
+                        : `Completed: ${faPerfectCount}/${FIRST_AID_REQUIRED}`}
                     </Text>
                   </View>
                 </View>
 
                 <TouchableOpacity
-                  style={[styles.downloadBtn, locked && { backgroundColor: "#cbd5e1" }]}
+                  style={[
+                    styles.downloadBtn,
+                    locked && { backgroundColor: "#cbd5e1" },
+                  ]}
                   onPress={() => onDownload(c)}
                   disabled={locked}
                   activeOpacity={locked ? 1 : 0.85}
@@ -225,8 +300,19 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E5E7EB",
     backgroundColor: "#fff",
   },
-  headerBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  headerTitle: { flex: 1, textAlign: "center", fontWeight: "600", color: "#111827", fontSize: 22 },
+  headerBtn: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "600",
+    color: "#111827",
+    fontSize: 22,
+  },
 
   screen: { flex: 1, backgroundColor: "#f8fafc" },
 

@@ -49,7 +49,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-url-polyfill": "*",
     "react-native-webview": "13.12.5",
-    "uuid": "*"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

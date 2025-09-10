@@ -1,8 +1,26 @@
-// components/ContactRow.js
+/**
+ * components/ContactRow.js — Emergency contact row component
+ *
+ * Purpose
+ * - Display a contact with name, optional relation, and phone number.
+ * - Provide inline action buttons for calling, editing, or deleting the contact.
+ *
+ * Key Behaviours
+ * - Shows a left-side avatar circle with a person icon.
+ * - Inline text: bold name, optional relation (in gray), and phone number.
+ * - Right-side actions are conditional: Call (green), Edit (blue), Delete (red).
+ *
+ * Exports
+ * - Default React component <ContactRow/>.
+ */
+
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function ContactRow({
   name,
   relation,
@@ -57,6 +75,9 @@ export default function ContactRow({
   );
 }
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",

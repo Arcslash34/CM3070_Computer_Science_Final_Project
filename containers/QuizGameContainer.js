@@ -1,10 +1,33 @@
-// containers/QuizGameContainer.js
+/**
+ * containers/QuizGameContainer.js — Quiz gameplay controller
+ *
+ * Purpose
+ * - Orchestrate a timed multiple-choice quiz: question shuffling, timer, hints, SFX/BGM,
+ *   scoring → XP, review payloads, and result persistence to Supabase.
+ * - Support “daily” mixed quiz or topic/set-based quizzes with i18n (UI localized; EN stored).
+ *
+ * Key Behaviours
+ * - 30s per question; animated progress bar that changes color (green→amber→red).
+ * - Optional 50/50-style hint removes one incorrect option (halves XP).
+ * - BGM toggled by app prefs; per-answer SFX for correct/incorrect.
+ * - On finish: uploads result (EN title + EN answers/review) to `quiz_results` and attempts badges.
+ *
+ * Exports
+ * - Default React component <QuizGameContainer/> that renders <QuizGameScreen vm={...} />.
+ */
+
 import React, {
-  useEffect, useMemo, useRef, useState, useCallback
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
 } from "react";
 import { Alert, BackHandler, Animated, Easing } from "react-native";
 import {
-  useNavigation, useRoute, useFocusEffect
+  useNavigation,
+  useRoute,
+  useFocusEffect,
 } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Audio } from "expo-av";
@@ -15,10 +38,14 @@ import { i18n, t, setLocale } from "../translations/translation";
 import * as AppPrefs from "../utils/appPrefs";
 import enQuizzes from "../translations/en/quizzes.json";
 
-// ----- constants -----
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 const TOTAL_TIME = 30;
 
-// ---- helpers (same as before) ----
+// ---------------------------------------------------------------------------
+// Pure helpers (sampling, permutations, EN DB accessor)
+// ---------------------------------------------------------------------------
 const sampleArray = (arr, n) =>
   arr
     .map((x, i) => [Math.random(), i])
@@ -48,17 +75,21 @@ function useEnglishQuizDB() {
   }, [i18n.locale]);
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function QuizGameContainer() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { params } = useRoute();
 
-  // route params
+  // -------------------------------------------------------------------------
+  // Route params & titles
+  // -------------------------------------------------------------------------
   const topicId = params?.topicId;
   const isDaily = !!params?.isDaily;
   const setNumber = params?.setIndex ?? 1;
 
-  // i18n titles (UI)
   const dailyTitle =
     t("quizzes.daily.title", { defaultValue: t("quizGame.dailyTitle") }) ||
     t("quizGame.dailyTitle");
@@ -66,16 +97,19 @@ export default function QuizGameContainer() {
     params?.topicTitle ??
     (isDaily ? dailyTitle : t("quizSet.quiz", { defaultValue: "Quiz" }));
 
-  // hide native header
   React.useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  // DBs
+  // -------------------------------------------------------------------------
+  // DBs (localized + English baseline for persistence)
+  // -------------------------------------------------------------------------
   const QUIZ_DB = useMemo(() => getQuiz(), [i18n.locale]);
   const QUIZ_DB_EN = useEnglishQuizDB();
 
-  // state (logic only)
+  // -------------------------------------------------------------------------
+  // Core state (logic only)
+  // -------------------------------------------------------------------------
   const [qset, setQset] = useState([]); // {q, qEn, options, optionsEn, correctIndex, explanation}
   const [index, setIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -87,26 +121,36 @@ export default function QuizGameContainer() {
   const [eliminatedOption, setEliminatedOption] = useState(null);
   const [usedHint, setUsedHint] = useState(false);
 
-  // timer
+  // -------------------------------------------------------------------------
+  // Timer + animations
+  // -------------------------------------------------------------------------
   const [remainingTime, setRemainingTime] = useState(TOTAL_TIME);
   const progressAnim = useRef(new Animated.Value(1)).current;
   const flashAnim = useRef(new Animated.Value(1)).current;
   const timerRef = useRef(null);
   const remainingRef = useRef(remainingTime);
-  useEffect(() => { remainingRef.current = remainingTime; }, [remainingTime]);
+  useEffect(() => {
+    remainingRef.current = remainingTime;
+  }, [remainingTime]);
 
-  // XP
+  // -------------------------------------------------------------------------
+  // XP + feedback
+  // -------------------------------------------------------------------------
   const [earnedXP, setEarnedXP] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [xpPerQuestion, setXpPerQuestion] = useState([]);
   const [feedback, setFeedback] = useState("");
 
-  // audio
+  // -------------------------------------------------------------------------
+  // Audio (BGM + SFX)
+  // -------------------------------------------------------------------------
   const bgmRef = useRef(null);
   const sfxCorrectRef = useRef(null);
   const sfxWrongRef = useRef(null);
 
-  // build question set (same logic as your file)
+  // -------------------------------------------------------------------------
+  // Build question set (daily mix or topic/set). Options are permuted, EN mirrors kept.
+  // -------------------------------------------------------------------------
   useEffect(() => {
     const cats = QUIZ_DB?.categories ?? [];
     const catsEn = QUIZ_DB_EN?.categories ?? [];
@@ -160,8 +204,10 @@ export default function QuizGameContainer() {
 
     const cat = findCat(cats, topicId) || null;
     const catEn = findCat(catsEn, topicId) || null;
-    const zhQuestions = cat?.sets?.[Math.max(0, setNumber - 1)]?.questions || [];
-    const enQuestions = catEn?.sets?.[Math.max(0, setNumber - 1)]?.questions || [];
+    const zhQuestions =
+      cat?.sets?.[Math.max(0, setNumber - 1)]?.questions || [];
+    const enQuestions =
+      catEn?.sets?.[Math.max(0, setNumber - 1)]?.questions || [];
 
     const indices = Array.from({ length: zhQuestions.length }, (_, i) => i);
     const out = [];
@@ -192,7 +238,9 @@ export default function QuizGameContainer() {
   const questionCount = qset.length;
   const current = qset[index];
 
-  // reset when questionCount changes
+  // -------------------------------------------------------------------------
+  // Reset screen-level state when questionCount changes
+  // -------------------------------------------------------------------------
   useEffect(() => {
     setIndex(0);
     setSelectedIndex(null);
@@ -208,7 +256,9 @@ export default function QuizGameContainer() {
     setXpPerQuestion([]);
   }, [questionCount]);
 
-  // audio init/cleanup
+  // -------------------------------------------------------------------------
+  // Audio init/cleanup
+  // -------------------------------------------------------------------------
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -250,7 +300,9 @@ export default function QuizGameContainer() {
     };
   }, []);
 
-  // submit
+  // -------------------------------------------------------------------------
+  // Submit current question (compute XP, feedback, SFX/haptics)
+  // -------------------------------------------------------------------------
   const onSubmit = useCallback(async () => {
     if (!current || submitted) return;
 
@@ -302,11 +354,15 @@ export default function QuizGameContainer() {
     setShowExplanation(false);
   }, [current, submitted, selectedIndex, usedHint, index]);
 
-  // keep latest submit ref for timer
+  // Keep latest submit ref for timer auto-submit
   const onSubmitRef = useRef(onSubmit);
-  useEffect(() => { onSubmitRef.current = onSubmit; }, [onSubmit]);
+  useEffect(() => {
+    onSubmitRef.current = onSubmit;
+  }, [onSubmit]);
 
-  // timer effect
+  // -------------------------------------------------------------------------
+  // Timer lifecycle (per question)
+  // -------------------------------------------------------------------------
   useEffect(() => {
     if (!current || submitted) return;
 
@@ -339,7 +395,9 @@ export default function QuizGameContainer() {
     };
   }, [index, current, submitted, progressAnim]);
 
-  // flashing opacity control lives in screen; we expose flags
+  // -------------------------------------------------------------------------
+  // Derived UI flags/values
+  // -------------------------------------------------------------------------
   const isLowTime = remainingTime <= 10 && !submitted;
 
   const barColor = progressAnim.interpolate({
@@ -347,30 +405,46 @@ export default function QuizGameContainer() {
     outputRange: ["#EF4444", "#F59E0B", "#10B981"],
   });
 
+  // -------------------------------------------------------------------------
+  // Hint (remove one incorrect option, halves XP already handled on submit)
+  // -------------------------------------------------------------------------
   const handleHint = () => {
     if (usedHint || !current) return;
-    const incorrectIdx = current.options.map((_, i) => i).filter((i) => i !== current.correctIndex);
-    const removeIdx = incorrectIdx[Math.floor(Math.random() * incorrectIdx.length)];
+    const incorrectIdx = current.options
+      .map((_, i) => i)
+      .filter((i) => i !== current.correctIndex);
+    const removeIdx =
+      incorrectIdx[Math.floor(Math.random() * incorrectIdx.length)];
     setEliminatedOption(removeIdx);
     setUsedHint(true);
   };
 
+  // -------------------------------------------------------------------------
+  // Exit guard (hardware back & header back)
+  // -------------------------------------------------------------------------
   const confirmExit = useCallback(() => {
     Alert.alert(
       t("quizGame.leaveTitle"),
       t("quizGame.leaveMsg"),
       [
         { text: t("quizGame.stay"), style: "cancel" },
-        { text: t("quizGame.leave"), style: "destructive", onPress: () => navigation.goBack() },
+        {
+          text: t("quizGame.leave"),
+          style: "destructive",
+          onPress: () => navigation.goBack(),
+        },
       ],
       { cancelable: true }
     );
   }, [navigation]);
 
-  // pause/resume BGM + back handler
+  // Pause/resume BGM + handle Android back while focused
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => { confirmExit(); return true; };
+      const onBackPress = () => {
+        confirmExit();
+        return true;
+      };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       (async () => {
@@ -382,12 +456,18 @@ export default function QuizGameContainer() {
 
       return () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-        (async () => { try { await bgmRef.current?.pauseAsync(); } catch {} })();
+        (async () => {
+          try {
+            await bgmRef.current?.pauseAsync();
+          } catch {}
+        })();
       };
     }, [confirmExit])
   );
 
-  // next / finish (includes Supabase)
+  // -------------------------------------------------------------------------
+  // Next / finish flow (compute review data, save to Supabase, navigate)
+  // -------------------------------------------------------------------------
   const goNext = () => {
     const next = [...userSelections];
     next[index] = selectedIndex;
@@ -406,11 +486,16 @@ export default function QuizGameContainer() {
       return;
     }
 
-    // finished
+    // ---- finished ----
     let correctCnt = 0;
     const reviewDataLocalized = qset.map((q, i) => {
       const sel = next[i];
-      const status = sel == null ? "unanswered" : sel === q.correctIndex ? "correct" : "incorrect";
+      const status =
+        sel == null
+          ? "unanswered"
+          : sel === q.correctIndex
+          ? "correct"
+          : "incorrect";
       if (status === "correct") correctCnt += 1;
       return {
         number: i + 1,
@@ -424,7 +509,12 @@ export default function QuizGameContainer() {
 
     const reviewDataEN = qset.map((q, i) => {
       const sel = next[i];
-      const status = sel == null ? "unanswered" : sel === q.correctIndex ? "correct" : "incorrect";
+      const status =
+        sel == null
+          ? "unanswered"
+          : sel === q.correctIndex
+          ? "correct"
+          : "incorrect";
       return {
         number: i + 1,
         question: q.qEn,
@@ -442,20 +532,17 @@ export default function QuizGameContainer() {
 
     const scorePercent = Math.round((correctCnt / questionCount) * 100);
 
-    // Localized title (for UI)
+    // Localized title (UI) + stable EN title (DB)
     const quizTitleLocalized = isDaily ? dailyTitle : topicTitle;
 
-    // Stable EN title to store in DB
     const catEnTitle = isDaily
-      ? (enQuizzes?.daily?.title || "Daily Quiz")
-      : (
-          QUIZ_DB_EN?.categories?.find(c => c.id === topicId)?.title
-          || String(topicTitle || topicId)
-        );
+      ? enQuizzes?.daily?.title || "Daily Quiz"
+      : QUIZ_DB_EN?.categories?.find((c) => c.id === topicId)?.title ||
+        String(topicTitle || topicId);
 
     let setEnTitle = catEnTitle;
     if (!isDaily) {
-      const catEn = QUIZ_DB_EN?.categories?.find(c => c.id === topicId);
+      const catEn = QUIZ_DB_EN?.categories?.find((c) => c.id === topicId);
       const setEn = catEn?.sets?.[Math.max(0, setNumber - 1)];
       setEnTitle = setEn?.title || `${catEnTitle} #${setNumber}`;
     }
@@ -467,24 +554,27 @@ export default function QuizGameContainer() {
     (async () => {
       try {
         setUploading(true);
-        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
         const userId = userData?.user?.id;
         if (!userError && userId) {
           const { error: insertError } = await supabase
-          .from("quiz_results")
-          .insert({
-            user_id: userId,
-            quiz_title: quizTitleEnglish,
-            topic_id: isDaily ? "daily" : topicId,
-            score: scorePercent,
-            xp: finalTotalXp,
-            answers: answersEN,
-            review_data: reviewDataEN,
-          });
+            .from("quiz_results")
+            .insert({
+              user_id: userId,
+              quiz_title: quizTitleEnglish,
+              topic_id: isDaily ? "daily" : topicId,
+              score: scorePercent,
+              xp: finalTotalXp,
+              answers: answersEN,
+              review_data: reviewDataEN,
+            });
           if (insertError) throw insertError;
 
           try {
-            const { checkAndAwardBadges } = await import("../utils/badgesLogic");
+            const { checkAndAwardBadges } = await import(
+              "../utils/badgesLogic"
+            );
             await checkAndAwardBadges(supabase, {
               lastQuiz: {
                 title: quizTitleEnglish,
@@ -493,14 +583,19 @@ export default function QuizGameContainer() {
               },
             });
           } catch (badgeErr) {
-            console.warn("Badge awarding failed:", badgeErr?.message || badgeErr);
+            console.warn(
+              "Badge awarding failed:",
+              badgeErr?.message || badgeErr
+            );
           }
         }
       } catch (e) {
         console.warn("Supabase save error:", e?.message || e);
         Alert.alert("Save failed", String(e?.message || e));
       } finally {
-        try { await bgmRef.current?.stopAsync(); } catch {}
+        try {
+          await bgmRef.current?.stopAsync();
+        } catch {}
         setUploading(false);
         navigation.navigate("ResultSummary", {
           reviewData: reviewDataLocalized,
@@ -515,30 +610,48 @@ export default function QuizGameContainer() {
     })();
   };
 
-  // expose VM to the screen
+  // -------------------------------------------------------------------------
+  // View-model
+  // -------------------------------------------------------------------------
   const vm = {
     // i18n + layout
-    t, insets,
-    isDaily, dailyTitle, topicTitle,
+    t,
+    insets,
+    isDaily,
+    dailyTitle,
+    topicTitle,
 
     // question data
-    current, questionCount, index,
+    current,
+    questionCount,
+    index,
 
     // selection/submission
-    selectedIndex, setSelectedIndex,
-    submitted, onSubmit,
+    selectedIndex,
+    setSelectedIndex,
+    submitted,
+    onSubmit,
 
     // hint
-    eliminatedOption, usedHint, handleHint,
+    eliminatedOption,
+    usedHint,
+    handleHint,
 
     // timer + anims
-    remainingTime, progressAnim, flashAnim, isLowTime, barColor,
+    remainingTime,
+    progressAnim,
+    flashAnim,
+    isLowTime,
+    barColor,
 
     // feedback + explanation
-    feedback, showExplanation, setShowExplanation,
+    feedback,
+    showExplanation,
+    setShowExplanation,
 
     // navigation / actions
-    confirmExit, goNext,
+    confirmExit,
+    goNext,
 
     // save state
     uploading,

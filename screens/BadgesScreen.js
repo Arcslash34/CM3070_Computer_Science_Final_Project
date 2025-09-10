@@ -1,5 +1,50 @@
-// screens/BadgesScreen.js — dynamic catalog + Supabase state, progress bars for not-yet-earned
-import React, { useMemo, useState, useLayoutEffect, useEffect, useContext } from "react";
+/**
+ * screens/BadgesScreen.js — Dynamic badges catalog + user progress (Supabase)
+ *
+ * Purpose
+ * - Present a responsive, localized grid of achievement badges.
+ * - Show which badges are earned vs. locked and how close the user is to each.
+ * - Surface overall points (sum of XP from quiz_results) and earned/total badges.
+ * - Let users preview a completed badge and share it.
+ *
+ * Data Sources
+ * - Catalog (static, localized at runtime): BADGE_CATALOG_FN()
+ * - Earned badges: Supabase table `user_disaster_badges` (badge_id rows per user)
+ * - Points: Sum of `xp` in Supabase table `quiz_results` for the user
+ * - Progress math: `getProgressSummary()` + `computeBadgeProgress()` from badgesLogic
+ * - Auto-award on open: `checkAndAwardBadges()` (e.g., count-based badges)
+ *
+ * Key Behaviours
+ * - On mount:
+ *   • Attempts to auto-award any newly satisfied badges.
+ *   • Loads user total points (XP), owned badges, and per-badge progress.
+ * - Tabs: filter catalog to All / Unlocked / Locked (keeps grouping).
+ * - Layout: responsive card width via measured grid width + `pickCols()`.
+ * - Modal: only opens for earned badges; includes “Share” action.
+ * - i18n: re-renders on language change (titles, labels, grouping names).
+ *
+ * UX / Accessibility
+ * - Uses high-contrast progress indicators and concise labels.
+ * - Taps on locked badges are ignored (no accidental empty modals).
+ * - Share flow uses platform share sheet with localized copy.
+ *
+ * Performance Notes
+ * - Uses `useMemo` to avoid repeated recomputation of lists/sections.
+ * - Avoids layout thrash by measuring grid width once per section layout.
+ * - Separates catalog from owned/progress state to minimize re-renders.
+ *
+ * Fail-safes
+ * - Network/Supabase errors are caught and logged; UI falls back gracefully
+ *   (0 points, empty owned set, empty progress map).
+ */
+
+import React, {
+  useMemo,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  useContext,
+} from "react";
 import {
   View,
   Text,
@@ -21,7 +66,11 @@ import { useNavigation } from "@react-navigation/native";
 import { supabase } from "../supabase";
 
 import { BADGE_CATALOG as BADGE_CATALOG_FN } from "../utils/badgeCatalog";
-import { checkAndAwardBadges, getProgressSummary, computeBadgeProgress } from "../utils/badgesLogic";
+import {
+  checkAndAwardBadges,
+  getProgressSummary,
+  computeBadgeProgress,
+} from "../utils/badgesLogic";
 import { t } from "../translations/translation";
 import { LanguageContext } from "../translations/language";
 

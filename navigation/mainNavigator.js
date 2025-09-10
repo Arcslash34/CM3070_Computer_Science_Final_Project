@@ -1,4 +1,33 @@
-// navigation/mainNavigator.js — i18n-enabled tabs and headers
+/**
+ * navigation/mainNavigator.js — Root navigation (tabs + stacks) with i18n
+ *
+ * Purpose
+ * - Define the app’s primary navigators:
+ *   • Bottom Tab Navigator for the main sections
+ *   • Stack Navigator for deep flows (quiz, articles, results, etc.)
+ * - Centralize screen options (icons, titles) with localization via `t(...)`.
+ *
+ * Key Behaviours
+ * - Tabs re-render titles/labels when the language changes (LanguageContext).
+ * - Consistent header styling:
+ *   • Centered titles
+ *   • Shared left logo (<LogoHeader/>)
+ * - Simple, readable Ionicons mapping per tab.
+ *
+ * Routes
+ * - Tabs: Home, Quizzes, Badges, Resource, Settings
+ * - Stack (in addition to tabs):
+ *   Chatbot, QuizSet, QuizGame, ResultSummary, HistoryContainer,
+ *   ResourceArticle, Checklist, Certificates, Articles
+ *
+ * i18n Notes
+ * - All visible titles/labels derive from translation keys (e.g. "nav.home").
+ * - Using `useContext(LanguageContext)` ensures header/tab text updates live.
+ *
+ * Exports
+ * - Default: MainNavigator (wraps TabNavigator inside a Stack)
+ */
+
 import React, { useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -29,7 +58,8 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function TabNavigator() {
-  const { lang } = useContext(LanguageContext); // re-render on language change
+  // Re-render labels/icons on language change
+  const { lang } = useContext(LanguageContext);
 
   return (
     <Tab.Navigator
@@ -89,7 +119,8 @@ function TabNavigator() {
 }
 
 export default function MainNavigator() {
-  const { lang } = useContext(LanguageContext); // ensure headers update on language change
+  // Ensure headers re-evaluate translations on language switch
+  const { lang } = useContext(LanguageContext);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -133,8 +164,6 @@ export default function MainNavigator() {
         options={{
           headerShown: true,
           headerTitleAlign: "center",
-          // If you have a dedicated title key for the article screen, use it.
-          // Using generic "Guide" from common.nav for now:
           headerTitle: t("nav.guide"),
         }}
       />
@@ -151,7 +180,7 @@ export default function MainNavigator() {
         component={Articles}
         options={{
           headerShown: true,
-          headerTitle: t("homeArticles.title"), // from translations/*/homeArticles.json
+          headerTitle: t("homeArticles.title"),
           headerTitleAlign: "center",
         }}
       />

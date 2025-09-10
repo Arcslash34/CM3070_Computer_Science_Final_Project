@@ -1,11 +1,137 @@
-# Sample Snack app
+# LiveShield
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+**LiveShield** is a mobile application built with **React Native** and **Supabase** that empowers individuals to prepare for and respond to emergencies through learning, gamification, and quick-access safety tools.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+It combines **educational quizzes, resource hubs, multilingual support, badges & achievements, and an emergency siren overlay** into one cohesive platform.
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+---
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+## ✨ Features
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+- 📚 **Quizzes & Learning**
+
+  - Daily and topic-based quizzes
+  - Explanations and answer reviews
+  - Streaks and XP rewards for consistent learning
+
+- 🏆 **Gamification**
+
+  - Badge system (first-step, quiz explorer, streak levels, etc.)
+  - XP tracking and progress history
+
+- 🌍 **Resource Hub**
+
+  - Curated first-aid and disaster-response guides
+  - Interactive resource articles with quick steps & detailed sections
+  - Rich media: images, news links, references
+
+- 🚨 **Emergency Tools**
+
+  - **Emergency Siren** screen: siren + vibration + flashlight strobe (native) or screen alert (web)
+  - 5-tap quick activation (via container logic)
+  - Region detection and live condition indicators
+
+- 🌐 **Multilingual Interface**
+
+  - English (en), Simplified Chinese (zh), Malay (ms), Tamil (ta)
+  - Easily extensible with `translations/<lang>` files
+
+- 🗄 **Data & Storage**
+  - Supabase for profiles, quiz results, badges
+  - AsyncStorage for preferences & tutorial state
+  - External APIs (NEA: rainfall, PM2.5, wind, humidity, temperature)
+  - Bundled snapshot via `assets/env_snapshot.json`
+
+---
+
+## 🏗 Architecture
+
+**Data Tier**
+
+- Supabase tables: `profiles`, `quiz_results`, `user_disaster_badges`
+- Local: AsyncStorage (preferences, flags)
+- Static JSON: quizzes, checklists, translations
+- External APIs: NEA endpoints for environment data
+- Scripted snapshot: `scripts/snapshot.js` → `assets/env_snapshot.json`
+
+**Logic Tier**
+
+- Containers: orchestrate data + actions (e.g., `QuizGameContainer`, `InteractiveMapModalContainer`, `SettingsContainer`, `CertificatesContainer`)
+- Services: `supabase.js`, env fetchers, badge/quiz utilities
+- Caching: in-memory TTL + de-dup for network requests
+
+**UI / Presentation Tier**
+
+- Screens: Quizzes, Quiz Game, Quiz Set, History, Result Summary
+- Resource Hub & Article, Home (dashboard), Settings, Certificates, Siren
+- Components: cards, modals, progress bars, map views, lists
+
+---
+
+## 📂 Project Structure (simplified)
+
+---
+
+## 🚀 Run Locally
+
+> **⚠️ SDK Version Notice:**  
+> This project was built and tested using **Expo SDK 52**.  
+> For best compatibility, please run the app using the Expo Go client for SDK 52:  
+> [https://expo.dev/go?sdkVersion=52&platform=android&device=true](https://expo.dev/go?sdkVersion=52&platform=android&device=true)
+
+To run **LiveShield** on your local machine using VS Code or any terminal:
+
+### 1️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+### 2️⃣ Start the Development Server
+
+```bash
+npm start
+```
+
+This will launch the Expo Developer Tools in your browser.  
+From here, you can run the app on:
+
+- Android Emulator
+- iOS Simulator (macOS only)
+- Physical device via Expo Go app
+
+### 3️⃣ Run Tests
+
+```bash
+npm test
+```
+
+---
+
+## 🧪 Testing Notes
+
+- Uses **Jest** for unit and integration tests
+- Run `npm test` to execute all test suites
+
+---
+
+## 👥 Demo Accounts for Testing
+
+### Gmail (For Testing Supabase Password Reset)
+
+- **Email:** quizzyfinal@gmail.com
+- **Password:** password000.
+
+### App Login
+
+- **Username:** Quizzy
+- **Password:** test123
+
+---
+
+## 📚 Credits / Acknowledgments
+
+- **Open Trivia DB** – For quiz content
+- **Supabase** – For backend services (auth, storage, DB)
+- **Vercel** – For hosting the password reset flow
+- **Expo** – For push notification support and mobile development tools

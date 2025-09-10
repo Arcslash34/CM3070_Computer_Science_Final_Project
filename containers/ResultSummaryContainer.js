@@ -1,9 +1,35 @@
-// containers/ResultSummaryContainer.js
+/**
+ * containers/ResultSummaryContainer.js — Quiz result recap (container)
+ *
+ * Purpose
+ * - Parse and localize a quiz attempt’s review data (saved in EN) for the current UI language.
+ * - Drive the Result Summary screen with a smart “back” experience.
+ * - Surface key header stats (score %, XP) and a motivational headline.
+ *
+ * Key Behaviours
+ * - Accepts varied shapes of `reviewData` (array | JSON string | { review_data }).
+ * - Relocalizes rows via buildQuestionMap() + relocalizeReviewItem() when locale changes.
+ * - Hardware back is intercepted and routed to an intent-aware destination:
+ *   • If `backTo.screen` provided → navigate accordingly (supports MainTabs → Quizzes).
+ *   • Else fall back to navigation.goBack() or Quizzes tab.
+ * - Gracefully handles legacy params (`score`, `userAnswers`, `difficulty`).
+ *
+ * Exports
+ * - Default React component <ResultSummaryContainer/> that renders <ResultSummaryScreen vm={...} />.
+ */
+
 import React, { useMemo, useCallback } from "react";
 import { BackHandler } from "react-native";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { t, i18n } from "../translations/translation";
-import { buildQuestionMap, relocalizeReviewItem } from "../utils/resultLocalization";
+import {
+  buildQuestionMap,
+  relocalizeReviewItem,
+} from "../utils/resultLocalization";
 
 export default function ResultSummaryContainer() {
   const navigation = useNavigation();
@@ -14,13 +40,13 @@ export default function ResultSummaryContainer() {
     quizTitle = "Quiz Review",
     scorePercent = 0,
     xp = 0,
-    score = 0,                 // legacy
-    userAnswers = [],          // legacy
-    difficulty,                // legacy
+    score = 0, // legacy
+    userAnswers = [], // legacy
+    difficulty, // legacy
     backTo,
   } = params;
 
-  // smart back
+  // Smart back (prefers explicit intent, otherwise reasonable defaults)
   const goBackSmart = useCallback(() => {
     if (backTo?.screen) {
       if (backTo.screen === "Quizzes") {
@@ -37,7 +63,7 @@ export default function ResultSummaryContainer() {
     navigation.navigate("MainTabs", { screen: "Quizzes" });
   }, [navigation, backTo]);
 
-  // hardware back -> smart back
+  // Bind Android hardware back to smart back
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -45,11 +71,12 @@ export default function ResultSummaryContainer() {
         return true;
       };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [goBackSmart])
   );
 
-  // parse incoming review data (array/string/obj.review_data)
+  // Parse incoming review data (array | string | object.review_data)
   const parsedEN = useMemo(() => {
     if (!reviewData) return null;
     try {
@@ -65,7 +92,7 @@ export default function ResultSummaryContainer() {
     }
   }, [reviewData]);
 
-  // localize the saved EN rows to current UI language
+  // Relocalize rows to current UI language
   const enToLocalMap = useMemo(() => buildQuestionMap(), [i18n.locale]);
   const parsed = useMemo(() => {
     if (!Array.isArray(parsedEN)) return null;
@@ -75,16 +102,21 @@ export default function ResultSummaryContainer() {
   const hasNewData = Array.isArray(parsed) && parsed.length > 0;
   const headerScore = hasNewData ? scorePercent : score;
 
-  // headline (localized)
+  // Headline (localized)
   const headline =
     headerScore >= 90
       ? t("resultSummary.headlineOutstanding", { defaultValue: "Outstanding!" })
       : headerScore >= 75
       ? t("resultSummary.headlineGreat", { defaultValue: "Great job!" })
       : headerScore >= 50
-      ? t("resultSummary.headlineNice", { defaultValue: "Nice effort — keep going!" })
-      : t("resultSummary.headlineKeepTrying", { defaultValue: "Don't give up — try again!" });
+      ? t("resultSummary.headlineNice", {
+          defaultValue: "Nice effort — keep going!",
+        })
+      : t("resultSummary.headlineKeepTrying", {
+          defaultValue: "Don't give up — try again!",
+        });
 
+  // View-model for presentational screen
   const vm = {
     // strings/labels
     t,
@@ -101,7 +133,7 @@ export default function ResultSummaryContainer() {
     // list data (already localized)
     items: hasNewData ? parsed : [],
 
-    // legacy fallbacks
+    // legacy flag for UI fallbacks
     hasNewData,
   };
 

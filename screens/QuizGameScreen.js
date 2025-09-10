@@ -1,4 +1,40 @@
-// screens/QuizGameScreen.js
+/**
+ * screens/QuizGameScreen.js — Timed multiple-choice quiz UI (presentational)
+ *
+ * Purpose
+ * - Render one question at a time with a countdown bar + MM:SS readout.
+ * - Handle selection, submit, per-option correctness states, and hint/50-50.
+ * - Show feedback + “View explanation” modal and Next/Finish actions.
+ *
+ * ViewModel (vm) contract
+ * - i18n/layout: t, insets
+ * - titles: isDaily, dailyTitle, topicTitle
+ * - question state: current, questionCount, index
+ * - selection: selectedIndex, setSelectedIndex, submitted, onSubmit
+ * - hint: eliminatedOption, usedHint, handleHint
+ * - timer/progress: remainingTime, progressAnim (0→1), flashAnim, isLowTime, barColor
+ * - feedback/explanation: feedback, showExplanation, setShowExplanation
+ * - nav/actions: confirmExit, goNext
+ * - saving: uploading
+ *
+ * Key Behaviours
+ * - Timer bar width interpolates from 0%→100%; color shifts via barColor; bar/text flash on low time.
+ * - Options lock after submit and display correct/wrong states.
+ * - Explanation modal summarizes result; primary CTA advances (Next/Finish).
+ *
+ * UX / Accessibility
+ * - Large tap targets; visible selection/correctness icons.
+ * - Back/hint buttons expose accessibility labels; submit disabled until a choice is made.
+ *
+ * Performance Notes
+ * - Presentational only; all side-effects live in the container.
+ * - Uses Animated.loop for low-time flash; stops on unmount/when not low time.
+ *
+ * Fail-safes
+ * - Shows loading overlay until `current` is ready.
+ * - Uploading overlay blocks taps while results are saving.
+ */
+
 import React, { useEffect } from "react";
 import {
   View,

@@ -1,10 +1,23 @@
-// containers/CertificatesContainer.js
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-} from "react";
+/**
+ * containers/CertificatesContainer.js — Certificates view-model container
+ *
+ * Purpose
+ * - Orchestrate data and actions for generating demo certificates (CPR, AED, Bleeding).
+ * - Gate downloads behind First Aid quiz progress (5/5 perfect) unless demo mode is enabled.
+ * - Resolve display name from Supabase profile and AsyncStorage; allow username/name toggle.
+ * - Render HTML → PDF via expo-print and share via expo-sharing.
+ *
+ * Key Behaviours
+ * - FIRST_AID_REQUIRED = 5 perfect quiz scores (titles like "First Aid #N").
+ * - Demo mode bypass persists in AsyncStorage ("certs:demoMode").
+ * - i18n-safe strings: use fallbacks when translation keys equal their ids.
+ * - HTML renderer is local to this module; keep here or extract to utils for reuse.
+ *
+ * Exports
+ * - Default React component <CertificatesContainer/> which renders <CertificatesScreen vm={...}/> .
+ */
+
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
@@ -15,20 +28,43 @@ import { supabase } from "../supabase";
 import { t } from "../translations/translation";
 import CertificatesScreen from "../screens/CertificatesScreen";
 
-// ===== Available certificates (visual only; unlocking is gated by First Aid progress) =====
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+// Available certificates (visual only; unlocking is gated by First Aid progress)
 const CERTS = [
-  { id: "cpr",   titleKey: "certificates.items.cpr",   fallback: "CPR Certificate",             theme: "#6366F1" },
-  { id: "aed",   titleKey: "certificates.items.aed",   fallback: "AED Certificate",             theme: "#10b981" },
-  { id: "bleed", titleKey: "certificates.items.bleed", fallback: "Severe Bleeding Certificate", theme: "#f59e0b" },
+  {
+    id: "cpr",
+    titleKey: "certificates.items.cpr",
+    fallback: "CPR Certificate",
+    theme: "#6366F1",
+  },
+  {
+    id: "aed",
+    titleKey: "certificates.items.aed",
+    fallback: "AED Certificate",
+    theme: "#10b981",
+  },
+  {
+    id: "bleed",
+    titleKey: "certificates.items.bleed",
+    fallback: "Severe Bleeding Certificate",
+    theme: "#f59e0b",
+  },
 ];
 
 // How many First Aid sets must be perfect
 const FIRST_AID_REQUIRED = 5;
 
-/* ---------- HTML renderer (kept local; move to utils if you want re-use) ---------- */
+// ---------------------------------------------------------------------------
+// HTML renderer (kept local; move to utils if you want re-use)
+// ---------------------------------------------------------------------------
 function renderCertificateHTML({ name, course, accent = "#6366F1", id }) {
   const now = new Date().toLocaleDateString();
-  const certId = `${id}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const certId = `${id}-${Math.random()
+    .toString(36)
+    .slice(2, 8)
+    .toUpperCase()}`;
 
   return `
 <!DOCTYPE html>
@@ -77,6 +113,9 @@ function renderCertificateHTML({ name, course, accent = "#6366F1", id }) {
 </html>`;
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function CertificatesContainer() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -94,7 +133,7 @@ export default function CertificatesContainer() {
   const [faPerfectCount, setFaPerfectCount] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(true);
 
-  // Load display name from profile / AsyncStorage (same logic as before)
+  // Load display name from profile / AsyncStorage
   useEffect(() => {
     (async () => {
       try {
@@ -141,6 +180,8 @@ export default function CertificatesContainer() {
       }
     })();
   }, []);
+
+  // Toggle demo mode (persist)
   const toggleDemoMode = async (v) => {
     setDemoMode(v);
     try {
@@ -209,6 +250,7 @@ export default function CertificatesContainer() {
   // Eligibility: demo mode bypasses, otherwise need 5/5
   const isEligible = demoMode || faPerfectCount >= FIRST_AID_REQUIRED;
 
+  // Generate & share certificate PDF
   const onDownload = async (cert) => {
     if (!isEligible) {
       const title =
@@ -249,6 +291,7 @@ export default function CertificatesContainer() {
     }
   };
 
+  // View-model for screen
   const vm = {
     // i18n + layout
     t,

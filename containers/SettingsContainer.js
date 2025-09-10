@@ -1,4 +1,23 @@
-// containers/SettingsContainer.js
+/**
+ * containers/SettingsContainer.js — Settings & Profile (container)
+ *
+ * Purpose
+ * - Manage user preferences (notifications, sound, vibration) and demo toggles.
+ * - Handle profile edit (name, username, avatar) and password change.
+ * - Maintain emergency contacts (CRUD, local-only), region detection, and language.
+ * - Provide a clean view-model for <SettingsScreen/>.
+ *
+ * Key Behaviours
+ * - Persists toggles and contacts to AsyncStorage; profile fields to Supabase.
+ * - Avatar uploads to Supabase Storage (public URL) with bearer auth.
+ * - Region detection via expo-location + reverse geocode, saved to profile.
+ * - Language, password, and profile modals are state-driven.
+ * - Supports “mock location/disaster” demo flags (saved in AsyncStorage).
+ *
+ * Exports
+ * - Default React component <SettingsContainer/> that renders <SettingsScreen vm={...} />.
+ */
+
 import React, {
   useEffect,
   useState,
@@ -31,6 +50,8 @@ import { t } from "../translations/translation";
 // Presentational screen
 import SettingsScreen from "../screens/SettingsScreen";
 
+/* ------------------------------- Constants ------------------------------- */
+
 const TOGGLE_KEYS = {
   notifications: "settings:notifications",
   sound: "settings:sound",
@@ -41,11 +62,13 @@ const TOGGLE_KEYS = {
 const CONTACTS_KEY = "settings:close-contacts";
 const MAX_CONTACTS = 5;
 
-// helper: ISO code => flag emoji
+// ISO code → flag emoji
 const countryCodeToFlagEmoji = (code = "") =>
   code
     .toUpperCase()
     .replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt()));
+
+/* --------------------------------- Component --------------------------------- */
 
 export default function SettingsContainer() {
   const navigation = useNavigation();
@@ -55,18 +78,18 @@ export default function SettingsContainer() {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
 
-  // Auth/session + profile
+  /* -------------------------- Session & Profile state ------------------------- */
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
 
-  // Toggles
+  /* -------------------------------- Toggles --------------------------------- */
   const [notifications, setNotifications] = useState(true);
   const [sound, setSound] = useState(true);
   const [vibration, setVibration] = useState(true);
   const [mockLocation, setMockLocation] = useState(false);
   const [mockDisaster, setMockDisaster] = useState(false);
 
-  // UI state
+  /* --------------------------------- UI state -------------------------------- */
   const [showLang, setShowLang] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -94,7 +117,8 @@ export default function SettingsContainer() {
   const [loadingRegion, setLoadingRegion] = useState(false);
   const spinAnim = useRef(new Animated.Value(0)).current;
 
-  // Reusable uploader for a local image URI
+  /* --------------------------- Avatar upload helper -------------------------- */
+
   const handleImageUpload = useCallback(
     async (uri) => {
       if (!session?.user) {
@@ -165,7 +189,7 @@ export default function SettingsContainer() {
     [session?.user]
   );
 
-  /* ---------- Load session & profile ---------- */
+  /* ---------------------------- Load session/profile -------------------------- */
   useEffect(() => {
     (async () => {
       const { data } = await supabase.auth.getSession();
@@ -201,7 +225,8 @@ export default function SettingsContainer() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  /* ---------- Load toggles ---------- */
+  /* ------------------------------- Load toggles ------------------------------ */
+
   useEffect(() => {
     (async () => {
       try {
@@ -227,7 +252,8 @@ export default function SettingsContainer() {
     AsyncStorage.setItem(key, value ? "1" : "0").catch(() => {});
   }, []);
 
-  /* ---------- Load contacts ---------- */
+  /* ------------------------------ Load contacts ------------------------------ */
+
   useEffect(() => {
     (async () => {
       try {
@@ -243,7 +269,8 @@ export default function SettingsContainer() {
     AsyncStorage.setItem(CONTACTS_KEY, JSON.stringify(arr)).catch(() => {});
   }, []);
 
-  // Spin only when loadingRegion is true
+  /* --------------------------- Region spinner anim --------------------------- */
+
   useEffect(() => {
     if (loadingRegion) {
       Animated.loop(
@@ -258,12 +285,14 @@ export default function SettingsContainer() {
     }
   }, [loadingRegion, spinAnim]);
 
-  /* ---------- Derived profile display ---------- */
+  /* --------------------------- Derived profile labels ------------------------ */
+
   const userDisplay =
     profile?.username || session?.user?.email || t("settings.generic.guest");
   const email = session?.user?.email || "";
 
-  /* ---------- Actions ---------- */
+  /* --------------------------------- Actions -------------------------------- */
+
   const onLogout = useCallback(() => {
     Alert.alert(
       t("settings.alerts.logoutTitle"),
@@ -278,7 +307,10 @@ export default function SettingsContainer() {
               await supabase.auth.signOut();
               await AsyncStorage.clear();
             } catch (e) {
-              Alert.alert(t("settings.alerts.error"), e.message || "Logout failed");
+              Alert.alert(
+                t("settings.alerts.error"),
+                e.message || "Logout failed"
+              );
             }
           },
         },
@@ -307,7 +339,7 @@ export default function SettingsContainer() {
     }
   }, [newPassword]);
 
-  // ⚠️ Camera & Gallery logic UNCHANGED (verbatim)
+  // Media pickers
   const pickAndUploadAvatar = useCallback(async () => {
     if (!session?.user) {
       return Alert.alert(
@@ -479,7 +511,8 @@ export default function SettingsContainer() {
     }
   }, [loadingRegion, session?.user?.id]);
 
-  // Contacts helpers
+  /* ------------------------------ Contacts CRUD ------------------------------ */
+
   const resetContactForm = () => {
     setEditingId(null);
     setCName("");
@@ -542,16 +575,14 @@ export default function SettingsContainer() {
     saveContacts(next);
     setShowContactForm(false);
   };
-  const call = (phone) => Linking.openURL(`tel:${phone}`); // Linking is only used in screen via handler; we can pass a wrapper
   const onCall = (phone) => {
-    // pass to screen
-    // we keep it here for parity with old behavior
-    // eslint-disable-next-line no-undef
     return Linking.openURL(`tel:${phone}`);
   };
 
-  // Navigation wrapper for screen
+  /* -------------------------------- Navigation ------------------------------- */
   const goToCertificates = () => navigation.navigate("Certificates");
+
+  /* ------------------------------------ VM ----------------------------------- */
 
   const vm = {
     // i18n

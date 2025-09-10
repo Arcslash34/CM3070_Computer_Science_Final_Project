@@ -1,4 +1,38 @@
-// screens/ResourceHubScreen.js
+/**
+ * screens/ResourceHubScreen.js — Browseable first-aid & hazard guides (presentational)
+ *
+ * Purpose
+ * - Render a searchable, filterable hub of safety/first-aid resources.
+ * - Show category chips, quick-tips preview, and per-card visual accents.
+ * - Delegate navigation to article details via `openArticle(item)`.
+ *
+ * ViewModel (vm) contract
+ * - i18n/layout: t, insets
+ * - data: RESOURCES, items (filtered/sorted), CATEGORIES, category, query, sortAlpha,
+ *         headerText, headerAccent
+ * - setters: setCategory(c), setQuery(q), setSortAlpha(fn)
+ * - actions: openArticle(item)
+ *
+ * Key Behaviours
+ * - Search box filters `items`; clear icon appears only when query is non-empty.
+ * - A→Z sort toggle updates `sortAlpha`; icon reflects current state.
+ * - Horizontal category chips toggle the active `category`.
+ * - Cards preview up to MAX_QUICK bullets and show “+N more” when truncated.
+ *
+ * UX / Accessibility
+ * - Large tap targets; consistent iconography; readable contrasts per category.
+ * - Chips and cards are buttons; provide accessibility labels when useful.
+ * - Inline disclaimer under results summary.
+ *
+ * Performance Notes
+ * - Pure presentational; no data fetching here.
+ * - Uses lightweight lists and local constants for accents.
+ *
+ * Fail-safes
+ * - Empty state renders when `items.length === 0`.
+ * - Category accent falls back to a neutral theme when unknown.
+ */
+
 import React from "react";
 import {
   View,
@@ -16,13 +50,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Visual accents (presentation-only)
 const CATEGORY_BY_ID = {
-  "flooding": "Flooding",
+  flooding: "Flooding",
   "fire-safety": "Fire",
   "mosquito-dengue": "Infectious",
   "cpr-aed-adult": "Cardiac",
   "choking-adult": "Airway",
   "severe-bleeding": "Trauma",
-  "burns": "Burns",
+  burns: "Burns",
   "heat-stroke": "Environmental",
   "fracture-sprain": "Trauma",
 };
@@ -72,12 +106,19 @@ export default function ResourceHubScreen({ vm }) {
       edges={["top", "left", "right", "bottom"]}
     >
       {Platform.OS === "android" && (
-        <StatusBar translucent={false} backgroundColor="transparent" barStyle="dark-content" />
+        <StatusBar
+          translucent={false}
+          backgroundColor="transparent"
+          barStyle="dark-content"
+        />
       )}
 
       {/* Brand row */}
       <View style={styles.brandRow}>
-        <Image source={require("../assets/logo1.png")} style={styles.brandLogoImg} />
+        <Image
+          source={require("../assets/logo1.png")}
+          style={styles.brandLogoImg}
+        />
         <Text style={styles.brandTitle}>{t("resourceHub.title")}</Text>
       </View>
 
@@ -105,7 +146,9 @@ export default function ResourceHubScreen({ vm }) {
           onPress={() => setSortAlpha((s) => !s)}
           style={styles.sortBtn}
           accessibilityLabel={
-            sortAlpha ? t("resourceHub.sortedAToZTapToRestore") : t("resourceHub.sortAToZ")
+            sortAlpha
+              ? t("resourceHub.sortedAToZTapToRestore")
+              : t("resourceHub.sortAToZ")
           }
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
@@ -147,10 +190,22 @@ export default function ResourceHubScreen({ vm }) {
       </View>
 
       {/* Content list */}
-      <ScrollView contentContainerStyle={styles.list} keyboardShouldPersistTaps="handled">
-        <View style={[styles.listHeader, { paddingBottom: Math.max(insets.bottom * 0, 0) }]}>
-          <Text style={[styles.resultText, { color: headerAccent }]}>{headerText}</Text>
-          <Text style={styles.disclaimerInline}>{t("resourceHub.disclaimerInline")}</Text>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View
+          style={[
+            styles.listHeader,
+            { paddingBottom: Math.max(insets.bottom * 0, 0) },
+          ]}
+        >
+          <Text style={[styles.resultText, { color: headerAccent }]}>
+            {headerText}
+          </Text>
+          <Text style={styles.disclaimerInline}>
+            {t("resourceHub.disclaimerInline")}
+          </Text>
         </View>
 
         {/* Cards */}
@@ -162,29 +217,45 @@ export default function ResourceHubScreen({ vm }) {
           return (
             <TouchableOpacity
               key={item.id ?? `res-${i}`}
-              style={[styles.card, { shadowOpacity: Platform.OS === "ios" ? 0.08 : 0.12 }]}
+              style={[
+                styles.card,
+                { shadowOpacity: Platform.OS === "ios" ? 0.08 : 0.12 },
+              ]}
               onPress={() => openArticle(item)}
               activeOpacity={0.9}
             >
               {/* Left accent stripe */}
-              <View style={[styles.accentStripe, { backgroundColor: accent.stripe }]} />
+              <View
+                style={[
+                  styles.accentStripe,
+                  { backgroundColor: accent.stripe },
+                ]}
+              />
 
               {/* Content */}
               <View style={styles.cardContent}>
                 {/* Header row */}
                 <View style={styles.headerRow}>
                   <View style={styles.titleWrap}>
-                    <Text style={styles.cardTitle} numberOfLines={2}>{item.title}</Text>
-                    <View style={[styles.catPill, { backgroundColor: accent.bg }]}>
+                    <Text style={styles.cardTitle} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    <View
+                      style={[styles.catPill, { backgroundColor: accent.bg }]}
+                    >
                       <Ionicons name="pricetag" size={12} color={accent.text} />
-                      <Text style={[styles.catPillText, { color: accent.text }]}>
+                      <Text
+                        style={[styles.catPillText, { color: accent.text }]}
+                      >
                         {item.category}
                       </Text>
                     </View>
                   </View>
 
                   <View style={styles.iconSlot}>
-                    <View style={[styles.iconWrap, { backgroundColor: accent.bg }]}>
+                    <View
+                      style={[styles.iconWrap, { backgroundColor: accent.bg }]}
+                    >
                       <Ionicons name={ionName} size={28} color={accent.text} />
                     </View>
                   </View>
@@ -193,14 +264,28 @@ export default function ResourceHubScreen({ vm }) {
                 {/* Quick tips */}
                 <View style={styles.quickList}>
                   {(item.quick || []).slice(0, MAX_QUICK).map((q, qi) => (
-                    <View key={`q-${item.id ?? "x"}-${qi}`} style={styles.quickItem}>
-                      <Ionicons name="checkmark-circle" size={14} color={accent.text} style={{ marginTop: 1 }} />
-                      <Text style={styles.quickItemText} numberOfLines={2}>{q}</Text>
+                    <View
+                      key={`q-${item.id ?? "x"}-${qi}`}
+                      style={styles.quickItem}
+                    >
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={14}
+                        color={accent.text}
+                        style={{ marginTop: 1 }}
+                      />
+                      <Text style={styles.quickItemText} numberOfLines={2}>
+                        {q}
+                      </Text>
                     </View>
                   ))}
                   {extraCount > 0 && (
-                    <View style={[styles.morePill, { backgroundColor: accent.bg }]}>
-                      <Text style={[styles.morePillText, { color: accent.text }]}>
+                    <View
+                      style={[styles.morePill, { backgroundColor: accent.bg }]}
+                    >
+                      <Text
+                        style={[styles.morePillText, { color: accent.text }]}
+                      >
                         +{extraCount} {t("resourceHub.more")}
                       </Text>
                     </View>
@@ -212,7 +297,11 @@ export default function ResourceHubScreen({ vm }) {
                   <Text style={[styles.readMoreText, { color: accent.text }]}>
                     {t("resourceHub.readMore")}
                   </Text>
-                  <Ionicons name="chevron-forward" size={16} color={accent.text} />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={16}
+                    color={accent.text}
+                  />
                 </View>
               </View>
             </TouchableOpacity>
@@ -223,7 +312,9 @@ export default function ResourceHubScreen({ vm }) {
           <View style={styles.empty}>
             <Ionicons name="search" size={20} color="#9CA3AF" />
             <Text style={styles.emptyTitle}>{t("resourceHub.noResults")}</Text>
-            <Text style={styles.emptyText}>{t("resourceHub.noResultsText")}</Text>
+            <Text style={styles.emptyText}>
+              {t("resourceHub.noResultsText")}
+            </Text>
           </View>
         )}
       </ScrollView>
@@ -233,30 +324,74 @@ export default function ResourceHubScreen({ vm }) {
 
 /* ---------------- styles ---------------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 16, backgroundColor: "#FFFFFF", paddingTop: 8 },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 14, marginTop: 4, paddingHorizontal: 2 },
-  brandLogoImg: { width: 30, height: 30, borderRadius: 6, resizeMode: "contain" },
-  brandTitle: { fontSize: 22, fontWeight: "800", color: "#111827", letterSpacing: 0.2 },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: "#FFFFFF",
+    paddingTop: 8,
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 14,
+    marginTop: 4,
+    paddingHorizontal: 2,
+  },
+  brandLogoImg: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    resizeMode: "contain",
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#111827",
+    letterSpacing: 0.2,
+  },
 
   searchRow: {
-    marginBottom: 2, borderRadius: 14, paddingHorizontal: 12,
-    paddingVertical: Platform.select({ ios: 6, android: 4 }), minHeight: 30,
-    borderWidth: 1, borderColor: "#E5E7EB", flexDirection: "row", alignItems: "center", gap: 8,
+    marginBottom: 2,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.select({ ios: 6, android: 4 }),
+    minHeight: 30,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   searchInput: { flex: 1, color: "#111827", fontSize: 13 },
   sortBtn: { marginLeft: 2 },
 
   chipsContainer: { height: CHIP_ROW_HEIGHT, justifyContent: "center" },
-  chipsRow: { paddingVertical: CHIP_ROW_VPAD, alignItems: "center", paddingRight: 4 },
+  chipsRow: {
+    paddingVertical: CHIP_ROW_VPAD,
+    alignItems: "center",
+    paddingRight: 4,
+  },
   chip: {
-    minWidth: 68, height: CHIP_HEIGHT, paddingHorizontal: 14, borderRadius: 10,
-    borderWidth: 1, borderColor: "#E5E7EB", backgroundColor: "#FFFFFF", marginRight: 8,
-    alignItems: "center", justifyContent: "center",
+    minWidth: 68,
+    height: CHIP_HEIGHT,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
+    marginRight: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   chipActive: { backgroundColor: "#EEF2FF", borderColor: "#C7D2FE" },
   chipText: {
-    color: "#374151", fontSize: 14, textAlign: "center",
-    maxWidth: CHIP_WIDTH - 16, includeFontPadding: false, textAlignVertical: "center",
+    color: "#374151",
+    fontSize: 14,
+    textAlign: "center",
+    maxWidth: CHIP_WIDTH - 16,
+    includeFontPadding: false,
+    textAlignVertical: "center",
     fontWeight: Platform.select({ ios: "600", android: "700" }),
   },
   chipTextActive: { color: "#4F46E5" },
@@ -264,35 +399,91 @@ const styles = StyleSheet.create({
   list: { paddingBottom: 8 },
   listHeader: { paddingHorizontal: 2, marginTop: 4, marginBottom: 10 },
   resultText: { color: "#6B7280", fontSize: 18, fontWeight: "600" },
-  disclaimerInline: { color: "#6B7280", fontSize: 13, lineHeight: 16, marginTop: 4 },
+  disclaimerInline: {
+    color: "#6B7280",
+    fontSize: 13,
+    lineHeight: 16,
+    marginTop: 4,
+  },
 
   card: {
-    position: "relative", flexDirection: "row", gap: 12,
-    borderWidth: 1, borderColor: "#E5E7EB", borderRadius: 16, backgroundColor: "#FFFFFF",
-    padding: 14, paddingLeft: 20, marginBottom: 14, shadowColor: "#000",
-    shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 2,
+    position: "relative",
+    flexDirection: "row",
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    padding: 14,
+    paddingLeft: 20,
+    marginBottom: 14,
+    shadowColor: "#000",
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
-  accentStripe: { position: "absolute", left: 0, top: 0, bottom: 0, width: 10, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 },
+  accentStripe: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 10,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
   cardContent: { flex: 1 },
   headerRow: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
   titleWrap: { flex: 8, paddingRight: 8 },
   cardTitle: { fontSize: 17, fontWeight: "800", color: "#111827" },
   iconSlot: { flex: 2, alignItems: "flex-end", justifyContent: "center" },
-  iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: "center", justifyContent: "center", alignSelf: "flex-end" },
+  iconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+  },
 
-  catPill: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, marginTop: 6 },
+  catPill: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    marginTop: 6,
+  },
   catPillText: { fontSize: 12, fontWeight: "700" },
 
   quickList: { marginTop: 8, gap: 6 },
   quickItem: { flexDirection: "row", gap: 8, alignItems: "flex-start" },
   quickItemText: { color: "#374151", fontSize: 13, lineHeight: 18, flex: 1 },
-  morePill: { alignSelf: "flex-start", backgroundColor: "#F3F4F6", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, marginTop: 2 },
+  morePill: {
+    alignSelf: "flex-start",
+    backgroundColor: "#F3F4F6",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    marginTop: 2,
+  },
   morePillText: { fontSize: 12, fontWeight: "700", color: "#4B5563" },
 
-  readMoreRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 10 },
+  readMoreRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 10,
+  },
   readMoreText: { color: "#6366F1", fontWeight: "700" },
 
   empty: { alignItems: "center", gap: 6, paddingVertical: 40 },
   emptyTitle: { color: "#111827", fontWeight: "800", fontSize: 16 },
-  emptyText: { color: "#6B7280", fontSize: 13, textAlign: "center", paddingHorizontal: 20 },
+  emptyText: {
+    color: "#6B7280",
+    fontSize: 13,
+    textAlign: "center",
+    paddingHorizontal: 20,
+  },
 });

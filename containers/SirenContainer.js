@@ -1,12 +1,58 @@
-// containers/SirenContainer.js
+/**
+ * containers/SirenContainer.js — Emergency Siren (torch strobe + audio)
+ *
+ * Purpose
+ * - Drive the full-screen emergency siren experience:
+ *   • keep screen awake
+ *   • loop siren audio
+ *   • vibrate with a repeating pattern
+ *   • strobe the camera torch as a visual alert
+ * - Coordinate lifecycle with the rest of the app via `emergencyBus`.
+ *
+ * Key Behaviours
+ * - Torch strobe:
+ *   • Frequency clamped for safety (Android ≤3 Hz, iOS ≤8 Hz).
+ *   • ~60% duty cycle (ON time), phase-locked scheduling via `scheduleNext()`.
+ *   • Warm-up delay (shorter when `primed` is true) before stable strobing.
+ * - Cover / readiness:
+ *   • Fades a cover out when camera becomes ready.
+ *   • Has a failsafe timeout to ensure the cover never gets “stuck”.
+ * - Audio & haptics:
+ *   • Starts siren + vibration on focus; stops both on cleanup.
+ *   • Shows a one-time hint about device volume / DND.
+ * - App focus:
+ *   • Pauses strobe when app backgrounded; resumes when active and allowed.
+ * - Permissions:
+ *   • Requests camera permission on native platforms (no torch on web).
+ * - Events:
+ *   • Emits: "siren-open", "siren-camera-ready", "siren-closed".
+ *
+ * Inputs
+ * - route.params.primed (boolean): if true, assume camera prewarmed and
+ *   reduce warm-up delays for faster first flash.
+ *
+ * Exports
+ * - Default React component <SirenContainer/> which renders <SirenScreen vm={...}>.
+ */
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Alert, Animated, AppState, InteractionManager, Platform, Vibration } from "react-native";
-import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  Alert,
+  Animated,
+  AppState,
+  InteractionManager,
+  Platform,
+  Vibration,
+} from "react-native";
+import {
+  useNavigation,
+  useFocusEffect,
+  useRoute,
+} from "@react-navigation/native";
 import { useKeepAwake } from "expo-keep-awake";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { playSiren, stopSiren } from "../utils/sirenAudio";
-import { emergencyBus } from '../utils/emergencyBus';
-
+import { emergencyBus } from "../utils/emergencyBus";
 
 export default function SirenContainer() {
   useKeepAwake();
@@ -40,11 +86,19 @@ export default function SirenContainer() {
   const armCoverFailsafe = useCallback(() => {
     if (coverFailsafeRef.current) clearTimeout(coverFailsafeRef.current);
     coverFailsafeRef.current = setTimeout(() => {
-      Animated.timing(cover, { toValue: 0, duration: 180, useNativeDriver: true })
-        .start(() => setCoverVisible(false));
+      Animated.timing(cover, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }).start(() => setCoverVisible(false));
     }, 1600);
   }, [cover]);
-  useEffect(() => () => { if (coverFailsafeRef.current) clearTimeout(coverFailsafeRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (coverFailsafeRef.current) clearTimeout(coverFailsafeRef.current);
+    },
+    []
+  );
 
   // mount the camera one frame later
   const [mountCam, setMountCam] = useState(false);
@@ -57,7 +111,9 @@ export default function SirenContainer() {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web" && !hasCameraPerm) {
-        try { await requestPermission(); } catch {}
+        try {
+          await requestPermission();
+        } catch {}
       }
     })();
   }, [hasCameraPerm, requestPermission]);
@@ -68,7 +124,7 @@ export default function SirenContainer() {
   }, []);
   const stopVibration = useCallback(() => Vibration.cancel(), []);
 
-  const nowTs = () => (global?.performance?.now?.() ?? Date.now());
+  const nowTs = () => global?.performance?.now?.() ?? Date.now();
 
   const scheduleNext = useCallback(() => {
     const base = baseTsRef.current;
@@ -81,7 +137,8 @@ export default function SirenContainer() {
     let nextBoundary;
     if (curOn) {
       const offThisCycle = base + k * period + onMs;
-      nextBoundary = now < offThisCycle ? offThisCycle : base + (k + 1) * period + onMs;
+      nextBoundary =
+        now < offThisCycle ? offThisCycle : base + (k + 1) * period + onMs;
     } else {
       const nextStart = base + (k + 1) * period;
       nextBoundary = now < nextStart ? nextStart : base + (k + 2) * period;
@@ -95,29 +152,32 @@ export default function SirenContainer() {
     }, delay);
   }, []);
 
-  const startStrobe = useCallback((hz = 6) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    const targetHz = Math.min(hz, Platform.OS === "android" ? 3 : 8);
-    const period = 1000 / targetHz;
-    const onMs = Math.max(180, period * 0.6);
+  const startStrobe = useCallback(
+    (hz = 6) => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      const targetHz = Math.min(hz, Platform.OS === "android" ? 3 : 8);
+      const period = 1000 / targetHz;
+      const onMs = Math.max(180, period * 0.6);
 
-    periodMsRef.current = period;
-    onMsRef.current = onMs;
-    baseTsRef.current = nowTs();
-    phaseOnRef.current = true;
-    setTorchOn(true);
+      periodMsRef.current = period;
+      onMsRef.current = onMs;
+      baseTsRef.current = nowTs();
+      phaseOnRef.current = true;
+      setTorchOn(true);
 
-    const warm = primed ? 120 : (Platform.OS === "android" ? 350 : 220);
-    timerRef.current = setTimeout(() => {
-      InteractionManager.runAfterInteractions(() => {
-        baseTsRef.current = nowTs();
-        scheduleNext();
-      });
-    }, warm);
-  }, [scheduleNext, primed]);
+      const warm = primed ? 120 : Platform.OS === "android" ? 350 : 220;
+      timerRef.current = setTimeout(() => {
+        InteractionManager.runAfterInteractions(() => {
+          baseTsRef.current = nowTs();
+          scheduleNext();
+        });
+      }, warm);
+    },
+    [scheduleNext, primed]
+  );
 
   const stopStrobe = useCallback(() => {
     if (timerRef.current) {
@@ -168,7 +228,15 @@ export default function SirenContainer() {
         stopStrobe();
         emergencyBus.emit("siren-closed");
       };
-    }, [strobing, startStrobe, stopStrobe, startVibration, stopVibration, cover, armCoverFailsafe])
+    }, [
+      strobing,
+      startStrobe,
+      stopStrobe,
+      startVibration,
+      stopVibration,
+      cover,
+      armCoverFailsafe,
+    ])
   );
 
   // screen handlers
@@ -180,8 +248,13 @@ export default function SirenContainer() {
   }, [navigation, stopStrobe, stopVibration]);
 
   const onToggleStrobe = useCallback(() => {
-    if (strobing) { setStrobing(false); stopStrobe(); }
-    else { setStrobing(true); if (cameraReadyRef.current) startStrobe(); }
+    if (strobing) {
+      setStrobing(false);
+      stopStrobe();
+    } else {
+      setStrobing(true);
+      if (cameraReadyRef.current) startStrobe();
+    }
   }, [strobing, startStrobe, stopStrobe]);
 
   const onCameraReady = useCallback(() => {
@@ -190,8 +263,11 @@ export default function SirenContainer() {
     if (strobing) setTimeout(() => startStrobe(), primed ? 60 : 120);
 
     if (coverFailsafeRef.current) clearTimeout(coverFailsafeRef.current);
-    Animated.timing(cover, { toValue: 0, duration: 180, useNativeDriver: true })
-      .start(() => setCoverVisible(false));
+    Animated.timing(cover, {
+      toValue: 0,
+      duration: 180,
+      useNativeDriver: true,
+    }).start(() => setCoverVisible(false));
   }, [strobing, startStrobe, primed, cover]);
 
   const onMountError = useCallback((error) => {
@@ -219,7 +295,8 @@ export default function SirenContainer() {
     cover,
 
     // web siren action
-    webReady, setWebReady,
+    webReady,
+    setWebReady,
 
     // pass CameraView to the screen to avoid re-imports there
     CameraView,

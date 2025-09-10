@@ -1,4 +1,36 @@
-// screens/HomeArticleScreen.js
+/**
+ * screens/HomeArticleScreen.js — Curated external resources/news list
+ *
+ * Purpose
+ * - Display a localized list of authoritative articles/resources (PUB, NEA, SCDF, media).
+ * - Provide users with quick access to current safety info and reference guides.
+ * - Merge default English items with optional translation-provided overrides.
+ *
+ * Data Sources
+ * - DEFAULT_ITEMS: local static array (id, title, source, url, image).
+ * - Optional overrides: translations/<lang>/homeArticles.json with `items[]`.
+ * - i18n for titles, labels, and accessibility strings.
+ *
+ * Key Behaviours
+ * - Items are merged by `id`, allowing translated/locale-specific replacements.
+ * - Each card shows a hero image, source badge, and truncated headline.
+ * - Tapping a card opens the external URL in the system browser.
+ * - Header includes back navigation with localized title.
+ *
+ * UX / Accessibility
+ * - Cards are touch-friendly with shadows, rounded corners, and source badges.
+ * - Gradient overlay ensures text legibility on hero images.
+ * - Accessibility labels announce source + headline.
+ *
+ * Performance Notes
+ * - FlatList for efficient rendering and recycling.
+ * - Local images (require) prevent network flicker; defaultSource used on iOS.
+ *
+ * Fail-safes
+ * - Falls back to DEFAULT_ITEMS if no overrides are present.
+ * - Invalid/missing image references are ignored (still shows text + link).
+ */
+
 import React, { useLayoutEffect, useMemo, useContext, useEffect } from "react";
 import {
   View,
@@ -19,8 +51,6 @@ import { LanguageContext } from "../translations/language";
 import i18n, { t, setLocale } from "../translations/translation";
 
 // Local default items (English sources, stable URLs)
-// You can override any of these by adding translations/<lang>/homeArticles.json
-// with an "items" array of objects that have matching "id" fields.
 const DEFAULT_ITEMS = [
   {
     id: "st-flood",
@@ -94,11 +124,10 @@ function useLocalizedArticles() {
     for (const o of overrides) {
       if (!o?.id) continue;
       const base = map.get(o.id) || {};
-      // Allow title/source/url override; for image you can use a local require by id if desired.
+      // Allow title/source/url override
       map.set(o.id, {
         ...base,
         ...o,
-        // If translations ship string paths for images, you can map them here if needed.
       });
     }
     return Array.from(map.values());
@@ -174,6 +203,7 @@ export default function HomeArticleScreen() {
   );
 }
 
+/* ---------- Styles ---------- */
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#FFFFFF" },
 

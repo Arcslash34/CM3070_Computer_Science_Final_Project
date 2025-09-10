@@ -1,8 +1,28 @@
-// containers/ChatbotContainer.js
+/**
+ * containers/ChatbotContainer.js — View-model for the in-app chatbot
+ *
+ * Purpose
+ * - Manage chatbot UI state (messages, input, loading, presets) and wire calls to OpenRouter.
+ * - Inject a Singapore-focused system prompt and user locale/language into requests.
+ * - Handle rate limits, timeouts, and missing environment variables gracefully.
+ *
+ * Key Behaviours
+ * - Uses env vars: EXPO_PUBLIC_OPENROUTER_ENDPOINT, EXPO_PUBLIC_OPENROUTER_API_KEY.
+ * - Streams disabled; uses a single POST with a 20s abort timeout.
+ * - Falls back to an error assistant message when envs are missing or on network/API errors.
+ * - Preset questions are localized from i18n (`chatbot.presetQuestions`).
+ *
+ * Exports
+ * - Default React component <ChatbotContainer/> which renders <ChatbotScreen vm={...}/> .
+ */
+
 import React, { useContext, useRef, useState } from "react";
 import { LanguageContext } from "../translations/language";
 import { t } from "../translations/translation";
 
+// ---------------------------------------------------------------------------
+// Model & system prompt
+// ---------------------------------------------------------------------------
 const OPENROUTER_ENDPOINT = process.env.EXPO_PUBLIC_OPENROUTER_ENDPOINT ?? "";
 const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ?? "";
 
@@ -17,19 +37,24 @@ Always prioritise Singapore-specific guidance, laws, and agencies.
 If advice differs by country, give the SINGAPORE answer first.
 `.trim();
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function ChatbotContainer({ navigation }) {
   const { lang } = useContext(LanguageContext);
 
-  // UI state kept here, but rendered in the screen
+  // UI state
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showPresets, setShowPresets] = useState(true);
   const scrollViewRef = useRef();
 
+  // Presets (localized)
   const presetRaw = t("chatbot.presetQuestions", { returnObjects: true });
   const presetQuestions = Array.isArray(presetRaw) ? presetRaw : [];
 
+  // Send a single-turn message (no streaming)
   const sendMessage = async (text) => {
     const content = (text ?? input).trim();
     if (!content || loading) return;
@@ -40,6 +65,7 @@ export default function ChatbotContainer({ navigation }) {
     setInput("");
     setLoading(true);
 
+    // Missing env guard
     if (!OPENROUTER_ENDPOINT || !OPENROUTER_API_KEY) {
       setMessages([
         ...updated,
@@ -88,8 +114,7 @@ export default function ChatbotContainer({ navigation }) {
         } catch {}
         if (res.status === 429) {
           msg =
-            t("chatbot.rateLimited") ||
-            "Rate limited. Try again in a moment.";
+            t("chatbot.rateLimited") || "Rate limited. Try again in a moment.";
         }
         throw new Error(msg || `HTTP ${res.status} ${textBody.slice(0, 200)}`);
       }
@@ -116,6 +141,7 @@ export default function ChatbotContainer({ navigation }) {
     }
   };
 
+  // View-model
   const vm = {
     // strings
     t,

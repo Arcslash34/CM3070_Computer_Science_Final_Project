@@ -1,10 +1,32 @@
-// components/RiskAlertCard.js
+/**
+ * components/RiskAlertCard.js — Prominent risk/alert banner
+ *
+ * Purpose
+ * - Render a centered alert banner for conditions like Flash Floods, Hazes, etc.
+ * - Show a severity variant (red/orange/green), title, timestamp (fancy date + relative),
+ *   and optional affected areas.
+ *
+ * Key Behaviours
+ * - Variants map to background/text/icon styles and icons:
+ *   • red    → warning, light text
+ *   • orange → warning-outline, dark text
+ *   • green  → checkmark-circle, dark text
+ * - Title auto-upsizes for “Flash Flood Warning”.
+ * - Dates localized via Intl with i18n.locale fallback.
+ *
+ * Exports
+ * - Default React component <RiskAlertCard variant title whenISO areasText/>.
+ */
+
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { t } from "../translations/translation";
 import i18n from "../translations/translation";
 
+// ---------------------------------------------------------------------------
+// Formatters
+// ---------------------------------------------------------------------------
 function formatFancyDate(dt) {
   if (!dt) return "—";
   try {
@@ -44,31 +66,108 @@ function formatAgo(dt) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function RiskAlertCard({ variant, title, whenISO, areasText }) {
   const dt = whenISO ? new Date(whenISO) : null;
   const palette =
     variant === "red"
-      ? { wrap: styles.alertRed, icon: "warning", iconColor: "#fff", text: styles.alertTextLight }
+      ? {
+          wrap: styles.alertRed,
+          icon: "warning",
+          iconColor: "#fff",
+          text: styles.alertTextLight,
+        }
       : variant === "orange"
-      ? { wrap: styles.alertOrange, icon: "warning-outline", iconColor: "#111827", text: styles.alertTextDark }
-      : { wrap: styles.alertGreen, icon: "checkmark-circle", iconColor: "#064e3b", text: styles.alertTextDark };
+      ? {
+          wrap: styles.alertOrange,
+          icon: "warning-outline",
+          iconColor: "#111827",
+          text: styles.alertTextDark,
+        }
+      : {
+          wrap: styles.alertGreen,
+          icon: "checkmark-circle",
+          iconColor: "#064e3b",
+          text: styles.alertTextDark,
+        };
 
   const isFlashFlood = title.includes("Flash Flood Warning");
   return (
     <View style={[styles.alertCard, palette.wrap]}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-        <Ionicons name={palette.icon} size={18} color={palette.iconColor} style={{ marginRight: 6 }} />
-        <Text style={[styles.alertTitle, palette.text, isFlashFlood && styles.alertTitleBig]}>{title}</Text>
-        {isFlashFlood && <Ionicons name={palette.icon} size={18} color={palette.iconColor} style={{ marginLeft: 6 }} />}
+      {/* Title row */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Ionicons
+          name={palette.icon}
+          size={18}
+          color={palette.iconColor}
+          style={{ marginRight: 6 }}
+        />
+        <Text
+          style={[
+            styles.alertTitle,
+            palette.text,
+            isFlashFlood && styles.alertTitleBig,
+          ]}
+        >
+          {title}
+        </Text>
+        {isFlashFlood && (
+          <Ionicons
+            name={palette.icon}
+            size={18}
+            color={palette.iconColor}
+            style={{ marginLeft: 6 }}
+          />
+        )}
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 4 }}>
-        <Ionicons name="calendar-outline" size={14} color={palette.iconColor} style={{ marginRight: 4 }} />
-        <Text style={[styles.alertMeta, palette.text, styles.alertSpaced]}>{formatFancyDate(dt)} • {formatAgo(dt)}</Text>
+      {/* When row */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 4,
+        }}
+      >
+        <Ionicons
+          name="calendar-outline"
+          size={14}
+          color={palette.iconColor}
+          style={{ marginRight: 4 }}
+        />
+        <Text style={[styles.alertMeta, palette.text, styles.alertSpaced]}>
+          {formatFancyDate(dt)} • {formatAgo(dt)}
+        </Text>
       </View>
+      {/* Areas row */}
       {!!areasText && (
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 2 }}>
-          <Ionicons name="location-outline" size={14} color={palette.iconColor} style={{ marginRight: 4 }} />
-          <Text style={[styles.alertMeta, palette.text, styles.alertSpaced]} numberOfLines={2} textAlign="center">
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 2,
+          }}
+        >
+          <Ionicons
+            name="location-outline"
+            size={14}
+            color={palette.iconColor}
+            style={{ marginRight: 4 }}
+          />
+          <Text
+            style={[styles.alertMeta, palette.text, styles.alertSpaced]}
+            numberOfLines={2}
+            textAlign="center"
+          >
             {areasText}
           </Text>
         </View>
@@ -77,8 +176,17 @@ export default function RiskAlertCard({ variant, title, whenISO, areasText }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
-  alertCard: { borderRadius: 18, paddingVertical: 12, paddingHorizontal: 14, marginTop: 8, marginBottom: 8 },
+  alertCard: {
+    borderRadius: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginTop: 8,
+    marginBottom: 8,
+  },
   alertRed: { backgroundColor: "#ef4444" },
   alertOrange: { backgroundColor: "#f59e0b" },
   alertGreen: { backgroundColor: "#d1fae5" },

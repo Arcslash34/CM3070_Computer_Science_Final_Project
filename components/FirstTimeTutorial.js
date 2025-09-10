@@ -1,4 +1,22 @@
-// components/FirstTimeTutorial.js
+/**
+ * components/FirstTimeTutorial.js — First-run tutorial for 5-tap emergency gesture
+ *
+ * Purpose
+ * - Teach users to trigger the emergency flow by tapping the screen 5 times quickly.
+ * - Provide a silent, guided practice that does not activate the real siren.
+ * - Persist completion so the tutorial won't reappear.
+ *
+ * Key Behaviours
+ * - Steps: "intro" → "practice" → "success".
+ * - Practice counts fast consecutive taps (≤ TAP_GAP_MS apart) up to REQUIRED_TAPS.
+ * - Shows a gentle "try faster" hint if timing resets (RESET_HINT_MS).
+ * - Auto-closes shortly after success and marks tutorial as seen in AsyncStorage.
+ * - Optionally disables any real overlay while the tutorial is visible.
+ *
+ * Exports
+ * - Default React component <FirstTimeTutorial visible onComplete onSkip disableRealOverlay/>.
+ */
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
@@ -9,14 +27,19 @@ import {
   Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import * as Haptics from "expo-haptics"; // optional
 
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 const TUTORIAL_KEY = "hasSeenTutorial";
 const REQUIRED_TAPS = 5;
 const TAP_GAP_MS = 1000; // max ms allowed between consecutive taps
 const RESET_HINT_MS = 1100; // show “try faster” if reset happens
 const AUTO_CLOSE_MS = 1200; // delay before closing on success
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function FirstTimeTutorial({
   visible,
   onComplete,
@@ -32,14 +55,13 @@ export default function FirstTimeTutorial({
   const resetTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
 
-  // when visible, start at intro
+  // when visible, start at intro and optionally pause any real overlay
   useEffect(() => {
     if (visible) {
       setStep("intro");
       setTapCount(0);
       setShowHint(false);
       lastTapRef.current = 0;
-      // tell parent to pause real overlay if they wired it (optional)
       disableRealOverlay?.(true);
     } else {
       disableRealOverlay?.(false);
@@ -51,12 +73,14 @@ export default function FirstTimeTutorial({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
+  // persist "has seen tutorial"
   const persistSeen = useCallback(async () => {
     try {
       await AsyncStorage.setItem(TUTORIAL_KEY, "1"); // use "1"/"0" consistently
     } catch {}
   }, []);
 
+  // transition to practice step
   const beginPractice = useCallback(() => {
     setStep("practice");
     setTapCount(0);
@@ -64,27 +88,29 @@ export default function FirstTimeTutorial({
     lastTapRef.current = 0;
   }, []);
 
+  // skip tutorial now
   const handleSkip = useCallback(async () => {
     await persistSeen();
     onSkip?.(); // if provided
     onComplete?.(); // close tutorial
   }, [onComplete, onSkip, persistSeen]);
 
+  // reset practice progress (optionally show hint)
   const resetProgress = useCallback((withHint = false) => {
     setTapCount(0);
     lastTapRef.current = 0;
     if (withHint) {
       setShowHint(true);
-      // Optionally vibrate
       // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
   }, []);
 
+  // handle taps in practice step
   const handleTap = useCallback(() => {
     const now = Date.now();
     const last = lastTapRef.current;
 
-    // If first tap, or too slow since last tap → reset to 1
+    // first tap, or too slow since last tap → reset chain to 1
     let nextCount;
     if (!last || now - last > TAP_GAP_MS) {
       nextCount = 1;
@@ -96,19 +122,16 @@ export default function FirstTimeTutorial({
     lastTapRef.current = now;
     setTapCount(nextCount);
 
-    // Optional: light haptic tick each tap
-    // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    // If they paused too long previously, show hint briefly
+    // if they paused too long previously, briefly show hint
     if (last && now - last > RESET_HINT_MS) {
       setShowHint(true);
       clearTimeout(resetTimerRef.current);
       resetTimerRef.current = setTimeout(() => setShowHint(false), 1200);
     }
 
+    // success
     if (nextCount >= REQUIRED_TAPS) {
       setStep("success");
-      // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = setTimeout(async () => {
         await persistSeen();
@@ -224,6 +247,9 @@ export default function FirstTimeTutorial({
   );
 }
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   scrim: {
     flex: 1,

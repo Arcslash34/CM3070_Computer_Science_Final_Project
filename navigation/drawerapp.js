@@ -1,4 +1,24 @@
-// navigation/drawerapp.js
+/**
+ * navigation/drawerapp.js — Drawer shell & shared header logo
+ *
+ * Purpose
+ * - Provide the app’s top-level navigator entry (<DrawerApp/>) which renders
+ *   the main navigation tree.
+ * - Expose a small reusable <LogoHeader/> component for use in a navigation
+ *   header’s `headerLeft` (e.g. `headerLeft: () => <LogoHeader />`).
+ *
+ * Key Behaviours
+ * - Stateless; purely presentational.
+ * - Uses a 30×30 logo image with `contain` resize to fit various headers.
+ *
+ * Inputs / Props
+ * - None (both components are self-contained and do not accept props).
+ *
+ * Exports
+ * - Named: LogoHeader
+ * - Default: DrawerApp
+ */
+
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
 import MainNavigator from "./mainNavigator";
