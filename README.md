@@ -119,12 +119,12 @@ npm test
 
 ### Gmail (For Testing Supabase Password Reset)
 
-- **Email:** quizzyfinal@gmail.com
+- **Email:** liveshield34@gmail.com
 - **Password:** password000.
 
 ### App Login
 
-- **Username:** Quizzy
+- **Username:** liveshield
 - **Password:** test123
 
 ---
