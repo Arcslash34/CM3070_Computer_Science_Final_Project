@@ -31,7 +31,7 @@ It combines **educational quizzes, resource hubs, multilingual support, badges &
   - English (en), Simplified Chinese (zh), Malay (ms), Tamil (ta)
   - Easily extensible with `translations/<lang>` files
 
-- 🗄 **Data & Storage**
+- **Data & Storage**
   - Supabase for profiles, quiz results, badges
   - AsyncStorage for preferences & tutorial state
   - External APIs (NEA: rainfall, PM2.5, wind, humidity, temperature)
