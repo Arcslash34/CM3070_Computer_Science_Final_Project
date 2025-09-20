@@ -8,30 +8,26 @@ It combines **educational quizzes, resource hubs, multilingual support, badges &
 
 ## ✨ Features
 
--  **Quizzes & Learning**
-
+- **Quizzes & Learning**
   - Daily and topic-based quizzes
   - Explanations and answer reviews
   - Streaks and XP rewards for consistent learning
 
--  **Gamification**
-
+- **Gamification**
   - Badge system (first-step, quiz explorer, streak levels, etc.)
   - XP tracking and progress history
 
--  **Resource Hub**
-
+- **Resource Hub**
   - Curated first-aid and disaster-response guides
   - Interactive resource articles with quick steps & detailed sections
   - Rich media: images, news links, references
 
--  **Emergency Tools**
+- **Emergency Tools**
   - **Emergency Siren** screen: siren + vibration + flashlight strobe (native) or screen alert (web)
-  - 5-tap quick activation (via container logic) at any point in the app
+  - Global 5-tap quick activation at any point in the app
   - Region detection and live condition indicators
 
--  **Multilingual Interface**
-
+- **Multilingual Interface**
   - English (en), Simplified Chinese (zh), Malay (ms), Tamil (ta)
   - Easily extensible with `translations/<lang>` files
 
@@ -46,7 +42,6 @@ It combines **educational quizzes, resource hubs, multilingual support, badges &
 ## 🏗 Architecture
 
 **Data Tier**
-
 - Supabase tables: `profiles`, `quiz_results`, `user_disaster_badges`
 - Local: AsyncStorage (preferences, flags)
 - Static JSON: quizzes, checklists, translations
@@ -54,13 +49,11 @@ It combines **educational quizzes, resource hubs, multilingual support, badges &
 - Scripted snapshot: `scripts/snapshot.js` → `assets/env_snapshot.json`
 
 **Logic Tier**
-
 - Containers: orchestrate data + actions (e.g., `QuizGameContainer`, `InteractiveMapModalContainer`, `SettingsContainer`, `CertificatesContainer`)
 - Services: `supabase.js`, env fetchers, badge/quiz utilities
 - Caching: in-memory TTL + de-dup for network requests
 
 **UI / Presentation Tier**
-
 - Screens: Quizzes, Quiz Game, Quiz Set, History, Result Summary
 - Resource Hub & Article, Home (dashboard), Settings, Certificates, Siren
 - Components: cards, modals, progress bars, map views, lists
